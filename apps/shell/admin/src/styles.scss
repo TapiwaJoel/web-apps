@@ -5,6 +5,7 @@
 
 // Tailwind CSS v4
 @import 'tailwindcss' layer(tailwindcss);
+@config '../../../../tailwind.config.js';
 
 // Basic body styling
 body {
