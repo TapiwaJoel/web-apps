@@ -1,0 +1,171 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.sidebar-layout {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+// ---- Icon rail (thin left column of circular buttons) ----
+// Rail geometry is tuned so each icon lines up with its tree row:
+//  - top-level tree rows have a constant 37px pitch (icons match with a 32px btn + 5px gap)
+//  - the rail now starts under the shared topbar (same Y as the tree content), so the top
+//    offset only needs to match the tree-nav's own top padding + half the icon/row delta
+//    (measured live; ~10px)
+.sidebar-rail {
+  --rail-btn-size: 2.5rem; // 40px — larger, airier icons like the reference
+  --rail-row-pitch: 45px; // matches the roomier top-level tree row pitch (py-3)
+  --rail-top-offset: 11px; // lands the first icon center on the first tree row
+
+  width: 4rem;
+  z-index: 1;
+  padding-top: var(--rail-top-offset);
+  padding-bottom: 1rem;
+  gap: calc(var(--rail-row-pitch) - var(--rail-btn-size));
+  // Same light background as the tree/topbar — one seamless panel (like the reference).
+  // The white icon chips read as raised via their own subtle shadow, not a darker rail.
+  background-color: #f7f7f9;
+}
+
+.rail-btn {
+  color: var(--theme-text-secondary);
+  // Inactive icons sit on a white circular chip, subtly raised via shadow (no border)
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--theme-primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--theme-primary-color);
+    outline-offset: 2px;
+  }
+
+  // Signature: the active rail icon is a filled accent circle (overrides the white chip)
+  &.rail-btn-active {
+    background-color: var(--theme-primary-color);
+    color: #ffffff;
+    box-shadow: none;
+
+    &:hover {
+      background-color: var(--theme-primary-color);
+      color: #ffffff;
+    }
+  }
+}
+
+.rail-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+// Pushes the footer rail group (e.g. logout) to the bottom of the column
+.rail-spacer {
+  margin-top: auto;
+}
+
+// ---- T-shape shell: a full-width topbar over a rail + tree body ----
+.sidebar-shell {
+  left: 0;
+  transform: translateX(0);
+  // Extremely subtle shadow for clean separation
+  box-shadow: 1px 0 0 0 rgba(0, 0, 0, 0.03);
+
+  // Mobile: hide by default
+  @media (max-width: 768px) {
+    transform: translateX(-100%);
+
+    &.sidebar-mobile-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+// Topbar spans the whole sidebar (rail + tree) — the top of the "T"
+.sidebar-topbar {
+  flex-shrink: 0;
+  background-color: #f7f7f9;
+}
+
+// Body holds the two columns beneath the topbar
+.sidebar-body {
+  min-height: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+
+  // Collapsing to an icon rail is handled structurally: the tree content is
+  // removed from the DOM (*ngIf="!railOnlyCollapsed") and the panel width goes
+  // to 0, so the rail is the only visible column. No CSS content-hiding needed
+  // (the old rules here couldn't pierce the child tree-node encapsulation).
+
+  &-header {
+    flex-shrink: 0;
+  }
+
+  &-content {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &-footer {
+    flex-shrink: 0;
+  }
+
+  &-brand {
+    &-name {
+      transition: opacity 0.3s ease;
+    }
+  }
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: var(--theme-background-color, #f5f5f5);
+}
+
+.content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.mobile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+// Smooth transitions
+.sidebar-shell,
+.sidebar-brand-name,
+.sidebar-toggle-btn svg {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Overlay backdrop blur effect
+.sidebar-overlay {
+  backdrop-filter: blur(2px);
+}
+
+// Hover effect for toggle button
+.sidebar-toggle-btn:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--theme-primary-color) 10%,
+    transparent
+  );
+}
