@@ -1,0 +1,16 @@
+<svg
+  [attr.width]="width()"
+  [attr.height]="height()"
+  [attr.viewBox]="'0 0 ' + width() + ' ' + height()"
+  fill="none"
+  aria-hidden="true"
+  class="overflow-visible"
+>
+  <path
+    [attr.d]="d()"
+    [attr.stroke]="stroke()"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
