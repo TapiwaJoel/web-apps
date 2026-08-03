@@ -21,6 +21,9 @@ export class StatTileComponent {
   public readonly metric: InputSignal<StatMetric> =
     input.required<StatMetric>();
 
+  /** When true, renders as a dark "featured" card (img_3 contrast piece). */
+  public readonly featured: InputSignal<boolean> = input<boolean>(false);
+
   protected readonly tone: Signal<'up' | 'down' | 'neutral'> = computed<
     'up' | 'down' | 'neutral'
   >(() => {

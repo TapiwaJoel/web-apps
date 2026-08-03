@@ -23,4 +23,16 @@ describe('StatTileComponent', () => {
     expect(text).toContain('%');
     expect(fixture.nativeElement.querySelector('org-sparkline')).toBeTruthy();
   });
+
+  it('renders a dark featured card when featured is true', async () => {
+    const fixture: ComponentFixture<StatTileComponent> =
+      TestBed.createComponent(StatTileComponent);
+    fixture.componentRef.setInput('metric', metric);
+    fixture.componentRef.setInput('featured', true);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const card: HTMLElement = fixture.nativeElement.querySelector('div');
+    expect(card.classList.contains('bg-umdzidzisi-800')).toBe(true);
+    expect(card.classList.contains('bg-white')).toBe(false);
+  });
 });

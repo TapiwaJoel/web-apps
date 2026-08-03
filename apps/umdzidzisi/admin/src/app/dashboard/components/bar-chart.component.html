@@ -31,8 +31,7 @@
         [attr.width]="bar.w"
         [attr.height]="bar.h"
         rx="4"
-        fill="var(--theme-primary-color)"
-        [attr.opacity]="0.35 + (0.65 * ($index + 1)) / bars().length"
+        [attr.fill]="barColor($index)"
       />
     }
   </svg>

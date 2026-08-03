@@ -30,4 +30,17 @@ describe('BarChartComponent', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('rect').length).toBe(2);
   });
+
+  it('steps bar fills through distinct purple shades', async () => {
+    const fixture: ComponentFixture<BarChartComponent> =
+      TestBed.createComponent(BarChartComponent);
+    fixture.componentRef.setInput('series', series);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const fills: string[] = Array.from<SVGRectElement>(
+      fixture.nativeElement.querySelectorAll('rect'),
+    ).map((r: SVGRectElement) => r.getAttribute('fill') ?? '');
+    // first bar (lightest) and last bar (darkest) must differ
+    expect(fills[0]).not.toBe(fills[fills.length - 1]);
+  });
 });

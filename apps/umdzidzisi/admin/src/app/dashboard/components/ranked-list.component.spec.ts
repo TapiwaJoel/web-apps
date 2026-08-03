@@ -3,8 +3,8 @@ import { RankedListComponent } from './ranked-list.component';
 import { SubjectRank } from '../dashboard.types';
 
 const items: SubjectRank[] = [
-  { label: 'Mathematics', value: 1842, pct: 38 },
-  { label: 'English', value: 1357, pct: 27 },
+  { label: 'Mathematics', value: 1842, pct: 38, color: '#6d5dd3' },
+  { label: 'English', value: 1357, pct: 27, color: '#0f9b8e' },
 ];
 
 describe('RankedListComponent', () => {

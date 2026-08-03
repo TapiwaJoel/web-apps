@@ -14,7 +14,10 @@
     <org-kpi-hero [kpi]="data.hero" />
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
       @for (stat of data.stats; track stat.label) {
-        <org-stat-tile [metric]="stat" />
+        <org-stat-tile
+          [metric]="stat"
+          [featured]="stat.label === 'Pass rate'"
+        />
       }
     </div>
   </section>

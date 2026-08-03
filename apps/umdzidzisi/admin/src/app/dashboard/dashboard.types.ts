@@ -38,7 +38,34 @@ export interface SubjectRank {
   label: string;
   value: number;
   pct: number;
+  /** Categorical accent colour (hex) for the row's dot + bar. */
+  color: string;
 }
+
+/**
+ * Categorical accent palette for distinguishing subjects/series.
+ * Validated CVD-safe (dataviz validate_palette.js, light mode): violet, teal,
+ * amber, blue, rose. Assigned to entities in fixed order, never cycled.
+ * (Dark mode would need a lighter amber ~#e8b45a — app runs light theme only.)
+ */
+export const CATEGORICAL_COLORS: readonly string[] = [
+  '#6d5dd3', // violet
+  '#0f9b8e', // teal
+  '#c98a2b', // amber
+  '#3b82f6', // blue
+  '#d94f8a', // rose
+];
+
+/**
+ * Purple-scale steps (umdzidzisi-300..600) for stepping the activity bars so
+ * they read as a real gradient rather than one faded hue.
+ */
+export const BAR_SCALE: readonly string[] = [
+  '#9891b4', // umdzidzisi-300
+  '#756d9e', // umdzidzisi-400
+  '#544a88', // umdzidzisi-500
+  '#3a3166', // umdzidzisi-600
+];
 
 /** A row in the examination-boards leaderboard. */
 export interface BoardRow {
@@ -111,11 +138,11 @@ export const DASHBOARD_DATA: DashboardData = {
     },
   ],
   subjects: [
-    { label: 'Mathematics', value: 1842, pct: 38 },
-    { label: 'English', value: 1357, pct: 27 },
-    { label: 'Sciences', value: 918, pct: 19 },
-    { label: 'History', value: 412, pct: 9 },
-    { label: 'Geography', value: 331, pct: 7 },
+    { label: 'Mathematics', value: 1842, pct: 38, color: '#6d5dd3' },
+    { label: 'English', value: 1357, pct: 27, color: '#0f9b8e' },
+    { label: 'Sciences', value: 918, pct: 19, color: '#c98a2b' },
+    { label: 'History', value: 412, pct: 9, color: '#3b82f6' },
+    { label: 'Geography', value: 331, pct: 7, color: '#d94f8a' },
   ],
   boards: [
     {
