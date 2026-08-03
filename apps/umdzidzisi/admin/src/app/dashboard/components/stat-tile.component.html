@@ -1,0 +1,31 @@
+<div
+  class="border-theme-border flex h-full flex-col justify-between rounded-xl border bg-white p-4"
+>
+  <div class="flex items-start justify-between gap-2">
+    <span
+      class="text-theme-text-secondary text-xs font-medium tracking-wide uppercase"
+    >
+      {{ metric().label }}
+    </span>
+    @if (metric().delta.pct !== 0) {
+      <span
+        class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums"
+        [class.text-success]="tone() === 'up'"
+        [class.text-error]="tone() === 'down'"
+      >
+        {{ tone() === 'up' ? '▲' : '▽' }} {{ absPct() | number: '1.0-1' }}%
+      </span>
+    }
+  </div>
+  <div class="mt-2 flex items-end justify-between gap-2">
+    <span class="text-theme-text text-2xl font-bold tabular-nums">
+      {{ metric().value | number }}{{ metric().suffix }}
+    </span>
+    <org-sparkline
+      [series]="metric().series"
+      [tone]="tone()"
+      [width]="72"
+      [height]="24"
+    />
+  </div>
+</div>
