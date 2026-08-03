@@ -13,7 +13,7 @@
         [class.text-success]="tone() === 'up'"
         [class.text-error]="tone() === 'down'"
       >
-        {{ tone() === 'up' ? '▲' : '▽' }} {{ absPct() | number: '1.0-1' }}%
+        {{ tone() === 'up' ? '▲' : '▼' }} {{ absPct() | number: '1.0-1' }}%
       </span>
     }
   </div>

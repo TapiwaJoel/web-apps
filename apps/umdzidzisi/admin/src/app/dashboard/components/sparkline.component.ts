@@ -28,10 +28,13 @@ export class SparklineComponent {
 
   protected readonly stroke: Signal<string> = computed<string>(() => {
     switch (this.tone()) {
+      // Mirrors the Tailwind `success`/`error` tokens (tailwind.config.js) so the
+      // sparkline stroke matches the delta pill colors. SVG `stroke` can't consume a
+      // Tailwind utility class, and these tokens have no CSS-var form in this repo.
       case 'up':
-        return 'var(--color-success, #16a34a)';
+        return '#52c41a';
       case 'down':
-        return 'var(--color-error, #dc2626)';
+        return '#ff4d4f';
       default:
         return 'var(--theme-primary-color)';
     }
