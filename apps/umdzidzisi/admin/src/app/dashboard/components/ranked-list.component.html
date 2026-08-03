@@ -1,0 +1,29 @@
+<div class="border-theme-border h-full rounded-xl border bg-white p-5">
+  <h3 class="text-theme-text text-sm font-semibold">{{ title() }}</h3>
+  <ul class="mt-4 space-y-3">
+    @for (item of items(); track item.label) {
+      <li>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-theme-text flex items-center gap-2">
+            <span
+              class="bg-theme-primary h-2 w-2 rounded-full"
+              aria-hidden="true"
+            ></span>
+            {{ item.label }}
+          </span>
+          <span class="text-theme-text-secondary tabular-nums">
+            {{ item.value | number }} · {{ item.pct }}%
+          </span>
+        </div>
+        <div class="bg-theme-surface mt-1.5 h-1.5 w-full rounded-full">
+          <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -- percentage width is inherently dynamic per-item data, not a static style -->
+          <div
+            data-bar
+            class="bg-theme-primary h-full rounded-full"
+            [style.width.%]="item.pct"
+          ></div>
+        </div>
+      </li>
+    }
+  </ul>
+</div>
