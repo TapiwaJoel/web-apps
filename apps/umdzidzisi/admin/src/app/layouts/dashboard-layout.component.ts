@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import {
   SidebarLayoutComponent,
@@ -13,21 +13,11 @@ import {
 } from '../config/navigation.config';
 
 @Component({
-  selector: 'app-dashboard-layout',
+  selector: 'org-dashboard-layout',
   standalone: true,
   imports: [SidebarLayoutComponent, RouterOutlet],
-  template: `
-    <mushaviri-sidebar-layout
-      [railNodes]="railConfig"
-      [railFooterNodes]="railFooterConfig"
-      [navigationNodes]="navConfig"
-      [navigationConfig]="navConfig2"
-      brandName="Umdzidzisi Admin"
-      [collapsible]="true"
-    >
-      <router-outlet></router-outlet>
-    </mushaviri-sidebar-layout>
-  `,
+  templateUrl: './dashboard-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardLayoutComponent {
   private readonly router: Router = inject(Router);

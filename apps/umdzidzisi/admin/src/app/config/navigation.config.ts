@@ -78,6 +78,7 @@ export const UMDZIDZISI_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     icon: 'fi fi-rr-graduation-cap',
     variant: 'section',
     expanded: true,
+    badge: '38',
     children: [
       {
         id: 'all-examinations',
@@ -124,6 +125,7 @@ export const UMDZIDZISI_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     label: 'Subscriptions',
     icon: 'fi fi-rr-credit-card',
     variant: 'section',
+    badge: '5',
     children: [
       {
         id: 'active-subscriptions',
