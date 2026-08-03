@@ -1,0 +1,212 @@
+:host {
+  display: block;
+}
+
+.tree-node {
+  position: relative;
+
+  &-children {
+    position: relative;
+    margin-left: 1.75rem; // Tighter indentation for children
+  }
+
+  // Vertical connecting line (shown inside children container)
+  &-connector {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: var(--theme-border-color);
+    opacity: 0.35;
+  }
+
+  // Last child: vertical line stops at middle (L-shape connector)
+  &:last-child > .tree-node-children > .tree-node-connector {
+    bottom: auto;
+    height: calc(50% + 0.75rem);
+  }
+
+  &-content {
+    position: relative;
+    color: var(--theme-text-color);
+
+    // Quiet hover: faint wash, no heavy pill
+    &:hover:not(.tree-node-disabled) {
+      background-color: color-mix(
+        in srgb,
+        var(--theme-primary-color) 6%,
+        transparent
+      );
+    }
+
+    &.tree-node-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    // Horizontal connector line for child items
+    &.has-connector::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 1.25rem;
+      height: 1px;
+      background-color: var(--theme-border-color);
+      opacity: 0.35;
+    }
+
+    // Keyboard focus ring (accessibility floor)
+    &:focus-visible {
+      outline: 2px solid var(--theme-primary-color);
+      outline-offset: -2px;
+    }
+  }
+
+  // ---- Signature: the migrating "active dot" ----
+  // Active rows take on the accent color; a small leading dot ties them to the rail.
+  &-content.tree-node-active {
+    .tree-node-label {
+      color: var(--theme-primary-color);
+      font-weight: 600;
+    }
+
+    .tree-node-icon {
+      color: var(--theme-primary-color);
+    }
+
+    // Leading accent dot (only when the row has no glyph of its own, i.e.
+    // children). Matches the rail's bright highlight for cohesion.
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0.375rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0.375rem;
+      height: 0.375rem;
+      border-radius: 9999px;
+      background-color: var(
+        --theme-highlight-color,
+        var(--theme-primary-color)
+      );
+    }
+  }
+
+  // Top-level items keep their glyph, so suppress the redundant dot there.
+  &[data-level='0'] > .tree-node-content.tree-node-active::after {
+    display: none;
+  }
+
+  // Leading glyph — small, monochrome, no circular container by default
+  &-icon-container {
+    color: var(--theme-text-secondary);
+
+    &.has-bg {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 9999px;
+    }
+  }
+
+  &-icon {
+    font-size: 1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    transition: color 0.18s ease;
+  }
+
+  &-content:hover:not(.tree-node-active) .tree-node-icon {
+    color: var(--theme-primary-color);
+  }
+
+  // Label typography — weight/color tiering carries the hierarchy
+  &-label {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+    color: var(--theme-text-color);
+
+    &:hover {
+      color: var(--theme-primary-color);
+    }
+  }
+
+  // Nested children: lighter, quieter than top-level items
+  &[data-level='1'] > .tree-node-content .tree-node-label,
+  &[data-level='2'] > .tree-node-content .tree-node-label,
+  &[data-level='3'] > .tree-node-content .tree-node-label {
+    font-weight: 400;
+    color: var(--theme-text-secondary);
+  }
+
+  // ---- Section header variant: a quiet group label ----
+  // No extra top margin: keeps a constant top-level row pitch so the icon rail
+  // can align 1:1 with each row. The bold label keeps sections distinct.
+  &.is-section > .tree-node-content {
+    .tree-node-label {
+      font-weight: 600;
+      color: var(--theme-text-color);
+      letter-spacing: 0;
+    }
+  }
+
+  // Notification badge — bright accent fill + its own text colour (falls back
+  // to the brand primary + white for themes without badge tokens).
+  &-badge {
+    background-color: var(--theme-badge-color, var(--theme-primary-color));
+    color: var(--theme-badge-text, #ffffff);
+  }
+
+  // Arrow rotation (180deg flip)
+  &-toggle {
+    transition: transform 0.2s ease;
+
+    &.expanded {
+      transform: rotate(180deg);
+    }
+  }
+
+  // Action button hover
+  &-action:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--theme-primary-color) 10%,
+      transparent
+    );
+  }
+}
+
+// Expand/collapse animation
+@keyframes expandCollapse {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+.tree-node-children {
+  animation: expandCollapse 0.2s ease-out;
+}
+
+// Respect reduced-motion preference
+@media (prefers-reduced-motion: reduce) {
+  .tree-node-children {
+    animation: none;
+  }
+
+  .tree-node-toggle,
+  .tree-node-icon,
+  .tree-node-content {
+    transition: none;
+  }
+}

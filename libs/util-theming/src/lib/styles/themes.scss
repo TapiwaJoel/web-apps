@@ -12,6 +12,12 @@
   --theme-text-secondary: #757575;
   --theme-border-color: #e0e0e0;
   --theme-shadow: rgba(69, 90, 100, 0.1);
+
+  /* Bright UI accents (active nav highlight + notification badges).
+     Default theme keeps its primary so it is visually unchanged. */
+  --theme-highlight-color: #455a64;
+  --theme-badge-color: #455a64;
+  --theme-badge-text: #ffffff;
 }
 
 [data-theme='umdzidzisi'] {
@@ -25,6 +31,13 @@
   --theme-border-color: #d7d6e0;
   --theme-hover-color: #3a3166;
   --theme-shadow: rgba(84, 74, 136, 0.08);
+
+  /* Bright UI accents blended with the purple brand:
+     indigo active-icon highlight (white icon 4.47:1) + amber notification
+     badges with dark text (8.65:1) — a classic purple+gold complementary pop. */
+  --theme-highlight-color: #6366f1;
+  --theme-badge-color: #f5a623;
+  --theme-badge-text: #1a1436;
 
   /* Extended color scale for flexibility */
   --umdzidzisi-50: #faf9fb;
@@ -51,6 +64,12 @@
   --theme-hover-color: #9891b4;
   --theme-shadow: rgba(152, 145, 180, 0.15);
 
+  /* Bright UI accents (dark mode): lighter indigo highlight for the dark
+     surface; amber badge with dark text carries over. */
+  --theme-highlight-color: #818cf8;
+  --theme-badge-color: #f5a623;
+  --theme-badge-text: #1a1436;
+
   /* Extended color scale (same values, different context) */
   --umdzidzisi-50: #faf9fb;
   --umdzidzisi-100: #d7d6e0;
@@ -72,6 +91,14 @@
   --theme-text-secondary: #757575;
   --theme-border-color: #e0e0e0;
   --theme-shadow: rgba(255, 114, 94, 0.1);
+
+  /* Bright UI accents harmonized with coral: a deeper terracotta highlight
+     (white icon 4.13:1 — the base coral #ff725e is too light for white, only
+     2.69:1) + a teal badge (coral's complementary accent). Teal needs DARK
+     text (white on teal is 2.49:1, fails; dark is 6.04:1). */
+  --theme-highlight-color: #d1553f;
+  --theme-badge-color: #14b8a6;
+  --theme-badge-text: #0b2b28;
 }
 
 /**

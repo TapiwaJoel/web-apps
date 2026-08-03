@@ -47,14 +47,19 @@
     outline-offset: 2px;
   }
 
-  // Signature: the active rail icon is a filled accent circle (overrides the white chip)
+  // Signature: the active rail icon is a filled accent circle (overrides the
+  // white chip). Uses the bright highlight token, falling back to the brand
+  // primary for themes that don't define one.
   &.rail-btn-active {
-    background-color: var(--theme-primary-color);
+    background-color: var(--theme-highlight-color, var(--theme-primary-color));
     color: #ffffff;
     box-shadow: none;
 
     &:hover {
-      background-color: var(--theme-primary-color);
+      background-color: var(
+        --theme-highlight-color,
+        var(--theme-primary-color)
+      );
       color: #ffffff;
     }
   }
