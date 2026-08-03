@@ -1,0 +1,34 @@
+<div class="p-6">
+  <org-dashboard-topbar userName="Umdzidzisi Admin" />
+
+  <div class="mb-4 flex items-center justify-between gap-3">
+    <h1 class="text-theme-text text-lg font-semibold">Overview</h1>
+    <span
+      class="border-theme-border bg-theme-surface text-theme-text-secondary rounded-full border px-3 py-1 text-xs tabular-nums"
+    >
+      {{ data.hero.period }}
+    </span>
+  </div>
+
+  <section class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <org-kpi-hero [kpi]="data.hero" />
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      @for (stat of data.stats; track stat.label) {
+        <org-stat-tile [metric]="stat" />
+      }
+    </div>
+  </section>
+
+  <section class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-5">
+    <div class="lg:col-span-3">
+      <org-bar-chart [series]="data.activity" />
+    </div>
+    <div class="lg:col-span-2">
+      <org-ranked-list [items]="data.subjects" />
+    </div>
+  </section>
+
+  <section class="mt-4">
+    <org-leaderboard-table [rows]="data.boards" />
+  </section>
+</div>
