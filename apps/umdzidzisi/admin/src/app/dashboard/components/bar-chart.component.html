@@ -1,0 +1,46 @@
+<div class="border-theme-border h-full rounded-xl border bg-white p-5">
+  <div class="flex items-center justify-between gap-3">
+    <h3 class="text-theme-text text-sm font-semibold">Enrollments over time</h3>
+    <div class="bg-theme-surface flex gap-1 rounded-lg p-1">
+      @for (s of series(); track s.key) {
+        <button
+          type="button"
+          class="rounded-md px-3 py-1 text-xs font-medium tabular-nums transition-colors"
+          [class.bg-theme-primary]="s.key === activeKey()"
+          [class.text-white]="s.key === activeKey()"
+          [class.text-theme-text-secondary]="s.key !== activeKey()"
+          (click)="activeKey.set(s.key)"
+        >
+          {{ s.label }}
+        </button>
+      }
+    </div>
+  </div>
+  <svg
+    class="mt-4 w-full"
+    [attr.viewBox]="'0 0 ' + width + ' ' + height"
+    [attr.height]="height"
+    preserveAspectRatio="none"
+    role="img"
+    [attr.aria-label]="'Bar chart of ' + active().label"
+  >
+    @for (bar of bars(); track $index) {
+      <rect
+        [attr.x]="bar.x"
+        [attr.y]="bar.y"
+        [attr.width]="bar.w"
+        [attr.height]="bar.h"
+        rx="4"
+        fill="var(--theme-primary-color)"
+        [attr.opacity]="0.35 + (0.65 * ($index + 1)) / bars().length"
+      />
+    }
+  </svg>
+  <div
+    class="text-theme-text-secondary mt-2 flex justify-between text-[10px] tabular-nums"
+  >
+    @for (c of active().categories; track $index) {
+      <span>{{ c }}</span>
+    }
+  </div>
+</div>
