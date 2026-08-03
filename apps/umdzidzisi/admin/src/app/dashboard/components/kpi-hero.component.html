@@ -1,0 +1,25 @@
+<div
+  class="border-theme-border flex h-full flex-col justify-center rounded-xl border bg-white p-6"
+>
+  <span
+    class="text-theme-text-secondary text-xs font-semibold tracking-wider uppercase"
+  >
+    {{ kpi().label }}
+  </span>
+  <div class="mt-2 flex flex-wrap items-center gap-3">
+    <span class="text-theme-text text-5xl leading-none font-bold tabular-nums">
+      {{ kpi().value | number }}
+    </span>
+    <span
+      class="bg-theme-primary inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-sm font-semibold text-white tabular-nums"
+    >
+      {{ up() ? '▲' : '▽' }} {{ absPct() | number: '1.0-1' }}%
+      @if (kpi().delta.abs !== undefined) {
+        <span class="opacity-80">+{{ kpi().delta.abs | number }}</span>
+      }
+    </span>
+  </div>
+  <p class="text-theme-text-secondary mt-3 text-sm tabular-nums">
+    vs prev {{ kpi().previous | number }} · {{ kpi().period }}
+  </p>
+</div>
