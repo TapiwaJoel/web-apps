@@ -23,7 +23,8 @@
       "@mushaviri/api-contracts": ["./libs/api-contracts/src/index.ts"],
       "@mushaviri/data-access-user-management": [
         "./libs/data-access-user-management/src/index.ts"
-      ]
+      ],
+      "@mushaviri/data-access": ["./libs/data-access/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
