@@ -1,0 +1,4 @@
+export enum AccountRecoveryType {
+  FORGOT_PASSWORD = 'FORGOT_PASSWORD',
+  UNLOCK_ACCOUNT = 'UNLOCK_ACCOUNT',
+}
