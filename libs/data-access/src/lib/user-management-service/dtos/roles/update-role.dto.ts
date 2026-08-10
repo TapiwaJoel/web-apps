@@ -1,4 +1,4 @@
-import { EntityStatus } from '../enums';
+import { EntityStatus } from '../../../common';
 
 export interface UpdateRoleDto {
   name?: string;

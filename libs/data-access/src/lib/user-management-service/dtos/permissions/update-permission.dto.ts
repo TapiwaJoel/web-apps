@@ -1,4 +1,5 @@
-import { Action, EntityStatus } from '../enums';
+import { Action } from '../enums';
+import { EntityStatus } from '../../../common';
 
 export interface UpdatePermissionDto {
   name?: string;
