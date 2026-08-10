@@ -20,7 +20,10 @@
       "@mushaviri/ui-common": ["./libs/ui-common/src/index.ts"],
       "@mushaviri/util-event-bus": ["./libs/util-event-bus/src/index.ts"],
       "@mushaviri/util-theming": ["./libs/util-theming/src/index.ts"],
-      "@mushaviri/api-contracts": ["./libs/api-contracts/src/index.ts"]
+      "@mushaviri/api-contracts": ["./libs/api-contracts/src/index.ts"],
+      "@mushaviri/data-access-user-management": [
+        "./libs/data-access-user-management/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
