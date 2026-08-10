@@ -1,0 +1,15 @@
+export enum Action {
+  CREATE = 'create',
+  STREAM = 'stream',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  READ_SELF = 'read_self',
+  UPDATE_SELF = 'update_self',
+  CREATE_SELF = 'create_self',
+  DELETE_SELF = 'delete_self',
+  LOGOUT = 'logout',
+  LOGOUT_SELF = 'logout_self',
+  LOGOUT_TEAM = 'logout_team',
+  SEND = 'send',
+}
