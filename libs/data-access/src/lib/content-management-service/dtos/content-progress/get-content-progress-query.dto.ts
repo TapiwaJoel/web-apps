@@ -1,4 +1,4 @@
-import { CompletionStatus, ResourceType } from '../enums';
+import { CompletionStatus, ResourceType } from '../../enums';
 
 export interface GetContentProgressQueryDto {
   _id?: string;

@@ -1,5 +1,5 @@
 import { Currency } from '../../../common';
-import { PaymentProviderStatus, PaymentProviderType } from '../enums';
+import { PaymentProviderStatus, PaymentProviderType } from '../../enums';
 
 export interface PaymentProviderResponseDto {
   id: string;

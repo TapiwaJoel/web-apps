@@ -1,4 +1,4 @@
-import { ReactionType } from '../enums';
+import { ReactionType } from '../../enums';
 
 /**
  * ReactionCountDto

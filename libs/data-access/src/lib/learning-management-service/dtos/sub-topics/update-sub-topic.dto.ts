@@ -1,4 +1,4 @@
-import { AccessLevel, ContentStatus } from '../enums';
+import { AccessLevel, ContentStatus } from '../../enums';
 
 export interface UpdateSubTopicDto {
   topicId?: string;

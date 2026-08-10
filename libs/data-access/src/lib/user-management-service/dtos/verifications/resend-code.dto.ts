@@ -1,4 +1,4 @@
-import { VerificationChannels } from '../enums';
+import { VerificationChannels } from '../../enums';
 
 export interface ResendCodeDto {
   verificationId?: string;

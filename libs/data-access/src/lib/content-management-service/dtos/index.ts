@@ -1,4 +1,3 @@
-export * from './enums';
 export * from './articles';
 export * from './comments';
 export * from './questions';

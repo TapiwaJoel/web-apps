@@ -1,4 +1,4 @@
-import { QuestionType, QuestionStatus } from '../enums';
+import { QuestionType, QuestionStatus } from '../../enums';
 
 /**
  * ListQuestionsQueryDto

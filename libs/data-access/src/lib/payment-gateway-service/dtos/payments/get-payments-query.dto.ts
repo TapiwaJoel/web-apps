@@ -1,5 +1,5 @@
 import { Currency } from '../../../common';
-import { PaymentStatus } from '../enums';
+import { PaymentStatus } from '../../enums';
 
 export interface GetPaymentsQueryDto {
   id?: string;

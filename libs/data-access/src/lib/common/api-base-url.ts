@@ -1,3 +1,4 @@
+
 import { InjectionToken } from '@angular/core';
 
 /** Gateway origin, e.g. http://localhost:3000. Provided per app from environment.apiBaseUrl. */

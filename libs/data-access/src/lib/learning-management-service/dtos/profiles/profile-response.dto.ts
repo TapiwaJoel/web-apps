@@ -1,5 +1,5 @@
 import { EntityStatus } from '../../../common';
-import { ProfileType } from '../enums';
+import { ProfileType } from '../../enums';
 
 export interface ProfileResponseDto {
   _id: string;

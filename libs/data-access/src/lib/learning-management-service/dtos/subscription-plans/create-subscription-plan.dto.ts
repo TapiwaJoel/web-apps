@@ -1,5 +1,5 @@
 import { Currency } from '../../../common';
-import { BillingCycle } from '../enums';
+import { BillingCycle } from '../../enums';
 
 export interface CreateSubscriptionPlanDto {
   educationalLevelId: string;

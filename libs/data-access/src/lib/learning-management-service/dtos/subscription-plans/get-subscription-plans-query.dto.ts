@@ -1,5 +1,5 @@
 import { Currency, EntityStatus, PaginationParams } from '../../../common';
-import { BillingCycle } from '../enums';
+import { BillingCycle } from '../../enums';
 
 export interface GetSubscriptionPlansQueryDto extends PaginationParams {
   _id?: string;

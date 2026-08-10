@@ -1,4 +1,4 @@
-import { ResourceType } from '../enums';
+import { ResourceType } from '../../enums';
 
 export interface CreateContentProgressDto {
   contentId: string;

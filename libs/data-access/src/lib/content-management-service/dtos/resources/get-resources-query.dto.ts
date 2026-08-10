@@ -1,4 +1,4 @@
-import { FileType } from '../enums';
+import { FileType } from '../../enums';
 
 export interface GetResourcesQueryDto {
   _id?: string;

@@ -1,5 +1,5 @@
 import { EntityStatus, PaginationParams } from '../../../common';
-import { ProfileType } from '../enums';
+import { ProfileType } from '../../enums';
 
 export interface GetProfilesQueryDto extends PaginationParams {
   _id?: string;

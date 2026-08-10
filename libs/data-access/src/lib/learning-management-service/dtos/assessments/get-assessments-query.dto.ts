@@ -1,4 +1,4 @@
-import { AssessmentStatus } from '../enums';
+import { AssessmentStatus } from '../../enums';
 
 export interface GetAssessmentsQueryDto {
   id?: string;

@@ -1,5 +1,5 @@
 import { Currency } from '../../../common';
-import { BillingCycle, SubscriptionStatus } from '../enums';
+import { BillingCycle, SubscriptionStatus } from '../../enums';
 import { SubjectResponseDto } from '../subjects';
 import { NotificationScheduleItemDto } from './notification-schedule-item.dto';
 

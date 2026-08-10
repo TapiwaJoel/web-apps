@@ -1,4 +1,4 @@
-import { StreamAction } from '../enums';
+import { StreamAction } from '../../enums';
 
 /**
  * UpdateStreamDto

@@ -1,4 +1,4 @@
-import { LogoutScope } from '../enums';
+import { LogoutScope } from '../../enums';
 
 export interface LogoutRequestDto {
   scope?: LogoutScope;

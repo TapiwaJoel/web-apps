@@ -1,4 +1,4 @@
-import { QuestionType, QuestionPurpose, QuestionStatus } from '../enums';
+import { QuestionType, QuestionPurpose, QuestionStatus } from '../../enums';
 import { QuestionAnswersDto } from './question-answers.dto';
 
 /**

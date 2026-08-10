@@ -1,4 +1,4 @@
-import { ArticleContentBlockType } from '../enums';
+import { ArticleContentBlockType } from '../../enums';
 
 export interface ArticleContentBlockDto {
   type: ArticleContentBlockType;

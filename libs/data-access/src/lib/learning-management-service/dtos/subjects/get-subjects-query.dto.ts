@@ -1,4 +1,4 @@
-import { ContentStatus, SubjectType } from '../enums';
+import { ContentStatus, SubjectType } from '../../enums';
 import { PaginationParams } from '../../../common';
 
 export interface GetSubjectsQueryDto extends PaginationParams {

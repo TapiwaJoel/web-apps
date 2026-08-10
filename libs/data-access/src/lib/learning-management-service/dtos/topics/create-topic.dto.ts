@@ -1,4 +1,4 @@
-import { ContentStatus } from '../enums';
+import { ContentStatus } from '../../enums';
 
 export interface CreateTopicDto {
   subjectId: string;

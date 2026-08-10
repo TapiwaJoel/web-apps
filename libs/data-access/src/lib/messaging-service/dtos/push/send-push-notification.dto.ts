@@ -1,4 +1,4 @@
-import { NotificationPlatform } from '../enums';
+import { NotificationPlatform } from '../../enums';
 
 export interface SendPushNotificationDto {
   deviceToken?: string;

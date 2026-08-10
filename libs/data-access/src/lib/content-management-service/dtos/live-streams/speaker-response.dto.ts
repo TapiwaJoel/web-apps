@@ -1,4 +1,4 @@
-import { SpeakerRole, ConnectionState } from '../enums';
+import { SpeakerRole, ConnectionState } from '../../enums';
 
 export interface SpeakerResponseDto {
   _id: string;

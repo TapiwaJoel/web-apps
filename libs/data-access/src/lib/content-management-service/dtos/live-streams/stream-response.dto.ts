@@ -1,4 +1,4 @@
-import { StreamStatus } from '../enums';
+import { StreamStatus } from '../../enums';
 import { StreamAnalyticsDto } from './stream-analytics.dto';
 
 export interface StreamResponseDto {

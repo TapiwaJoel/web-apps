@@ -1,5 +1,5 @@
 import { EntityStatus } from '../../../common';
-import { ExaminationPaperType } from '../enums';
+import { ExaminationPaperType } from '../../enums';
 
 export interface ExaminationPaperResponseDto {
   _id: string;

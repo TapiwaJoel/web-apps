@@ -1,4 +1,4 @@
-import { AssessmentStatus } from '../enums';
+import { AssessmentStatus } from '../../enums';
 import { CreateAssessmentQuestionDto } from './create-assessment-question.dto';
 
 export interface CreateAssessmentDto {

@@ -1,4 +1,4 @@
-import { FileType } from '../enums';
+import { FileType } from '../../enums';
 import { MediaResourceResponseDto } from './media-resource-response.dto';
 import { DocumentResourceResponseDto } from './document-resource-response.dto';
 

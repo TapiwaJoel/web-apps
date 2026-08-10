@@ -1,4 +1,4 @@
-import { UserType, UserStatus } from '../enums';
+import { UserType, UserStatus } from '../../enums';
 import { PaginationParams } from '../../../common';
 
 export interface GetUsersQueryDto extends PaginationParams {

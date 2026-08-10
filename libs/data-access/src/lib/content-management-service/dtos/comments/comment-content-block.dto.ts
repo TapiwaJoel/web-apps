@@ -1,4 +1,4 @@
-import { CommentContentType } from '../enums';
+import { CommentContentType } from '../../enums';
 
 /**
  * CommentContentBlockDto

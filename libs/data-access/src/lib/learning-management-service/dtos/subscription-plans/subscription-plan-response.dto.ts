@@ -1,5 +1,5 @@
 import { Currency, EntityStatus } from '../../../common';
-import { BillingCycle } from '../enums';
+import { BillingCycle } from '../../enums';
 
 export interface SubscriptionPlanResponseDto {
   _id: string;

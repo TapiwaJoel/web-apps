@@ -1,5 +1,5 @@
 import { PaginationParams } from '../../../common';
-import { SubscriptionStatus } from '../enums';
+import { SubscriptionStatus } from '../../enums';
 
 export interface GetSubscriptionsQueryDto extends PaginationParams {
   status?: SubscriptionStatus;

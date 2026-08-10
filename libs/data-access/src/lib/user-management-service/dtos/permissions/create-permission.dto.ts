@@ -1,4 +1,4 @@
-import { Action } from '../enums';
+import { Action } from '../../enums';
 
 export interface CreatePermissionDto {
   name: string;

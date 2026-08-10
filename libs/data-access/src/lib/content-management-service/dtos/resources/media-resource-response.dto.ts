@@ -1,4 +1,4 @@
-import { MediaType } from '../enums';
+import { MediaType } from '../../enums';
 
 export interface MediaResourceResponseDto {
   _id: string;

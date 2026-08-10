@@ -1,4 +1,4 @@
-import { UserType, UserStatus } from '../enums';
+import { UserType, UserStatus } from '../../enums';
 
 export interface UpdateUserDto {
   _id?: string;

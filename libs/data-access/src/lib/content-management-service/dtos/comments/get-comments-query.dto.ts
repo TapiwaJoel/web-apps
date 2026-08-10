@@ -1,4 +1,4 @@
-import { CommentStatus } from '../enums';
+import { CommentStatus } from '../../enums';
 
 /**
  * CommentSortOrder

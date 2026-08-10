@@ -1,5 +1,5 @@
 import { CommentContentBlockDto } from './comment-content-block.dto';
-import { CommentStatus } from '../enums';
+import { CommentStatus } from '../../enums';
 
 export interface UpdateCommentDto {
   content?: CommentContentBlockDto;

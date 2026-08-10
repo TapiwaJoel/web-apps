@@ -1,5 +1,5 @@
-import { UserType } from '../enums';
-import { UserStatus } from '../enums';
+import { UserType } from '../../enums';
+import { UserStatus } from '../../enums';
 
 export interface UserResponseDto {
   _id: string;

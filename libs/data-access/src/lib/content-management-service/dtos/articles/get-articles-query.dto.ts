@@ -1,4 +1,4 @@
-import { ArticleStatus } from '../enums';
+import { ArticleStatus } from '../../enums';
 
 export interface GetArticlesQueryDto {
   _id?: string;

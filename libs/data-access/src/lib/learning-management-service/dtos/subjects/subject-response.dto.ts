@@ -1,4 +1,4 @@
-import { ContentStatus, SubjectType } from '../enums';
+import { ContentStatus, SubjectType } from '../../enums';
 
 export interface SubjectResponseDto {
   _id: string;
