@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const customRules = await import(join(__dirname, 'tools/eslint-rules/index.js'));
+const customRules = await import(
+  join(__dirname, 'tools/eslint-rules/index.js')
+);
 
 export default [
   ...nx.configs['flat/base'],
@@ -23,7 +25,7 @@ export default [
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     plugins: {
       'unused-imports': unusedImports,
-      'org': customRules.default,
+      org: customRules.default,
     },
     rules: {
       '@nx/enforce-module-boundaries': [
@@ -108,13 +110,13 @@ export default [
       '@typescript-eslint/typedef': [
         'error',
         {
-          arrayDestructuring: false,       // Allow: const [a, b] = tuple
-          arrowParameter: false,           // Allow: arr.map(x => x * 2)
+          arrayDestructuring: false, // Allow: const [a, b] = tuple
+          arrowParameter: false, // Allow: arr.map(x => x * 2)
           memberVariableDeclaration: true, // Require: property: Type
-          objectDestructuring: false,      // Allow: const { a, b } = obj
-          parameter: true,                 // Require: function(param: Type)
-          propertyDeclaration: true,       // Require: class property: Type
-          variableDeclaration: true,       // Require: const var: Type = value
+          objectDestructuring: false, // Allow: const { a, b } = obj
+          parameter: true, // Require: function(param: Type)
+          propertyDeclaration: true, // Require: class property: Type
+          variableDeclaration: true, // Require: const var: Type = value
           variableDeclarationIgnoreFunction: false, // Enforce even for functions
         },
       ],
@@ -122,9 +124,9 @@ export default [
       '@typescript-eslint/explicit-function-return-type': [
         'error',
         {
-          allowExpressions: true,              // Allow: const x = () => 5
+          allowExpressions: true, // Allow: const x = () => 5
           allowTypedFunctionExpressions: true, // Allow: const x: Fn = () => {}
-          allowHigherOrderFunctions: true,     // Allow: fn(x => x)
+          allowHigherOrderFunctions: true, // Allow: fn(x => x)
           allowDirectConstAssertionInArrowFunctions: true,
           allowConciseArrowFunctionExpressionsStartingWithVoid: true,
         },
