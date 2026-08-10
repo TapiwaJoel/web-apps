@@ -1,4 +1,12 @@
 export * from './lib/core';
 export * from './lib/services/authentication.service';
 export * from './lib/services/users.service';
-// service exports added in Task 5
+export * from './lib/services/system-users.service';
+export * from './lib/services/roles.service';
+export * from './lib/services/permissions.service';
+export * from './lib/services/role-permissions.service';
+export * from './lib/services/verifications.service';
+export * from './lib/services/devices.service';
+export * from './lib/services/countries.service';
+export * from './lib/services/audit-trail.service';
+export * from './lib/services/authentication-settings.service';
