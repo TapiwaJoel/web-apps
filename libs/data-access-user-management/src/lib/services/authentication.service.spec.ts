@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http/testing';
 import { AuthenticationService } from './authentication.service';
 import { API_BASE_URL } from '../core';
+import { LogoutRequestDto } from '@mushaviri/api-contracts';
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
@@ -73,5 +74,62 @@ describe('AuthenticationService', () => {
       statusCode: 401,
       message: 'Invalid credentials',
     });
+  });
+
+  it('POSTs logout to the gateway user-management path and completes with void', () => {
+    let result: unknown;
+    let completed: boolean = false;
+    const dto: LogoutRequestDto = { deviceId: 'device-1' };
+    service.logout(dto).subscribe({
+      next: (r) => (result = r),
+      complete: () => (completed = true),
+    });
+
+    const req: TestRequest = httpMock.expectOne(
+      `${BASE}/user-management-service/authentications/logout`,
+    );
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(dto);
+    req.flush({ statusCode: 200, success: true, message: 'ok', data: null });
+
+    expect(result).toBeUndefined();
+    expect(completed).toBe(true);
+  });
+
+  it('POSTs refreshToken to the gateway user-management path and unwraps data', () => {
+    let result: unknown;
+    service.refreshToken().subscribe((r) => (result = r));
+
+    const req: TestRequest = httpMock.expectOne(
+      `${BASE}/user-management-service/authentications/refresh-token`,
+    );
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({});
+    req.flush({
+      statusCode: 200,
+      success: true,
+      message: 'ok',
+      data: { _id: 'r', user: { _id: 'u1' } },
+    });
+
+    expect((result as { _id: string })._id).toBe('r');
+  });
+
+  it('GETs myPermissions from the gateway user-management path and unwraps data', () => {
+    let result: unknown;
+    service.myPermissions().subscribe((r) => (result = r));
+
+    const req: TestRequest = httpMock.expectOne(
+      `${BASE}/user-management-service/authentications/my-permissions`,
+    );
+    expect(req.request.method).toBe('GET');
+    req.flush({
+      statusCode: 200,
+      success: true,
+      message: 'ok',
+      data: { roleId: 'x', roleName: 'admin', permissions: [] },
+    });
+
+    expect((result as { roleId: string }).roleId).toBe('x');
   });
 });
