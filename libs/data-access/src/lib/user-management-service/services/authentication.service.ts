@@ -5,10 +5,10 @@ import { catchError, map } from 'rxjs/operators';
 import {
   LoginDto,
   LogoutRequestDto,
-  ServiceResponse,
   UserPermissionsResponseDto,
   WebAuthenticationResponseDto,
 } from '../dtos';
+import { ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
   buildUrl,

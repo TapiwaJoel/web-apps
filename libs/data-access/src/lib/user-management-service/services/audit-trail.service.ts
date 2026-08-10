@@ -2,11 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { AuditTrailResponseDto } from '../dtos';
 import {
-  AuditTrailResponseDto,
   PaginateResult,
   ServiceResponse,
-} from '../dtos';
+} from '../../common';
 import {
   API_BASE_URL,
   buildUrl,

@@ -4,11 +4,13 @@ import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import {
   CreatePermissionDto,
-  PaginateResult,
   PermissionResponseDto,
-  ServiceResponse,
   UpdatePermissionDto,
 } from '../dtos';
+import {
+  PaginateResult,
+  ServiceResponse,
+} from '../../common';
 import {
   API_BASE_URL,
   buildUrl,

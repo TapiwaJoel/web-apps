@@ -6,11 +6,13 @@ import {
   ChangeContactDto,
   CreateUserDto,
   GetUsersQueryDto,
-  PaginateResult,
-  ServiceResponse,
   UpdateUserDto,
   UserResponseDto,
 } from '../dtos';
+import {
+  PaginateResult,
+  ServiceResponse,
+} from '../../common';
 import {
   API_BASE_URL,
   buildUrl,

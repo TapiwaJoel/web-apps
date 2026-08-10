@@ -4,10 +4,10 @@ import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import {
   ResendCodeDto,
-  ServiceResponse,
   VerificationResponseDto,
   VerifyCodeDto,
 } from '../dtos';
+import { ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
   buildUrl,

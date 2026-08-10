@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { CountryResponseDto, ServiceResponse } from '../dtos';
+import { CountryResponseDto } from '../dtos';
+import { ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
   buildUrl,

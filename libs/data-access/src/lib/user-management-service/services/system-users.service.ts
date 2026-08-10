@@ -4,11 +4,13 @@ import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import {
   CreateSystemUserDto,
+  SystemUserResponseDto,
+} from '../dtos';
+import {
   PaginateResult,
   PaginationParams,
   ServiceResponse,
-  SystemUserResponseDto,
-} from '../dtos';
+} from '../../common';
 import {
   API_BASE_URL,
   buildUrl,
