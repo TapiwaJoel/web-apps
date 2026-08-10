@@ -1,2 +1,3 @@
 export * from './lib/core';
-// service exports added in Task 4/5
+export * from './lib/services/authentication.service';
+// service exports added in Task 5
