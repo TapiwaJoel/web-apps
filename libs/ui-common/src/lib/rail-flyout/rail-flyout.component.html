@@ -1,0 +1,42 @@
+<div class="rail-flyout" [class.rail-flyout-tooltip]="!hasChildren">
+  <!-- Header: the node's label, doubling as a tooltip when there are no children -->
+  <div class="rail-flyout-header">
+    <span class="rail-flyout-title">{{ node.label }}</span>
+
+    @if (node.badge && hasChildren) {
+      <span
+        class="rail-flyout-badge inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold"
+      >
+        {{ node.badge }}
+      </span>
+    }
+  </div>
+
+  <!-- Submenu: child links (only when the node has children) -->
+  @if (hasChildren) {
+    <div class="rail-flyout-list">
+      @for (child of node.children; track trackByFn($index, child)) {
+        @if (child.route) {
+          <a
+            [routerLink]="child.route"
+            routerLinkActive="rail-flyout-item-active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="rail-flyout-item"
+            (click)="onNavigate()"
+          >
+            {{ child.label }}
+            @if (child.badge) {
+              <span
+                class="rail-flyout-badge inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold"
+              >
+                {{ child.badge }}
+              </span>
+            }
+          </a>
+        } @else {
+          <span class="rail-flyout-item">{{ child.label }}</span>
+        }
+      }
+    </div>
+  }
+</div>

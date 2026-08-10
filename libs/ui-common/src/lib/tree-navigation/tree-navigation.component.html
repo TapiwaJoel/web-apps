@@ -1,0 +1,13 @@
+<nav class="tree-navigation" role="navigation" aria-label="Main navigation">
+  <div class="tree-navigation-content">
+    <mushaviri-tree-node
+      *ngFor="let node of nodes; trackBy: trackByFn"
+      [node]="node"
+      [level]="0"
+      [expanded]="node.expanded ?? config.defaultExpanded ?? false"
+      [showIcons]="config.showIcons ?? true"
+      [showBadges]="config.showBadges ?? true"
+      [collapsible]="config.collapsible ?? true"
+    ></mushaviri-tree-node>
+  </div>
+</nav>

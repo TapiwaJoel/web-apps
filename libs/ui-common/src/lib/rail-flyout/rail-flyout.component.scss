@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+
+.rail-flyout {
+  min-width: 200px;
+  background-color: var(--theme-surface, #f7f7f9);
+  border: 1px solid var(--theme-border-color);
+  border-radius: 10px;
+  padding: 0.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  animation: railFlyoutIn 0.12s ease-out;
+
+  // Label-only variant (no children): behaves like a compact tooltip
+  &-tooltip {
+    min-width: 0;
+    padding: 0.375rem 0.625rem;
+    white-space: nowrap;
+  }
+
+  // Section label header — holds the title and an optional badge
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--theme-text-secondary);
+  }
+
+  // Drop the header's bottom padding when it stands alone as a tooltip
+  &-tooltip &-header {
+    padding-bottom: 0;
+  }
+
+  // Submenu list of child links
+  &-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  // Individual submenu row (link or plain label)
+  &-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--theme-text-color, var(--theme-text));
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      color 0.18s ease,
+      background-color 0.18s ease;
+
+    &:hover {
+      background-color: color-mix(
+        in srgb,
+        var(--theme-primary-color) 8%,
+        transparent
+      );
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--theme-primary-color);
+      outline-offset: -2px;
+    }
+  }
+
+  // Active submenu link (exact route match)
+  &-item-active {
+    color: var(--theme-primary-color);
+    font-weight: 600;
+    background-color: color-mix(
+      in srgb,
+      var(--theme-primary-color) 12%,
+      transparent
+    );
+  }
+
+  // Notification badge — mirrors the tree-node badge treatment
+  &-badge {
+    background-color: var(--theme-badge-color, var(--theme-primary-color));
+    color: var(--theme-badge-text, #ffffff);
+  }
+}
+
+// Dark theme: lean on the surface token and deepen the elevation shadow
+[data-theme*='dark'] .rail-flyout {
+  background-color: var(--theme-surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+// Entrance: subtle fade + slide in from the rail
+@keyframes railFlyoutIn {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Respect reduced-motion preference
+@media (prefers-reduced-motion: reduce) {
+  .rail-flyout {
+    animation: none;
+  }
+
+  .rail-flyout-item {
+    transition: none;
+  }
+}
