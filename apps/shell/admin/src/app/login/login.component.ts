@@ -8,7 +8,7 @@ import {
   Signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '@mushaviri/data-access-auth';
+import { AuthService } from '@mushaviri/data-access';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SmartNavigationService } from '../services/smart-navigation.service';

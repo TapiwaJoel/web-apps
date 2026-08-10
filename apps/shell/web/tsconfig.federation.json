@@ -5,12 +5,10 @@
     "types": []
   },
   "include": [
-    "src/**/*.ts",
-    "../../../libs/models/src/index.ts",
-    "../../../libs/data-access-auth/src/index.ts",
-    "../../../libs/ui-common/src/index.ts",
-    "../../../libs/util-event-bus/src/index.ts",
-    "../../../libs/util-theming/src/index.ts"
+    "src/**/*.ts"
   ],
-  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"]
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
 }

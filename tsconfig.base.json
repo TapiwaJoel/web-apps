@@ -16,14 +16,9 @@
     "baseUrl": ".",
     "paths": {
       "@mushaviri/models": ["libs/models/src/index.ts"],
-      "@mushaviri/data-access-auth": ["./libs/data-access-auth/src/index.ts"],
       "@mushaviri/ui-common": ["./libs/ui-common/src/index.ts"],
       "@mushaviri/util-event-bus": ["./libs/util-event-bus/src/index.ts"],
       "@mushaviri/util-theming": ["./libs/util-theming/src/index.ts"],
-      "@mushaviri/api-contracts": ["./libs/api-contracts/src/index.ts"],
-      "@mushaviri/data-access-user-management": [
-        "./libs/data-access-user-management/src/index.ts"
-      ],
       "@mushaviri/data-access": ["./libs/data-access/src/index.ts"]
     }
   },

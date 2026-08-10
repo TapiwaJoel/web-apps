@@ -5,7 +5,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from './app.routes';
-import { authInterceptor } from '@mushaviri/data-access-auth';
+import { authInterceptor } from '@mushaviri/data-access';
 import { ENVIRONMENT } from '@mushaviri/util-theming';
 import { environment } from '../environments/environment';
 
