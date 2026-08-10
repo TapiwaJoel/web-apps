@@ -12,3 +12,4 @@ export * from './lib/guards/conditional-auth.guard';
 
 // Interceptors
 export * from './lib/interceptors/auth.interceptor';
+export * from './lib/interceptors/api.interceptor';

@@ -5,7 +5,7 @@ import angular from '@analogjs/vite-plugin-angular';
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../../node_modules/.vite/libs/data-access-auth',
-  plugins: [angular({ tsconfig: './tsconfig.lib.json' })],
+  plugins: [angular({ tsconfig: './tsconfig.spec.json' })],
   resolve: {
     tsconfigPaths: true,
   },
@@ -22,7 +22,7 @@ export default defineConfig(() => ({
     setupFiles: ['src/test-setup.ts'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../../coverage/libs/data-access-auth',
+      reportsDirectory: './coverage',
       provider: 'v8' as const,
     },
   },
