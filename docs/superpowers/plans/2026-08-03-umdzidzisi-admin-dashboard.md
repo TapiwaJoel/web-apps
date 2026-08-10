@@ -20,6 +20,18 @@
 - Tests: Vitest, `globals: true` (ambient `describe`/`it`/`expect`), files as `*.spec.ts` colocated in `src/`. Run a single project's tests with `pnpm nx test umdzidzisi-admin`.
 - Commit after each task. Work on branch `feat/umdzidzisi-admin-dashboard` (already created; spec already committed there).
 
+### STRICT ESLint — enforced by the husky pre-commit hook (a commit FAILS if violated)
+
+`eslint.config.mjs` applies these as **errors** to all `**/*.ts` (relaxed only in `*.spec.ts`). Every non-test file MUST satisfy them or the commit is rejected and reverted:
+
+- **`@typescript-eslint/explicit-member-accessibility` (accessibility: 'explicit'):** EVERY class member — properties, methods, getters — needs an explicit `public` / `private` / `protected`. In these components: injected deps `private readonly`; template-bound members `protected readonly`; public API (`input()`s meant for parents) `readonly` is fine but still needs a modifier — use `public readonly` for inputs, `protected readonly` for internal `computed`/`signal`.
+- **`@typescript-eslint/typedef` (memberVariableDeclaration, propertyDeclaration, parameter, variableDeclaration all true):** class properties and `const` declarations need explicit type annotations; function parameters need types. Relaxations: `arrowParameter: false` (so `arr.map(x => …)` is fine), `objectDestructuring`/`arrayDestructuring: false`. Note `input()`/`computed()`/`signal()` initializers ARE function expressions, so `variableDeclarationIgnoreFunction: false` still requires the property to have its accessibility modifier but the inferred type from `input.required<T>()` is accepted (it's an assignment from a typed call). When in doubt, annotate.
+- **`@typescript-eslint/explicit-function-return-type` + `explicit-module-boundary-types`:** methods and exported functions need explicit return types. Relaxations: `allowExpressions: true`, `allowTypedFunctionExpressions: true`, `allowHigherOrderFunctions: true` — so `computed(() => …)` and `input()` arrow initializers do NOT need annotation, but a named method like `protected toggle(): void {}` DOES, and every exported top-level function (`sparklinePath`, `barLayout`) MUST declare its return type (already do in the plan).
+- **`no-console`: allow only `warn`/`error`** (a warning, but husky treats the hook's non-zero exit as blocking on errors; avoid `console.log` entirely — use nothing or `console.warn`).
+- **`unused-imports/no-unused-imports`: error** — no unused imports (e.g. don't import `CommonModule` if only `DecimalPipe` is used).
+
+**Consequence for the plan's code samples:** the component code blocks in Tasks 3-10 show `readonly x = input(…)` etc. WITHOUT accessibility modifiers for brevity. Implementers MUST add `public`/`protected`/`private` to every member: inputs → `public readonly`, internal computed/signal → `protected readonly`, injected services → `private readonly`, named methods → explicit modifier + return type. Verify with `pnpm nx lint umdzidzisi-admin` before each commit (the hook runs `eslint --fix` on staged files; run lint yourself first so the commit doesn't bounce).
+
 ## File Structure
 
 ```
@@ -45,6 +57,54 @@ apps/umdzidzisi/admin/src/app/
 ```
 
 Task order builds leaves first (types → geometry → sparkline → tiles/hero → chart/list/table → topbar → orchestrator → sidebar polish → verify), so every task consumes only already-built interfaces.
+
+---
+
+### Task 0: Commit the scaffolding baseline (lint-fix pre-existing files)
+
+The umdzidzisi admin `config/`, `layouts/`, `pages/` files exist untracked and must be committed as a clean diff baseline — but they currently VIOLATE the strict ESLint rules, so the pre-commit hook rejects them. Fix them minimally, then commit.
+
+**Files:**
+- Modify: `apps/umdzidzisi/admin/src/app/pages/placeholder-page.component.ts`
+- Modify: `apps/umdzidzisi/admin/src/app/layouts/dashboard-layout.component.ts`
+- Modify: `apps/umdzidzisi/admin/src/app/config/navigation.config.ts`
+
+**Interfaces:** Consumes/produces nothing new — purely making existing files lint-clean.
+
+- [ ] **Step 1: Fix `placeholder-page.component.ts`** — switch to `inject()`, add accessibility modifiers + types:
+
+```ts
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+// ...@Component decorator unchanged...
+export class PlaceholderPageComponent {
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  protected readonly pageTitle: string =
+    this.route.snapshot.data['title'] || 'Page';
+  protected readonly currentRoute: string = window.location.pathname;
+}
+```
+
+- [ ] **Step 2: Fix `dashboard-layout.component.ts`** — add accessibility modifiers, types, and a `void` return on `logout()`. Give the config arrays explicit types (`TreeNavNode[]`). The `router` is `private readonly router: Router = inject(Router)`. `railConfig`/`railFooterConfig`/`navConfig`/`navConfig2` → `protected readonly` with explicit types (`TreeNavNode[]` / `TreeNavConfig`). `logout(): void`.
+
+- [ ] **Step 3: Fix `navigation.config.ts`** — the `USER_MENU_CONFIG` logout `action` uses `console.log`. Replace the arrow body so it has an explicit `: void` return type and no `console.log`:
+
+```ts
+    action: (): void => {
+      // Logout handled by the layout component wiring.
+    },
+```
+
+- [ ] **Step 4: Lint, then commit**
+
+```bash
+pnpm nx lint umdzidzisi-admin        # expect: clean
+git add apps/umdzidzisi/admin/src/app/config apps/umdzidzisi/admin/src/app/layouts apps/umdzidzisi/admin/src/app/pages
+git commit -m "feat(umdzidzisi-admin): dashboard layout scaffolding baseline"
+```
+
+Expected: the pre-commit hook passes (no ESLint errors) and the commit lands. If the hook still bounces, read its output and fix the named rule before retrying.
 
 ---
 

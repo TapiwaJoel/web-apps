@@ -5,26 +5,27 @@
 .tree-node {
   position: relative;
 
+  // Half of a child row's height — the vertical connector ends at the last
+  // child's center, and each horizontal tick meets the line at row center.
+  --tree-row-half: 26.5px;
+
   &-children {
     position: relative;
     margin-left: 1.75rem; // Tighter indentation for children
   }
 
-  // Vertical connecting line (shown inside children container)
+  // Vertical connecting line: runs from the top of the children container down
+  // to the CENTER of the last child, so every child's tick connects to it.
+  // (The old `:last-child` shortening mis-fired because the recursive component
+  // wraps each node in a host element, making every `.tree-node` a :last-child.)
   &-connector {
     position: absolute;
     left: 0;
     top: 0;
-    bottom: 0;
+    bottom: var(--tree-row-half);
     width: 1px;
     background-color: var(--theme-border-color);
-    opacity: 0.35;
-  }
-
-  // Last child: vertical line stops at middle (L-shape connector)
-  &:last-child > .tree-node-children > .tree-node-connector {
-    bottom: auto;
-    height: calc(50% + 0.75rem);
+    opacity: 0.6;
   }
 
   &-content {
@@ -46,16 +47,21 @@
       pointer-events: none;
     }
 
-    // Horizontal connector line for child items
-    &.has-connector::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      width: 1.25rem;
-      height: 1px;
-      background-color: var(--theme-border-color);
-      opacity: 0.35;
+    // Horizontal tick connecting a child to the vertical line, with a gap
+    // before the label so the tick doesn't touch the text.
+    &.has-connector {
+      padding-left: 1.5rem; // clears the tick + leaves a gap before the label
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 1rem;
+        height: 1px;
+        background-color: var(--theme-border-color);
+        opacity: 0.6;
+      }
     }
 
     // Keyboard focus ring (accessibility floor)
@@ -65,39 +71,40 @@
     }
   }
 
-  // ---- Signature: the migrating "active dot" ----
-  // Active rows take on the accent color; a small leading dot ties them to the rail.
+  // ---- Signature: the migrating accent → "lit branch" on the active child ----
+  // The active row lights up its part of the tree: accent text, a brighter/thicker
+  // accent tick, and a filled accent node sitting on the vertical line junction.
   &-content.tree-node-active {
     .tree-node-label {
-      color: var(--theme-primary-color);
+      color: var(--theme-highlight-color, var(--theme-primary-color));
       font-weight: 600;
     }
 
     .tree-node-icon {
-      color: var(--theme-primary-color);
+      color: var(--theme-highlight-color, var(--theme-primary-color));
     }
 
-    // Leading accent dot (only when the row has no glyph of its own, i.e.
-    // children). Matches the rail's bright highlight for cohesion.
-    &::after {
+    // Brighten + thicken the horizontal tick so the branch reads as "lit".
+    &.has-connector::before {
+      background-color: var(--theme-highlight-color, var(--theme-primary-color));
+      opacity: 1;
+      height: 2px;
+    }
+
+    // Filled accent node at the junction where the tick meets the vertical line.
+    // A light ring (panel colour) makes it punch cleanly over the line.
+    &.has-connector::after {
       content: '';
       position: absolute;
-      left: 0.375rem;
+      left: -0.1875rem; // centre the node on the line (line sits at content left)
       top: 50%;
       transform: translateY(-50%);
-      width: 0.375rem;
-      height: 0.375rem;
+      width: 0.5rem;
+      height: 0.5rem;
       border-radius: 9999px;
-      background-color: var(
-        --theme-highlight-color,
-        var(--theme-primary-color)
-      );
+      background-color: var(--theme-highlight-color, var(--theme-primary-color));
+      box-shadow: 0 0 0 2px #f7f7f9;
     }
-  }
-
-  // Top-level items keep their glyph, so suppress the redundant dot there.
-  &[data-level='0'] > .tree-node-content.tree-node-active::after {
-    display: none;
   }
 
   // Leading glyph — small, monochrome, no circular container by default
@@ -143,6 +150,14 @@
   &[data-level='3'] > .tree-node-content .tree-node-label {
     font-weight: 400;
     color: var(--theme-text-secondary);
+  }
+
+  // Active child label wins over the muted nested-child colour above.
+  &[data-level='1'] > .tree-node-content.tree-node-active .tree-node-label,
+  &[data-level='2'] > .tree-node-content.tree-node-active .tree-node-label,
+  &[data-level='3'] > .tree-node-content.tree-node-active .tree-node-label {
+    color: var(--theme-highlight-color, var(--theme-primary-color));
+    font-weight: 600;
   }
 
   // ---- Section header variant: a quiet group label ----

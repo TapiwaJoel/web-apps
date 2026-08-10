@@ -1,0 +1,59 @@
+<button
+  type="button"
+  class="theme-trigger"
+  aria-label="Theme"
+  [attr.aria-expanded]="isOpen()"
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  (click)="toggle()"
+>
+  <i
+    [class]="isDark() ? 'fi fi-rr-moon' : 'fi fi-rr-sun'"
+    aria-hidden="true"
+  ></i>
+</button>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPositions]="[
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+  ]"
+  (backdropClick)="close()"
+  (overlayOutsideClick)="close()"
+  (detach)="close()"
+>
+  <div
+    class="theme-panel"
+    role="menu"
+    aria-label="Theme"
+    (keydown.escape)="close()"
+  >
+    <p class="theme-panel-title">Theme</p>
+    @for (option of options; track trackByMode($index, option)) {
+      <button
+        type="button"
+        role="menuitemradio"
+        class="theme-option"
+        [class.theme-option-active]="isActive(option)"
+        [attr.aria-checked]="isActive(option)"
+        (click)="select(option)"
+      >
+        <i [class]="option.icon" class="theme-option-icon" aria-hidden="true"></i>
+        <span class="theme-option-label">{{ option.label }}</span>
+        @if (isActive(option)) {
+          <i class="fi fi-rr-check theme-option-check" aria-hidden="true"></i>
+        }
+      </button>
+    }
+  </div>
+</ng-template>

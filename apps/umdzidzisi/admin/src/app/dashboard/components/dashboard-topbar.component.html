@@ -1,32 +1,15 @@
 <header class="flex items-center gap-3 pb-4">
-  <label class="relative max-w-md flex-1">
-    <span class="sr-only">Search</span>
-    <i
-      class="fi fi-rr-search text-theme-text-secondary pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
-      aria-hidden="true"
-    ></i>
-    <input
-      type="search"
-      placeholder="Search examinations, subjects, learners…"
-      class="border-theme-border text-theme-text placeholder:text-theme-text-secondary focus:ring-theme-primary w-full rounded-full border bg-white py-2 pr-4 pl-9 text-sm focus:ring-2 focus:outline-none"
+  <org-global-search />
+
+  <div class="ml-auto flex items-center gap-3">
+    <org-theme-switcher />
+
+    <org-notifications-menu />
+
+    <org-profile-menu
+      [userName]="userName()"
+      (logout)="logout.emit()"
+      (changePassword)="changePassword.emit()"
     />
-  </label>
-  <button
-    type="button"
-    class="border-theme-border text-theme-text-secondary hover:text-theme-text focus:ring-theme-primary grid h-9 w-9 place-items-center rounded-full border bg-white focus:ring-2 focus:outline-none"
-    aria-label="Notifications"
-  >
-    <i class="fi fi-rr-bell" aria-hidden="true"></i>
-  </button>
-  <div class="flex items-center gap-2">
-    <span
-      class="bg-theme-primary grid h-9 w-9 place-items-center rounded-full text-sm font-semibold text-white"
-      aria-hidden="true"
-    >
-      {{ initials() }}
-    </span>
-    <span class="text-theme-text hidden text-sm font-medium sm:inline">{{
-      userName()
-    }}</span>
   </div>
 </header>

@@ -16,19 +16,70 @@ export const UMDZIDZISI_RAIL_CONFIG: TreeNavNode[] = [
     id: 'rail-examinations',
     label: 'Examinations',
     icon: 'fi fi-rr-graduation-cap',
-    route: 'examinations/all',
+    // Section root so the rail icon stays active for every examinations/* child.
+    route: 'examinations',
+    badge: '38',
+    children: [
+      {
+        id: 'all-examinations',
+        label: 'All Examinations',
+        route: 'examinations/all',
+      },
+      {
+        id: 'examination-boards',
+        label: 'Examination Boards',
+        route: 'examinations/boards',
+      },
+      {
+        id: 'examination-papers',
+        label: 'Examination Papers',
+        route: 'examinations/papers',
+      },
+      {
+        id: 'educational-levels',
+        label: 'Educational Levels',
+        route: 'examinations/levels',
+      },
+    ],
   },
   {
     id: 'rail-subjects',
     label: 'Subjects',
     icon: 'fi fi-rr-book-open-reader',
-    route: 'subjects/all',
+    // Section root so the rail icon stays active for every subjects/* child.
+    route: 'subjects',
+    children: [
+      {
+        id: 'all-subjects',
+        label: 'All Subjects',
+        route: 'subjects/all',
+      },
+      {
+        id: 'topics',
+        label: 'Topics',
+        route: 'subjects/topics',
+      },
+    ],
   },
   {
     id: 'rail-subscriptions',
     label: 'Subscriptions',
     icon: 'fi fi-rr-credit-card',
-    route: 'subscriptions/active',
+    // Section root so the rail icon stays active for every subscriptions/* child.
+    route: 'subscriptions',
+    badge: '5',
+    children: [
+      {
+        id: 'active-subscriptions',
+        label: 'Active Subscriptions',
+        route: 'subscriptions/active',
+      },
+      {
+        id: 'subscription-plans',
+        label: 'Subscription Plans',
+        route: 'subscriptions/plans',
+      },
+    ],
   },
   {
     id: 'rail-profiles',

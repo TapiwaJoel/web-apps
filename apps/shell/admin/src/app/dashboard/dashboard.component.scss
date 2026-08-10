@@ -1,60 +1,8 @@
-.dashboard-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 2rem 1rem;
+:host {
+  display: block;
+  height: 100vh;
 }
 
-.dashboard-header {
-  text-align: center;
-  margin-bottom: 2rem;
-  padding-top: 1rem;
-}
-
-h1 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #2d3748;
-  margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-p {
-  font-size: 1rem;
-  color: #4a5568;
-  margin: 0;
-}
-
-// Tablet (768px+)
-@media (min-width: 768px) {
-  .dashboard-header {
-    margin-bottom: 2.5rem;
-    padding-top: 1.5rem;
-  }
-
-  h1 {
-    font-size: 2.25rem;
-  }
-
-  p {
-    font-size: 1.0625rem;
-  }
-}
-
-// Desktop (1024px+)
-@media (min-width: 1024px) {
-  .dashboard-header {
-    margin-bottom: 3rem;
-    padding-top: 2rem;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  p {
-    font-size: 1.125rem;
-  }
+.dashboard-content {
+  min-height: 100%;
 }

@@ -6,6 +6,9 @@
 @import 'tailwindcss' layer(tailwindcss);
 @config '../../../../tailwind.config.js';
 
+// CDK Overlay container/positioning styles (used by the collapsed-rail flyout)
+@import '@angular/cdk/overlay-prebuilt.css';
+
 // Basic body styling
 body {
   margin: 0;

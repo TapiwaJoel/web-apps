@@ -9,6 +9,13 @@ export * from './lib/notification/notification-container.component';
 export * from './lib/banner/banner.component';
 export * from './lib/banner/banner-container.component';
 export * from './lib/user-menu/user-menu.component';
+export * from './lib/sidebar-layout/sidebar-layout.component';
+export * from './lib/tree-navigation/tree-navigation.component';
+export * from './lib/tree-node/tree-node.component';
+export * from './lib/rail-flyout/rail-flyout.component';
+
+// Models
+export * from './lib/tree-navigation/tree-navigation.model';
 
 // Legacy export
 export { UiCommonComponent } from './lib/ui-common/ui-common';

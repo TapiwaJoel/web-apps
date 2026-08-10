@@ -1,0 +1,92 @@
+<button
+  type="button"
+  class="notif-trigger border-theme-border text-theme-text-secondary hover:text-theme-text focus:ring-theme-primary relative grid h-9 w-9 place-items-center rounded-full border focus:ring-2 focus:outline-none"
+  aria-label="Notifications"
+  [attr.aria-expanded]="isOpen()"
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  (click)="toggle()"
+>
+  <i class="fi fi-rr-bell" aria-hidden="true"></i>
+  @if (unreadCount() > 0) {
+    <span class="notif-count" aria-hidden="true">{{ unreadCount() }}</span>
+    <span class="sr-only">{{ unreadCount() }} unread notifications</span>
+  }
+</button>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPositions]="[
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+  ]"
+  (backdropClick)="close()"
+  (overlayOutsideClick)="close()"
+  (detach)="close()"
+>
+  <div
+    class="notif-panel"
+    role="dialog"
+    aria-label="Notifications"
+    (keydown.escape)="close()"
+  >
+    <header class="notif-header">
+      <span class="notif-title">Notifications</span>
+      @if (!allRead()) {
+        <button type="button" class="notif-action" (click)="markAllRead()">
+          Mark all read
+        </button>
+      }
+    </header>
+
+    @if (allRead()) {
+      <div class="notif-empty">
+        <i class="fi fi-rr-bell-slash" aria-hidden="true"></i>
+        <p class="notif-empty-title">You're all caught up</p>
+        <p class="notif-empty-sub">No new notifications right now.</p>
+      </div>
+    } @else {
+      <ul class="notif-list">
+        @for (item of notifications(); track trackById($index, item)) {
+          <li>
+            <button
+              type="button"
+              class="notif-item"
+              [class.notif-item-unread]="!item.read"
+              (click)="markRead(item.id)"
+            >
+              <span class="notif-item-icon" aria-hidden="true">
+                <i [class]="item.icon"></i>
+              </span>
+              <span class="notif-item-body">
+                <span class="notif-item-title">{{ item.title }}</span>
+                <span class="notif-item-text">{{ item.body }}</span>
+              </span>
+              <span class="notif-item-meta">
+                <span class="notif-item-time">{{ item.time }}</span>
+                @if (!item.read) {
+                  <span class="notif-dot" aria-hidden="true"></span>
+                }
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    <footer class="notif-footer">
+      <button type="button" class="notif-view-all" (click)="close()">
+        View all
+      </button>
+    </footer>
+  </div>
+</ng-template>

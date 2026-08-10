@@ -19,6 +19,16 @@ export class AppConfigService {
   private remotes: RemoteConfiguration = environment.remotes;
 
   /**
+   * Get the app the shell should land on for the empty route.
+   * When set (tenant configs, e.g. umdzidzisi), the shell redirects '' straight
+   * into that remote. When unset (default shell config), '' shows the app-selector.
+   * @returns The landing remote name, or null to use the app-selector
+   */
+  public getLandingApp(): string | null {
+    return environment.landingApp ?? null;
+  }
+
+  /**
    * Get the authentication mode for a specific remote app
    * @param remoteName The name of the remote app (e.g., 'umdzidzisi-website')
    * @returns The auth mode: 'none', 'optional', or 'required'

@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, Signal } from '@angular/core';
 import { AppConfigService } from './app-config.service';
+import { environment } from '../../environments/environment';
 
 export interface FederationManifest {
   [key: string]: string;
@@ -18,7 +19,11 @@ export class RemoteDetectionService {
     this.availableRemotesSignal.asReadonly();
   private checkCache: Map<string, { available: boolean; timestamp: number }> =
     new Map<string, { available: boolean; timestamp: number }>();
-  private readonly CACHE_DURATION: number = 30000; // 30 seconds
+  // In dev, a remote briefly 404s while it rebuilds; a long negative cache would
+  // keep it "unavailable" for up to half a minute after each change. Use a short
+  // window in dev so a rebuilt remote is re-probed almost immediately, and keep
+  // the longer window in production where remotes don't churn.
+  private readonly CACHE_DURATION: number = environment.production ? 30000 : 2000;
   private readonly REQUEST_TIMEOUT: number = 5000; // 5 seconds
 
   public constructor() {

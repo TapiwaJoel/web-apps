@@ -6,6 +6,7 @@ interface RemoteConfig {
 interface Environment {
   production: boolean;
   defaultTheme: 'default' | 'admin' | 'umdzidzisi' | 'umtengesi';
+  landingApp?: string;
   remotes: Record<string, RemoteConfig>;
 }
 

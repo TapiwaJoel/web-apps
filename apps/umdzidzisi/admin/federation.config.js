@@ -7,7 +7,7 @@ export default withNativeFederation({
   name: 'umdzidzisi-admin',
 
   exposes: {
-    './Component': './apps/umdzidzisi/admin/src/app/app.ts',
+    './Routes': './apps/umdzidzisi/admin/src/app/app.routes.ts',
   },
 
   shared: {

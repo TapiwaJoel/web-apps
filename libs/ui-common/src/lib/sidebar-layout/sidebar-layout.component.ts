@@ -4,10 +4,13 @@ import {
   ChangeDetectionStrategy,
   signal,
   WritableSignal,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { OverlayModule, ConnectedPosition } from '@angular/cdk/overlay';
 import { TreeNavigationComponent } from '../tree-navigation/tree-navigation.component';
+import { RailFlyoutComponent } from '../rail-flyout/rail-flyout.component';
 import {
   TreeNavNode,
   TreeNavConfig,
@@ -16,12 +19,18 @@ import {
 @Component({
   selector: 'mushaviri-sidebar-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, TreeNavigationComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    OverlayModule,
+    TreeNavigationComponent,
+    RailFlyoutComponent,
+  ],
   templateUrl: './sidebar-layout.component.html',
   styleUrls: ['./sidebar-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidebarLayoutComponent {
+export class SidebarLayoutComponent implements OnDestroy {
   /** Navigation nodes to display in the sidebar */
   @Input() public navigationNodes: TreeNavNode[] = [];
 
@@ -63,13 +72,41 @@ export class SidebarLayoutComponent {
   /** Signal for collapsed state */
   public readonly isCollapsed: WritableSignal<boolean> = signal(false);
 
-  /** Signal for mobile menu open state */
-  public readonly isMobileMenuOpen: WritableSignal<boolean> = signal(false);
-
-  /** Id of the currently-active rail node (falls back to a node's own `active` flag) */
-  public readonly activeRailId: WritableSignal<string | null> = signal<
+  /**
+   * Id of the rail node whose hover flyout is currently open. Only meaningful
+   * while the sidebar is collapsed to the icon rail.
+   */
+  public readonly hoveredRailId: WritableSignal<string | null> = signal<
     string | null
   >(null);
+
+  /** Pending close timer, so moving into the flyout can cancel the dismissal. */
+  private closeTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /** Grace period (ms) before a flyout closes, letting the pointer cross the gap. */
+  private static readonly FLYOUT_CLOSE_DELAY_MS: number = 150;
+
+  /**
+   * Overlay positions for the rail flyout: anchored to the right of the icon,
+   * top-aligned, with a bottom-aligned fallback so it shifts up when there is
+   * no room below (e.g. rail icons near the viewport bottom).
+   */
+  public readonly flyoutPositions: ConnectedPosition[] = [
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetX: 8,
+    },
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetX: 8,
+    },
+  ];
 
   /** Whether a rail should render */
   public get hasRail(): boolean {
@@ -86,26 +123,63 @@ export class SidebarLayoutComponent {
   }
 
   /**
-   * Whether a rail node is the active one. Route-backed rail nodes rely on
-   * routerLinkActive in the template; this covers explicit `active`/click state.
+   * Invokes a rail node's action, if any. The active highlight is driven purely
+   * by routerLinkActive in the template (route-backed rail nodes), so this only
+   * needs to fire side effects like logout for action-only nodes.
    */
-  public isRailActive(node: TreeNavNode): boolean {
-    const id: string = node.id ?? node.label;
-    if (this.activeRailId() !== null) {
-      return this.activeRailId() === id;
-    }
-    return !!node.active;
-  }
-
-  /** Selects a rail node (and invokes its action, if any) */
   public selectRail(node: TreeNavNode): void {
-    this.activeRailId.set(node.id ?? node.label);
     node.action?.();
   }
 
   /** trackBy for rail nodes */
   public trackRail(index: number, node: TreeNavNode): string | number {
     return node.id ?? node.label ?? index;
+  }
+
+  /** Stable key for a rail node (id, falling back to its label). */
+  public railNodeId(node: TreeNavNode): string {
+    return node.id ?? node.label;
+  }
+
+  /**
+   * Whether the hover flyout should be shown for a given rail node. Flyouts only
+   * apply while collapsed — expanded, the tree panel already shows submenus.
+   */
+  public flyoutOpenFor(node: TreeNavNode): boolean {
+    return this.isCollapsed() && this.hoveredRailId() === this.railNodeId(node);
+  }
+
+  /** Opens the flyout for a rail node (on hover or keyboard focus). */
+  public openFlyout(node: TreeNavNode): void {
+    this.cancelClose();
+    this.hoveredRailId.set(this.railNodeId(node));
+  }
+
+  /** Schedules the flyout to close after a short grace delay. */
+  public scheduleClose(): void {
+    this.cancelClose();
+    this.closeTimer = setTimeout((): void => {
+      this.hoveredRailId.set(null);
+      this.closeTimer = null;
+    }, SidebarLayoutComponent.FLYOUT_CLOSE_DELAY_MS);
+  }
+
+  /** Cancels a pending flyout close (e.g. the pointer moved into the panel). */
+  public cancelClose(): void {
+    if (this.closeTimer !== null) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
+  }
+
+  /** Closes the flyout immediately (e.g. after following a submenu link or Escape). */
+  public closeFlyout(): void {
+    this.cancelClose();
+    this.hoveredRailId.set(null);
+  }
+
+  public ngOnDestroy(): void {
+    this.cancelClose();
   }
 
   /**
@@ -115,20 +189,6 @@ export class SidebarLayoutComponent {
     if (this.collapsible) {
       this.isCollapsed.update((value: boolean) => !value);
     }
-  }
-
-  /**
-   * Toggles the mobile menu
-   */
-  public toggleMobileMenu(): void {
-    this.isMobileMenuOpen.update((value: boolean) => !value);
-  }
-
-  /**
-   * Closes the mobile menu
-   */
-  public closeMobileMenu(): void {
-    this.isMobileMenuOpen.set(false);
   }
 
   /**

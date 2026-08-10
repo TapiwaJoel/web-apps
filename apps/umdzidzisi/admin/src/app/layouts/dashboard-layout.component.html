@@ -3,8 +3,28 @@
   [railFooterNodes]="railFooterConfig"
   [navigationNodes]="navConfig"
   [navigationConfig]="navConfig2"
-  brandName="Umdzidzisi Admin"
+  brandName="Umdzidzisi"
+  logoUrl="/assets/logos/umdzidzisi-logo.svg"
   [collapsible]="true"
 >
-  <router-outlet></router-outlet>
+  <!-- Off-white surround fills the whole content column (covers the shared white
+       .main-content) so the white panel below can curve against it (see designs/img_3.png). -->
+  <div class="flex min-h-full flex-col" style="background-color: var(--theme-sidebar-bg, #f7f7f9)">
+    <!-- Search/header stays on the off-white, sticky at the top -->
+    <div class="sticky top-0 z-20 px-6 pt-6" style="background-color: var(--theme-sidebar-bg, #f7f7f9)">
+      <org-dashboard-topbar
+        userName="Umdzidzisi Admin"
+        (logout)="logout()"
+        (changePassword)="changePasswordOpen.set(true)"
+      />
+    </div>
+    <!-- White content panel, curved at its top-left corner (the reference look) -->
+    <div class="bg-theme-background flex-1 rounded-tl-3xl">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </mushaviri-sidebar-layout>
+
+@if (changePasswordOpen()) {
+  <org-change-password-dialog (close)="changePasswordOpen.set(false)" />
+}

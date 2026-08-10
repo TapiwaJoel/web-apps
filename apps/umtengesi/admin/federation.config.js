@@ -7,7 +7,7 @@ export default withNativeFederation({
   name: 'umtengesi-admin',
 
   exposes: {
-    './Component': './apps/umtengesi/admin/src/app/app.ts',
+    './Routes': './apps/umtengesi/admin/src/app/app.routes.ts',
   },
 
   shared: {

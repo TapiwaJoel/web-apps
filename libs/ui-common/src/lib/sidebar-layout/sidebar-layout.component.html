@@ -1,81 +1,69 @@
 <div class="sidebar-layout">
-  <!-- Mobile Overlay -->
-  <div
-    *ngIf="isMobileMenuOpen()"
-    class="sidebar-overlay fixed inset-0 z-40 bg-black/50 md:hidden"
-    (click)="closeMobileMenu()"
-  ></div>
-
   <!-- Sidebar shell: a T — a full-width topbar over a rail + tree body -->
   <div
     class="sidebar-shell fixed top-0 z-50 flex h-screen flex-col transition-all duration-300 ease-in-out md:sticky md:z-auto"
     [class.sidebar-collapsed]="isCollapsed()"
-    [class.sidebar-mobile-open]="isMobileMenuOpen()"
   >
+    <!-- Collapse/expand toggle: a chevron chip on the sidebar's right edge that
+         reveals on hover (Linear/Notion style). Stays visible when collapsed. -->
+    <button
+      *ngIf="collapsible"
+      type="button"
+      class="sidebar-edge-toggle hidden md:flex"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      [attr.aria-expanded]="!isCollapsed()"
+    >
+      <svg
+        class="h-3.5 w-3.5"
+        [class.rotate-180]="isCollapsed()"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.5"
+          d="M15 19l-7-7 7-7"
+        />
+      </svg>
+    </button>
+
     <!-- Topbar (spans rail + tree) -->
     <div
-      class="sidebar-topbar border-theme-border flex items-center border-b p-4"
+      class="sidebar-topbar flex items-center p-4"
     >
       <!-- Logo sits over the rail column -->
       <div
-        class="sidebar-logo flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg"
-        [style.background-color]="'color-mix(in srgb, var(--theme-primary-color) 10%, transparent)'"
+        class="sidebar-logo flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg"
       >
         <img
           *ngIf="logoUrl; else logoPlaceholder"
           [src]="logoUrl"
           [alt]="brandName || 'Logo'"
-          class="h-8 w-8 object-contain"
+          class="h-10 w-10 object-contain"
         />
         <ng-template #logoPlaceholder>
-          <span class="text-2xl">{{ brandName?.charAt(0) || 'M' }}</span>
+          <span
+            class="text-theme-text flex h-full w-full items-center justify-center rounded-lg text-lg font-semibold"
+            [style.background-color]="'color-mix(in srgb, var(--theme-primary-color) 10%, transparent)'"
+          >
+            {{ brandName?.charAt(0) || 'M' }}
+          </span>
         </ng-template>
       </div>
 
       <!-- Brand name sits over the tree column -->
       <div
         *ngIf="!isCollapsed()"
-        class="sidebar-brand-name ml-3 flex min-w-0 flex-1 items-center gap-2"
+        class="sidebar-brand-name ml-3 flex min-w-0 flex-1 items-center"
       >
         <span class="text-theme-text truncate text-sm font-semibold">
           {{ brandName || 'Dashboard' }}
         </span>
-        <svg
-          class="text-theme-text-secondary h-4 w-4 flex-shrink-0"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
       </div>
 
-      <!-- Close button (mobile only) -->
-      <button
-        type="button"
-        class="text-theme-text-secondary hover:text-theme-text ml-auto md:hidden"
-        (click)="closeMobileMenu()"
-        aria-label="Close menu"
-      >
-        <svg
-          class="h-6 w-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
     </div>
 
     <!-- Body: rail + tree columns -->
@@ -89,16 +77,36 @@
           @for (item of railNodes; track trackRail($index, item)) {
             <a
               class="rail-btn flex h-10 w-10 items-center justify-center rounded-full transition-colors"
-              [class.rail-btn-active]="isRailActive(item)"
               [routerLink]="item.route || null"
               routerLinkActive="rail-btn-active"
+              #rlaRail="routerLinkActive"
               (click)="selectRail(item)"
+              cdkOverlayOrigin
+              #railOrigin="cdkOverlayOrigin"
+              (mouseenter)="openFlyout(item)"
+              (mouseleave)="scheduleClose()"
+              (focus)="openFlyout(item)"
+              (blur)="scheduleClose()"
+              (keydown.escape)="closeFlyout()"
               [attr.aria-label]="item.label"
-              [attr.aria-current]="isRailActive(item) ? 'page' : null"
-              [attr.title]="item.label"
+              [attr.aria-current]="rlaRail.isActive ? 'page' : null"
             >
               <i [class]="item.icon" class="rail-icon"></i>
             </a>
+
+            <ng-template
+              cdkConnectedOverlay
+              [cdkConnectedOverlayOrigin]="railOrigin"
+              [cdkConnectedOverlayOpen]="flyoutOpenFor(item)"
+              [cdkConnectedOverlayPositions]="flyoutPositions"
+            >
+              <mushaviri-rail-flyout
+                [node]="item"
+                (navigate)="closeFlyout()"
+                (mouseenter)="cancelClose()"
+                (mouseleave)="scheduleClose()"
+              ></mushaviri-rail-flyout>
+            </ng-template>
           }
 
           <!-- Pinned bottom group (e.g. logout) -->
@@ -107,48 +115,39 @@
             @for (item of railFooterNodes; track trackRail($index, item)) {
               <a
                 class="rail-btn flex h-10 w-10 items-center justify-center rounded-full transition-colors"
-                [class.rail-btn-active]="isRailActive(item)"
                 [routerLink]="item.route || null"
                 routerLinkActive="rail-btn-active"
+                #rlaRailFooter="routerLinkActive"
                 (click)="selectRail(item)"
+                cdkOverlayOrigin
+                #railFooterOrigin="cdkOverlayOrigin"
+                (mouseenter)="openFlyout(item)"
+                (mouseleave)="scheduleClose()"
+                (focus)="openFlyout(item)"
+                (blur)="scheduleClose()"
+                (keydown.escape)="closeFlyout()"
                 [attr.aria-label]="item.label"
-                [attr.aria-current]="isRailActive(item) ? 'page' : null"
-                [attr.title]="item.label"
+                [attr.aria-current]="rlaRailFooter.isActive ? 'page' : null"
               >
                 <i [class]="item.icon" class="rail-icon"></i>
               </a>
+
+              <ng-template
+                cdkConnectedOverlay
+                [cdkConnectedOverlayOrigin]="railFooterOrigin"
+                [cdkConnectedOverlayOpen]="flyoutOpenFor(item)"
+                [cdkConnectedOverlayPositions]="flyoutPositions"
+              >
+                <mushaviri-rail-flyout
+                  [node]="item"
+                  (navigate)="closeFlyout()"
+                  (mouseenter)="cancelClose()"
+                  (mouseleave)="scheduleClose()"
+                ></mushaviri-rail-flyout>
+              </ng-template>
             }
           } @else {
             <div class="rail-spacer"></div>
-          }
-
-          <!-- Collapse/expand toggle lives on the rail so it stays visible when
-               the tree panel is hidden (collapsed) as well as when expanded. -->
-          @if (collapsible) {
-            <button
-              type="button"
-              class="rail-btn flex h-10 w-10 items-center justify-center rounded-full transition-colors"
-              (click)="toggleSidebar()"
-              [attr.aria-label]="
-                isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'
-              "
-              [attr.aria-expanded]="!isCollapsed()"
-            >
-              <svg
-                class="h-5 w-5 transition-transform duration-300"
-                [class.rotate-180]="isCollapsed()"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                />
-              </svg>
-            </button>
           }
         </nav>
       }
@@ -156,7 +155,7 @@
       <!-- Tree panel -->
       <aside
         class="sidebar flex min-w-0 flex-1 flex-col"
-        style="background-color: #f7f7f9"
+        style="background-color: var(--theme-sidebar-bg, #f7f7f9)"
         [style.width]="currentSidebarWidth"
       >
         <!-- Navigation (removed from the DOM when collapsed to an icon rail) -->
@@ -208,32 +207,6 @@
 
   <!-- Main Content Area -->
   <main class="main-content min-w-0 flex-1">
-    <!-- Mobile Header with Hamburger -->
-    <div
-      class="mobile-header bg-theme-surface border-theme-border sticky top-0 z-30 border-b px-4 py-3 md:hidden"
-    >
-      <button
-        type="button"
-        class="hamburger-btn text-theme-text-secondary hover:text-theme-text"
-        (click)="toggleMobileMenu()"
-        aria-label="Open menu"
-      >
-        <svg
-          class="h-6 w-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
-      </button>
-    </div>
-
     <!-- Content Projection -->
     <div class="content-wrapper">
       <ng-content></ng-content>

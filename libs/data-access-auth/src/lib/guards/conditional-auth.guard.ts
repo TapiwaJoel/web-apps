@@ -40,7 +40,8 @@ export const requiredAuthGuard: CanActivateFn = (route, state) => {
   const authService: AuthService = inject(AuthService);
   const router: Router = inject(Router);
 
-  const isAuthenticated: boolean = authService.isAuthenticated();
+  // Use isAuthenticatedValue() method instead of calling the computed signal
+  const isAuthenticated: boolean = authService.isAuthenticatedValue();
 
   if (isAuthenticated) {
     return true;

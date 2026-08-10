@@ -6,12 +6,14 @@ interface RemoteConfig {
 interface Environment {
   production: boolean;
   defaultTheme: 'default' | 'admin' | 'umdzidzisi' | 'umtengesi';
+  landingApp?: string;
   remotes: Record<string, RemoteConfig>;
 }
 
 export const environment: Environment = {
   production: false,
   defaultTheme: 'umdzidzisi' as 'default' | 'umdzidzisi' | 'umtengesi',
+  landingApp: 'umdzidzisi-admin',
   remotes: {
     'umdzidzisi-website': {
       url: 'http://localhost:4201/remoteEntry.json',

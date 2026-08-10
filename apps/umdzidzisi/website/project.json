@@ -24,6 +24,7 @@
     },
     "serve": {
       "executor": "@angular-architects/native-federation:build",
+      "continuous": true,
       "options": {
         "target": "umdzidzisi-website:serve-original:development",
         "rebuildDelay": 500,

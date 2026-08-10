@@ -1,0 +1,79 @@
+<div class="search-pill">
+  <!-- Scope selector: which entity (→ which API) the query targets -->
+  <button
+    type="button"
+    class="scope-trigger"
+    aria-label="Search scope"
+    [attr.aria-expanded]="isScopeOpen()"
+    cdkOverlayOrigin
+    #scopeOrigin="cdkOverlayOrigin"
+    (click)="toggleScope()"
+  >
+    <i [class]="selectedScope().icon" class="scope-icon" aria-hidden="true"></i>
+    <span class="scope-label">{{ selectedScope().label }}</span>
+    <i class="fi fi-rr-angle-small-down scope-caret" aria-hidden="true"></i>
+  </button>
+
+  <span class="scope-divider" aria-hidden="true"></span>
+
+  <!-- Query input -->
+  <label class="search-field">
+    <input
+      #searchInput
+      type="search"
+      class="search-input"
+      [placeholder]="placeholder()"
+      [attr.aria-label]="placeholder()"
+      (keydown)="onSearchKeydown($event)"
+    />
+  </label>
+
+  <!-- Right cluster: search icon then the ⌘K keycap -->
+  <i class="fi fi-rr-search search-icon" aria-hidden="true"></i>
+  <kbd class="search-kbd" aria-hidden="true">{{ shortcutLabel }}</kbd>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="scopeOrigin"
+  [cdkConnectedOverlayOpen]="isScopeOpen()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPositions]="[
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+  ]"
+  (backdropClick)="closeScope()"
+  (overlayOutsideClick)="closeScope()"
+  (detach)="closeScope()"
+>
+  <div
+    class="scope-panel"
+    role="listbox"
+    aria-label="Search in"
+    (keydown.escape)="closeScope()"
+  >
+    <p class="scope-panel-title">Search in</p>
+    @for (scope of scopes; track trackByScope($index, scope)) {
+      <button
+        type="button"
+        role="option"
+        class="scope-option"
+        [class.scope-option-active]="isActive(scope)"
+        [attr.aria-selected]="isActive(scope)"
+        (click)="selectScope(scope)"
+      >
+        <i [class]="scope.icon" class="scope-option-icon" aria-hidden="true"></i>
+        <span class="scope-option-label">{{ scope.label }}</span>
+        @if (isActive(scope)) {
+          <i class="fi fi-rr-check scope-option-check" aria-hidden="true"></i>
+        }
+      </button>
+    }
+  </div>
+</ng-template>
