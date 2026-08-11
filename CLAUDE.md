@@ -21,3 +21,13 @@
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
+
+# Project Conventions
+
+## Testing
+- Do NOT write `.spec.ts` unit test files. UI is covered by end-to-end (e2e) testing
+  (Playwright, under `apps/e2e/**`). If a generator scaffolds a `.spec.ts`, delete it.
+
+## Styling
+- Use **SCSS**, never plain CSS. All stylesheets are `.scss` (component `styleUrl`s point to
+  `.scss`, global styles are `.scss`). If a `.css` file is generated, convert it to `.scss`.
