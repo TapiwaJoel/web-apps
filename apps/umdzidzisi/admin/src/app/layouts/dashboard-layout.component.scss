@@ -1,0 +1,5 @@
+// Off-white surround fills the whole content column (covers the shared white
+// .main-content) so the white panel below can curve against it (see designs/img_3.png).
+.dashboard-surround {
+  background-color: var(--theme-sidebar-bg, #f7f7f9);
+}

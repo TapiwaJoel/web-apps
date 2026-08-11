@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   output,
   OutputEmitterRef,
   signal,
@@ -30,7 +31,7 @@ import {
 })
 export class ChangePasswordDialogComponent {
   /** Emitted when the dialog should close (cancel, backdrop, escape, or after success). */
-  public readonly close: OutputEmitterRef<void> = output<void>();
+  public readonly closed: OutputEmitterRef<void> = output<void>();
 
   /** True briefly after a valid submit, showing the success confirmation. */
   protected readonly submitted: WritableSignal<boolean> = signal(false);
@@ -42,18 +43,16 @@ export class ChangePasswordDialogComponent {
     confirm: boolean;
   }> = signal({ current: false, next: false, confirm: false });
 
-  protected readonly form: FormGroup;
+  private readonly fb: FormBuilder = inject(FormBuilder);
 
-  constructor(private readonly fb: FormBuilder) {
-    this.form = this.fb.group(
-      {
-        currentPassword: ['', [Validators.required]],
-        newPassword: ['', [Validators.required, Validators.minLength(8)]],
-        confirmPassword: ['', [Validators.required]],
-      },
-      { validators: [ChangePasswordDialogComponent.passwordsMatch] },
-    );
-  }
+  protected readonly form: FormGroup = this.fb.group(
+    {
+      currentPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    { validators: [ChangePasswordDialogComponent.passwordsMatch] },
+  );
 
   /** Form-level validator: new and confirm must match. */
   private static passwordsMatch(
@@ -83,10 +82,10 @@ export class ChangePasswordDialogComponent {
     }
     // Dummy submit: show inline success, then close.
     this.submitted.set(true);
-    setTimeout((): void => this.close.emit(), 1100);
+    setTimeout((): void => this.closed.emit(), 1100);
   }
 
   protected onCancel(): void {
-    this.close.emit();
+    this.closed.emit();
   }
 }

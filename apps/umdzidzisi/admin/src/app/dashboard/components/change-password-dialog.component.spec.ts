@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormGroup } from '@angular/forms';
 import { ChangePasswordDialogComponent } from './change-password-dialog.component';
 
 describe('ChangePasswordDialogComponent', () => {
@@ -11,11 +12,11 @@ describe('ChangePasswordDialogComponent', () => {
   });
 
   it('keeps the submit button disabled until the form is valid and matching', () => {
-    const submit = (): HTMLButtonElement =>
+    const submit: () => HTMLButtonElement = (): HTMLButtonElement =>
       fixture.nativeElement.querySelector('.cpw-btn-primary');
     expect(submit().disabled).toBe(true);
 
-    const form = fixture.componentInstance['form'];
+    const form: FormGroup = fixture.componentInstance['form'];
     form.setValue({
       currentPassword: 'oldpass1',
       newPassword: 'newpass12',
@@ -29,9 +30,9 @@ describe('ChangePasswordDialogComponent', () => {
     expect(submit().disabled).toBe(false); // valid + matching
   });
 
-  it('emits close after a valid submit', (done) => {
-    fixture.componentInstance.close.subscribe(() => done());
-    const form = fixture.componentInstance['form'];
+  it('emits closed after a valid submit', (done) => {
+    fixture.componentInstance.closed.subscribe(() => done());
+    const form: FormGroup = fixture.componentInstance['form'];
     form.setValue({
       currentPassword: 'oldpass1',
       newPassword: 'newpass12',

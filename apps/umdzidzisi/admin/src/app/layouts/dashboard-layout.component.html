@@ -9,9 +9,9 @@
 >
   <!-- Off-white surround fills the whole content column (covers the shared white
        .main-content) so the white panel below can curve against it (see designs/img_3.png). -->
-  <div class="flex min-h-full flex-col" style="background-color: var(--theme-sidebar-bg, #f7f7f9)">
+  <div class="dashboard-surround flex min-h-full flex-col">
     <!-- Search/header stays on the off-white, sticky at the top -->
-    <div class="sticky top-0 z-20 px-6 pt-6" style="background-color: var(--theme-sidebar-bg, #f7f7f9)">
+    <div class="dashboard-surround sticky top-0 z-20 px-6 pt-6">
       <org-dashboard-topbar
         userName="Umdzidzisi Admin"
         (logout)="logout()"
@@ -26,5 +26,5 @@
 </org-sidebar-layout>
 
 @if (changePasswordOpen()) {
-  <org-change-password-dialog (close)="changePasswordOpen.set(false)" />
+  <org-change-password-dialog (closed)="changePasswordOpen.set(false)" />
 }

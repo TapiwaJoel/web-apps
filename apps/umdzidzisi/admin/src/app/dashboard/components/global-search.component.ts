@@ -38,7 +38,7 @@ export class GlobalSearchComponent {
   private readonly router: Router = inject(Router);
 
   /** Emitted on submit so a future service can run the actual search. */
-  public readonly search: OutputEmitterRef<{
+  public readonly searched: OutputEmitterRef<{
     scope: SearchScopeId;
     query: string;
   }> = output<{ scope: SearchScopeId; query: string }>();
@@ -106,7 +106,7 @@ export class GlobalSearchComponent {
       return;
     }
     const scope: SearchScope = this.selectedScope();
-    this.search.emit({ scope: scope.id, query });
+    this.searched.emit({ scope: scope.id, query });
     this.router.navigate([scope.route], { queryParams: { q: query } });
   }
 

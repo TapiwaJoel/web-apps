@@ -30,6 +30,7 @@ import {
     ChangePasswordDialogComponent,
   ],
   templateUrl: './dashboard-layout.component.html',
+  styleUrl: './dashboard-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardLayoutComponent {

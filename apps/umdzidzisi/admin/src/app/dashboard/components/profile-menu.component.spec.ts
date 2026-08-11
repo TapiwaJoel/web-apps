@@ -23,7 +23,7 @@ describe('ProfileMenuComponent', () => {
   });
 
   it('emits changePassword when the item is chosen', () => {
-    let changed = false;
+    let changed: boolean = false;
     fixture.componentInstance.changePassword.subscribe(() => (changed = true));
 
     (fixture.nativeElement.querySelector('.profile-trigger') as HTMLButtonElement).click();

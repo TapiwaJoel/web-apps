@@ -58,13 +58,13 @@ export class ThemeSwitcherComponent implements OnDestroy {
       ? matchMedia('(prefers-color-scheme: dark)')
       : null;
 
-  private readonly onSystemChange = (): void => {
+  private readonly onSystemChange: () => void = (): void => {
     if (this.mode() === 'system') {
       this.apply('system');
     }
   };
 
-  constructor() {
+  public constructor() {
     this.darkQuery?.addEventListener('change', this.onSystemChange);
   }
 

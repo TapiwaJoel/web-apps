@@ -6,9 +6,9 @@
  */
 export type ThemeMode = 'light' | 'dark' | 'system';
 
-export const LIGHT_THEME = 'umdzidzisi';
-export const DARK_THEME = 'umdzidzisi-dark';
-const STORAGE_KEY = 'umdzidzisi-theme-mode';
+export const LIGHT_THEME: string = 'umdzidzisi';
+export const DARK_THEME: string = 'umdzidzisi-dark';
+const STORAGE_KEY: string = 'umdzidzisi-theme-mode';
 
 const MODES: ReadonlySet<ThemeMode> = new Set<ThemeMode>([
   'light',

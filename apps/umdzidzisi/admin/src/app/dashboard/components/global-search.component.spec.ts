@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { provideRouter } from '@angular/router';
+import type { MockInstance } from 'vitest';
 import { GlobalSearchComponent } from './global-search.component';
 
 describe('GlobalSearchComponent', () => {
@@ -50,9 +51,12 @@ describe('GlobalSearchComponent', () => {
   });
 
   it('emits and navigates to the scope route with ?q on submit', () => {
-    const navSpy = spyOn(router, 'navigate');
+    const navSpy: MockInstance<Router['navigate']> = spyOn(
+      router,
+      'navigate',
+    );
     let emitted: { scope: string; query: string } | undefined;
-    fixture.componentInstance.search.subscribe((e) => (emitted = e));
+    fixture.componentInstance.searched.subscribe((e) => (emitted = e));
 
     const input: HTMLInputElement =
       fixture.nativeElement.querySelector('.search-input');
@@ -68,7 +72,10 @@ describe('GlobalSearchComponent', () => {
   });
 
   it('does not submit an empty query', () => {
-    const navSpy = spyOn(router, 'navigate');
+    const navSpy: MockInstance<Router['navigate']> = spyOn(
+      router,
+      'navigate',
+    );
     const input: HTMLInputElement =
       fixture.nativeElement.querySelector('.search-input');
     input.value = '   ';
