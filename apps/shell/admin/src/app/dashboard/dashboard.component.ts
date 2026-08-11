@@ -16,7 +16,7 @@ export class DashboardComponent {
   /**
    * Navigation menu structure
    */
-  navigationNodes: TreeNavNode[] = [
+  public navigationNodes: TreeNavNode[] = [
     {
       id: 'starred',
       label: 'Starred',
