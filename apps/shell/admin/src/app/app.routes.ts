@@ -4,7 +4,7 @@ import {
   noAuthGuard,
   optionalAuthGuard,
   requiredAuthGuard,
-} from '@mushaviri/data-access';
+} from '@mushaviri/api';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 import { AppConfigService } from './services/app-config.service';
 import { environment } from '../environments/environment';
@@ -144,7 +144,8 @@ export const appRoutes: Routes = [
     // Land directly on the configured app (tenant configs) or the app-selector
     // (default shell config). See AppConfigService.getLandingApp().
     redirectTo: (): string => {
-      const landingApp: string | null = inject(AppConfigService).getLandingApp();
+      const landingApp: string | null =
+        inject(AppConfigService).getLandingApp();
       return landingApp ? `/${landingApp}` : '/app-selector';
     },
   },

@@ -6,7 +6,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from './app.routes';
-import { authInterceptor, AuthService } from '@mushaviri/data-access';
+import { authInterceptor, AuthService } from '@mushaviri/api';
 import { ENVIRONMENT } from '@mushaviri/util';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';

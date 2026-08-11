@@ -32,7 +32,7 @@ export default withNativeFederation({
         },
       },
     ),
-    '@mushaviri/data-access': {
+    '@mushaviri/api': {
       singleton: true,
       strictVersion: true,
       requiredVersion: 'auto',

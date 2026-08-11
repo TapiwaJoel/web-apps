@@ -15,9 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mushaviri/data-access": ["./libs/data-access/src/index.ts"],
       "@mushaviri/ui": ["./libs/ui/src/index.ts"],
-      "@mushaviri/util": ["./libs/util/src/index.ts"]
+      "@mushaviri/util": ["./libs/util/src/index.ts"],
+      "@mushaviri/api": ["./libs/api/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
