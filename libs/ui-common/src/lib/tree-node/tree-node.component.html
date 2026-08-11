@@ -7,19 +7,16 @@
 >
   <!-- Node Content -->
   <div
-    class="tree-node-content group flex cursor-pointer items-center px-3 py-4"
-    style="
-      gap: 0.625rem;
-      border-radius: 8px;
-      transition:
-        color 0.18s ease,
-        background-color 0.18s ease;
-    "
+    class="tree-node-content tree-node-content-inline group flex cursor-pointer items-center px-3 py-4"
+    role="button"
+    tabindex="0"
+    [attr.aria-expanded]="hasChildren ? expanded : null"
     [class.tree-node-disabled]="node.disabled"
     [class.has-connector]="level > 0"
     [class.tree-node-active]="(node.route && rla?.isActive) || node.active"
     [class]="node.cssClass"
     (click)="toggleExpanded()"
+    (keydown.enter)="toggleExpanded()"
     [routerLink]="node.route || null"
     routerLinkActive
     #rla="routerLinkActive"
@@ -32,14 +29,9 @@
     @if (showIcons && node.icon && shouldShowIcon) {
       <span
         class="tree-node-icon-container inline-flex h-5 w-5 flex-shrink-0 items-center justify-center"
-        [style.background-color]="node.iconBg || null"
         [class.has-bg]="!!node.iconBg"
       >
-        <i
-          [class]="node.icon"
-          class="tree-node-icon"
-          [style.color]="node.iconBg ? node.iconColor || '#FFFFFF' : null"
-        ></i>
+        <i [class]="node.icon" class="tree-node-icon"></i>
       </span>
     }
 
@@ -128,14 +120,14 @@
       <div class="tree-node-connector"></div>
 
       @for (child of node.children; track trackByFn($index, child)) {
-        <mushaviri-tree-node
+        <org-tree-node
           [node]="child"
           [level]="level + 1"
           [expanded]="child.expanded || false"
           [showIcons]="showIcons"
           [showBadges]="showBadges"
           [collapsible]="collapsible"
-        ></mushaviri-tree-node>
+        ></org-tree-node>
       }
     </div>
   }

@@ -1,4 +1,4 @@
-<mushaviri-sidebar-layout
+<org-sidebar-layout
   [railNodes]="railConfig"
   [railFooterNodes]="railFooterConfig"
   [navigationNodes]="navConfig"
@@ -23,7 +23,7 @@
       <router-outlet></router-outlet>
     </div>
   </div>
-</mushaviri-sidebar-layout>
+</org-sidebar-layout>
 
 @if (changePasswordOpen()) {
   <org-change-password-dialog (close)="changePasswordOpen.set(false)" />

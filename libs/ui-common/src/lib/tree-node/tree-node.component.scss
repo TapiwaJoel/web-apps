@@ -28,6 +28,15 @@
     opacity: 0.6;
   }
 
+  // Static layout previously inlined via `style="..."` on the content row.
+  &-content-inline {
+    gap: 0.625rem;
+    border-radius: 8px;
+    transition:
+      color 0.18s ease,
+      background-color 0.18s ease;
+  }
+
   &-content {
     position: relative;
     color: var(--theme-text-color);
@@ -107,9 +116,13 @@
     }
   }
 
-  // Leading glyph — small, monochrome, no circular container by default
+  // Leading glyph — small, monochrome, no circular container by default.
+  // Per-node colours arrive as host CSS custom properties (set in the
+  // component class via @HostBinding) rather than template style bindings,
+  // since @angular-eslint/template/no-inline-styles bans style bindings.
   &-icon-container {
     color: var(--theme-text-secondary);
+    background-color: var(--tree-node-icon-bg, transparent);
 
     &.has-bg {
       width: 1.5rem;
@@ -124,7 +137,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: inherit;
+    color: var(--tree-node-icon-color, inherit);
     transition: color 0.18s ease;
   }
 

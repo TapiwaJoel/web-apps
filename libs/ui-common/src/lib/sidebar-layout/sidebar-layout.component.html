@@ -6,29 +6,32 @@
   >
     <!-- Collapse/expand toggle: a chevron chip on the sidebar's right edge that
          reveals on hover (Linear/Notion style). Stays visible when collapsed. -->
-    <button
-      *ngIf="collapsible"
-      type="button"
-      class="sidebar-edge-toggle hidden md:flex"
-      (click)="toggleSidebar()"
-      [attr.aria-label]="isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-      [attr.aria-expanded]="!isCollapsed()"
-    >
-      <svg
-        class="h-3.5 w-3.5"
-        [class.rotate-180]="isCollapsed()"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+    @if (collapsible) {
+      <button
+        type="button"
+        class="sidebar-edge-toggle hidden md:flex"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="
+          isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'
+        "
+        [attr.aria-expanded]="!isCollapsed()"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2.5"
-          d="M15 19l-7-7 7-7"
-        />
-      </svg>
-    </button>
+        <svg
+          class="h-3.5 w-3.5"
+          [class.rotate-180]="isCollapsed()"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </button>
+    }
 
     <!-- Topbar (spans rail + tree) -->
     <div
@@ -38,31 +41,31 @@
       <div
         class="sidebar-logo flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg"
       >
-        <img
-          *ngIf="logoUrl; else logoPlaceholder"
-          [src]="logoUrl"
-          [alt]="brandName || 'Logo'"
-          class="h-10 w-10 object-contain"
-        />
-        <ng-template #logoPlaceholder>
+        @if (logoUrl) {
+          <img
+            [src]="logoUrl"
+            [alt]="brandName || 'Logo'"
+            class="h-10 w-10 object-contain"
+          />
+        } @else {
           <span
-            class="text-theme-text flex h-full w-full items-center justify-center rounded-lg text-lg font-semibold"
-            [style.background-color]="'color-mix(in srgb, var(--theme-primary-color) 10%, transparent)'"
+            class="sidebar-logo-placeholder text-theme-text flex h-full w-full items-center justify-center rounded-lg text-lg font-semibold"
           >
             {{ brandName?.charAt(0) || 'M' }}
           </span>
-        </ng-template>
+        }
       </div>
 
       <!-- Brand name sits over the tree column -->
-      <div
-        *ngIf="!isCollapsed()"
-        class="sidebar-brand-name ml-3 flex min-w-0 flex-1 items-center"
-      >
-        <span class="text-theme-text truncate text-sm font-semibold">
-          {{ brandName || 'Dashboard' }}
-        </span>
-      </div>
+      @if (!isCollapsed()) {
+        <div
+          class="sidebar-brand-name ml-3 flex min-w-0 flex-1 items-center"
+        >
+          <span class="text-theme-text truncate text-sm font-semibold">
+            {{ brandName || 'Dashboard' }}
+          </span>
+        </div>
+      }
 
     </div>
 
@@ -100,12 +103,12 @@
               [cdkConnectedOverlayOpen]="flyoutOpenFor(item)"
               [cdkConnectedOverlayPositions]="flyoutPositions"
             >
-              <mushaviri-rail-flyout
+              <org-rail-flyout
                 [node]="item"
                 (navigate)="closeFlyout()"
                 (mouseenter)="cancelClose()"
                 (mouseleave)="scheduleClose()"
-              ></mushaviri-rail-flyout>
+              ></org-rail-flyout>
             </ng-template>
           }
 
@@ -138,12 +141,12 @@
                 [cdkConnectedOverlayOpen]="flyoutOpenFor(item)"
                 [cdkConnectedOverlayPositions]="flyoutPositions"
               >
-                <mushaviri-rail-flyout
+                <org-rail-flyout
                   [node]="item"
                   (navigate)="closeFlyout()"
                   (mouseenter)="cancelClose()"
                   (mouseleave)="scheduleClose()"
-                ></mushaviri-rail-flyout>
+                ></org-rail-flyout>
               </ng-template>
             }
           } @else {
@@ -154,53 +157,51 @@
 
       <!-- Tree panel -->
       <aside
-        class="sidebar flex min-w-0 flex-1 flex-col"
-        style="background-color: var(--theme-sidebar-bg, #f7f7f9)"
-        [style.width]="currentSidebarWidth"
+        class="sidebar sidebar-panel flex min-w-0 flex-1 flex-col"
       >
         <!-- Navigation (removed from the DOM when collapsed to an icon rail) -->
-        <div
-          *ngIf="!railOnlyCollapsed"
-          class="sidebar-content flex-1 overflow-hidden"
-        >
-          <mushaviri-tree-navigation
-            [nodes]="navigationNodes"
-            [config]="navigationConfig || {}"
-          ></mushaviri-tree-navigation>
-        </div>
+        @if (!railOnlyCollapsed) {
+          <div class="sidebar-content flex-1 overflow-hidden">
+            <org-tree-navigation
+              [nodes]="navigationNodes"
+              [config]="navigationConfig || {}"
+            ></org-tree-navigation>
+          </div>
+        }
 
         <!-- Footer (Toggle Button) — only for the rail-less layout. When a rail
              exists it owns the toggle (see the rail footer above), so this is
              suppressed to avoid a duplicate control. -->
-        <div
-          *ngIf="collapsible && !hasRail"
-          class="sidebar-footer border-theme-border hidden items-center justify-center border-t p-4 md:flex"
-        >
-          <button
-            type="button"
-            class="sidebar-toggle-btn text-theme-text-secondary hover:text-theme-primary flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
-            (click)="toggleSidebar()"
-            [attr.aria-label]="
-              isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'
-            "
-            [attr.aria-expanded]="!isCollapsed()"
+        @if (collapsible && !hasRail) {
+          <div
+            class="sidebar-footer border-theme-border hidden items-center justify-center border-t p-4 md:flex"
           >
-            <svg
-              class="h-5 w-5 transition-transform duration-300"
-              [class.rotate-180]="isCollapsed()"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <button
+              type="button"
+              class="sidebar-toggle-btn text-theme-text-secondary hover:text-theme-primary flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
+              (click)="toggleSidebar()"
+              [attr.aria-label]="
+                isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'
+              "
+              [attr.aria-expanded]="!isCollapsed()"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-              />
-            </svg>
-          </button>
-        </div>
+              <svg
+                class="h-5 w-5 transition-transform duration-300"
+                [class.rotate-180]="isCollapsed()"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                />
+              </svg>
+            </button>
+          </div>
+        }
       </aside>
     </div>
   </div>

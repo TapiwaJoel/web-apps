@@ -5,8 +5,8 @@ import {
   signal,
   WritableSignal,
   OnDestroy,
+  HostBinding,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { OverlayModule, ConnectedPosition } from '@angular/cdk/overlay';
 import { TreeNavigationComponent } from '../tree-navigation/tree-navigation.component';
@@ -17,10 +17,9 @@ import {
 } from '../tree-navigation/tree-navigation.model';
 
 @Component({
-  selector: 'mushaviri-sidebar-layout',
+  selector: 'org-sidebar-layout',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     OverlayModule,
     TreeNavigationComponent,
@@ -202,5 +201,17 @@ export class SidebarLayoutComponent implements OnDestroy {
       return '0';
     }
     return this.isCollapsed() ? this.sidebarCollapsedWidth : this.sidebarWidth;
+  }
+
+  /**
+   * Exposes the tree-panel width as a host CSS custom property so the
+   * `<aside>` in the template can consume it via `var(...)` instead of a
+   * `[style.width]` binding (banned by
+   * @angular-eslint/template/no-inline-styles). Consumed by `.sidebar-panel`
+   * in the stylesheet.
+   */
+  @HostBinding('style.--sidebar-panel-width')
+  public get sidebarPanelWidthVar(): string {
+    return this.currentSidebarWidth;
   }
 }

@@ -10,7 +10,7 @@ import { RouterModule } from '@angular/router';
 import { TreeNavNode } from '../tree-navigation/tree-navigation.model';
 
 @Component({
-  selector: 'mushaviri-rail-flyout',
+  selector: 'org-rail-flyout',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './rail-flyout.component.html',

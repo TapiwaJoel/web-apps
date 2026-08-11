@@ -4,13 +4,14 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
+  HostBinding,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TreeNavNode } from '../tree-navigation/tree-navigation.model';
 
 @Component({
-  selector: 'mushaviri-tree-node',
+  selector: 'org-tree-node',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './tree-node.component.html',
@@ -85,6 +86,26 @@ export class TreeNodeComponent {
    */
   public get shouldShowIcon(): boolean {
     return this.level === 0 || !!this.node.iconBg;
+  }
+
+  /**
+   * Icon background colour, exposed as a host CSS custom property so the
+   * template never needs a `style`/`[style.*]` binding (banned by
+   * @angular-eslint/template/no-inline-styles). Consumed by
+   * `.tree-node-icon-container` in the stylesheet.
+   */
+  @HostBinding('style.--tree-node-icon-bg')
+  public get iconBgVar(): string | null {
+    return this.node?.iconBg || null;
+  }
+
+  /**
+   * Icon glyph colour (only meaningful when an iconBg is set — mirrors the
+   * previous inline `[style.color]` logic). Consumed by `.tree-node-icon`.
+   */
+  @HostBinding('style.--tree-node-icon-color')
+  public get iconColorVar(): string | null {
+    return this.node?.iconBg ? this.node.iconColor || '#FFFFFF' : null;
   }
 
   /**

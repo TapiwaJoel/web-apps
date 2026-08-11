@@ -8,13 +8,13 @@ import { UMTENGESI_ADMIN_NAV_CONFIG, USER_MENU_CONFIG } from '../config/navigati
   standalone: true,
   imports: [SidebarLayoutComponent, RouterOutlet],
   template: `
-    <mushaviri-sidebar-layout
+    <org-sidebar-layout
       [navigationNodes]="navConfig"
       brandName="Umtengesi Admin"
       [collapsible]="true"
     >
       <router-outlet></router-outlet>
-    </mushaviri-sidebar-layout>
+    </org-sidebar-layout>
   `,
 })
 export class DashboardLayoutComponent {

@@ -182,9 +182,27 @@
   min-height: 0;
 }
 
+// Logo placeholder: subtle tint of the theme primary colour behind the
+// brand initial when no logoUrl is provided.
+.sidebar-logo-placeholder {
+  background-color: color-mix(
+    in srgb,
+    var(--theme-primary-color) 10%,
+    transparent
+  );
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
+
+  // Tree panel background + dynamic width, moved out of `style`/`[style.*]`
+  // bindings. The width comes from a host CSS custom property set in the
+  // component class (@HostBinding), since it changes with collapsed state.
+  &-panel {
+    background-color: var(--theme-sidebar-bg, #f7f7f9);
+    width: var(--sidebar-panel-width);
+  }
 
   // Collapsing to an icon rail is handled structurally: the tree content is
   // removed from the DOM (*ngIf="!railOnlyCollapsed") and the panel width goes
