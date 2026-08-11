@@ -8,13 +8,13 @@ import {
   UserPermissionsResponseDto,
   WebAuthenticationResponseDto,
 } from '../dtos';
-import { ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
+  ServiceResponse,
+  USER_MANAGEMENT_PATH,
   buildUrl,
   mapHttpError,
-  USER_MANAGEMENT_PATH,
-} from '../../core';
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {

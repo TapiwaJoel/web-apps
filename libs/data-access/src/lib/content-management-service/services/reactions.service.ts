@@ -11,13 +11,13 @@ import {
   ReactionTypeMetadataDto,
   RemoveReactionDto,
 } from '../dtos';
-import { ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
+  CONTENT_MANAGEMENT_PATH,
+  ServiceResponse,
   buildUrl,
   mapHttpError,
-  CONTENT_MANAGEMENT_PATH,
-} from '../../core';
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class ReactionsService {

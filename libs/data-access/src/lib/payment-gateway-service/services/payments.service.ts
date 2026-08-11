@@ -8,15 +8,16 @@ import {
   PaymentResponseDto,
   PaynowStatusDto,
 } from '../dtos';
-import { PaginateResult, ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
+  HeaderPaginationParams,
+  PAYMENT_GATEWAY_PATH,
+  PaginateResult,
+  ServiceResponse,
   buildPaginationHeaders,
   buildUrl,
-  HeaderPaginationParams,
   mapHttpError,
-  PAYMENT_GATEWAY_PATH,
-} from '../../core';
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentsService {

@@ -1,4 +1,4 @@
-export { API_BASE_URL } from '../common';
+export { API_BASE_URL } from './api-base-url';
 
 /** First path segment the gateway uses to route to user-management-service. */
 export const USER_MANAGEMENT_PATH: string = 'user-management-service';

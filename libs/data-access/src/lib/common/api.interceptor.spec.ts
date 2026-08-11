@@ -5,7 +5,7 @@ import {
   HttpTestingController,
   TestRequest,
 } from '@angular/common/http/testing';
-import { API_BASE_URL } from '../common';
+import { API_BASE_URL } from './api-base-url';
 import { apiInterceptor } from './api.interceptor';
 
 describe('apiInterceptor', () => {

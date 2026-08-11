@@ -9,15 +9,13 @@ import {
   UpdateSubscriptionPlanDto,
 } from '../dtos';
 import {
+  API_BASE_URL,
+  LEARNING_MANAGEMENT_PATH,
   PaginateResult,
   ServiceResponse,
-} from '../../common';
-import {
-  API_BASE_URL,
   buildUrl,
-  LEARNING_MANAGEMENT_PATH,
   mapHttpError,
-} from '../../core';
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionPlansService {

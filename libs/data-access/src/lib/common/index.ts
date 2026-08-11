@@ -3,3 +3,8 @@ export * from './paginate-result';
 export * from './pagination-params';
 export * from './api-base-url';
 export * from './enums';
+export * from './api-config';
+export * from './build-url';
+export * from './build-pagination-headers';
+export * from './map-http-error';
+export * from './api.interceptor';

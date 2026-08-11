@@ -6,13 +6,13 @@ import {
   GetPaymentProvidersQueryDto,
   PaymentProviderResponseDto,
 } from '../dtos';
-import { ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
+  PAYMENT_GATEWAY_PATH,
+  ServiceResponse,
   buildUrl,
   mapHttpError,
-  PAYMENT_GATEWAY_PATH,
-} from '../../core';
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentProvidersService {

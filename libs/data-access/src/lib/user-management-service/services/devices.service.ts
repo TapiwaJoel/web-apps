@@ -4,15 +4,13 @@ import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { DeviceResponseDto } from '../dtos';
 import {
+  API_BASE_URL,
   PaginateResult,
   ServiceResponse,
-} from '../../common';
-import {
-  API_BASE_URL,
+  USER_MANAGEMENT_PATH,
   buildUrl,
   mapHttpError,
-  USER_MANAGEMENT_PATH,
-} from '../../core';
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class DevicesService {

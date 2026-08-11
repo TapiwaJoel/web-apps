@@ -8,15 +8,16 @@ import {
   StreamResponseDto,
   UpdateStreamDto,
 } from '../dtos';
-import { PaginateResult, ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
+  CONTENT_MANAGEMENT_PATH,
+  HeaderPaginationParams,
+  PaginateResult,
+  ServiceResponse,
   buildPaginationHeaders,
   buildUrl,
-  HeaderPaginationParams,
   mapHttpError,
-  CONTENT_MANAGEMENT_PATH,
-} from '../../core';
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class LiveStreamsService {

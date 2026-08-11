@@ -6,8 +6,13 @@ import {
   PushNotificationQueueResponseDto,
   SendPushNotificationDto,
 } from '../dtos';
-import { ServiceResponse } from '../../common';
-import { API_BASE_URL, buildUrl, mapHttpError, MESSAGING_PATH } from '../../core';
+import {
+  API_BASE_URL,
+  MESSAGING_PATH,
+  ServiceResponse,
+  buildUrl,
+  mapHttpError,
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class PushService {

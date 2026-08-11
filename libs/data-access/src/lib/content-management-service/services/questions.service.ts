@@ -8,13 +8,14 @@ import {
   QuestionResponseDto,
   UpdateQuestionDto,
 } from '../dtos';
-import { PaginateResult, ServiceResponse } from '../../common';
 import {
   API_BASE_URL,
+  CONTENT_MANAGEMENT_PATH,
+  PaginateResult,
+  ServiceResponse,
   buildUrl,
   mapHttpError,
-  CONTENT_MANAGEMENT_PATH,
-} from '../../core';
+} from '../../common';
 
 @Injectable({ providedIn: 'root' })
 export class QuestionsService {
