@@ -38,11 +38,6 @@ export default withNativeFederation({
       strictVersion: true,
       requiredVersion: 'auto',
     },
-    '@mushaviri/util-event-bus': {
-      singleton: true,
-      strictVersion: true,
-      requiredVersion: 'auto',
-    },
     '@mushaviri/util-theming': {
       singleton: true,
       strictVersion: true,
