@@ -5,7 +5,7 @@ import {
   inject,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ThemeService } from '@mushaviri/util-theming';
+import { ThemeService } from '@mushaviri/util';
 import {
   readMode,
   resolveTheme,

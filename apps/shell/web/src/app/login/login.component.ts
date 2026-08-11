@@ -12,7 +12,7 @@ import { AuthService } from '@mushaviri/data-access';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SmartNavigationService } from '../services/smart-navigation.service';
-import { Theme, ThemeService } from '@mushaviri/util-theming';
+import { Theme, ThemeService } from '@mushaviri/util';
 
 @Component({
   selector: 'org-login',

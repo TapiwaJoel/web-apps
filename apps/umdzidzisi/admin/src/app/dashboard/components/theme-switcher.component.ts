@@ -9,7 +9,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ThemeService } from '@mushaviri/util-theming';
+import { ThemeService } from '@mushaviri/util';
 import {
   readMode,
   resolveTheme,

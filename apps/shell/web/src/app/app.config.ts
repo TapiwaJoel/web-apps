@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from './app.routes';
 import { authInterceptor } from '@mushaviri/data-access';
-import { ENVIRONMENT } from '@mushaviri/util-theming';
+import { ENVIRONMENT } from '@mushaviri/util';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {

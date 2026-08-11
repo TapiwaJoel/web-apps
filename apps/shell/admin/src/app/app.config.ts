@@ -7,7 +7,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from './app.routes';
 import { authInterceptor, AuthService } from '@mushaviri/data-access';
-import { ENVIRONMENT } from '@mushaviri/util-theming';
+import { ENVIRONMENT } from '@mushaviri/util';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -16,7 +16,9 @@ import { Observable } from 'rxjs';
  * This prevents the race condition where route guards check auth before
  * the user is restored from localStorage on page reload.
  */
-export function initializeAuth(authService: AuthService): () => Observable<boolean> {
+export function initializeAuth(
+  authService: AuthService,
+): () => Observable<boolean> {
   return () => authService.checkAuth();
 }
 
