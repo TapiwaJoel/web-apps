@@ -1,7 +1,7 @@
 {
-  "name": "ui-common",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/ui-common/src",
+  "name": "ui",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ui/src",
   "prefix": "org",
   "projectType": "library",
   "tags": ["scope:shared", "type:ui"],

@@ -2,12 +2,17 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AppSelectorComponent } from '../components/app-selector/app-selector.component';
-import { SidebarLayoutComponent, TreeNavNode } from '@mushaviri/ui-common';
+import { SidebarLayoutComponent, TreeNavNode } from '@mushaviri/ui';
 
 @Component({
   selector: 'org-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, AppSelectorComponent, SidebarLayoutComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    AppSelectorComponent,
+    SidebarLayoutComponent,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

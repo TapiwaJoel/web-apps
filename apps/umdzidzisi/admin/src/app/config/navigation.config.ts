@@ -1,4 +1,4 @@
-import { TreeNavNode } from '@mushaviri/ui-common';
+import { TreeNavNode } from '@mushaviri/ui';
 
 /**
  * Icon-rail configuration (the thin left column of circular buttons).

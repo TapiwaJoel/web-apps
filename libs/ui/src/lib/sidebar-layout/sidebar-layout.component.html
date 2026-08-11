@@ -34,9 +34,7 @@
     }
 
     <!-- Topbar (spans rail + tree) -->
-    <div
-      class="sidebar-topbar flex items-center p-4"
-    >
+    <div class="sidebar-topbar flex items-center p-4">
       <!-- Logo sits over the rail column -->
       <div
         class="sidebar-logo flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg"
@@ -58,15 +56,12 @@
 
       <!-- Brand name sits over the tree column -->
       @if (!isCollapsed()) {
-        <div
-          class="sidebar-brand-name ml-3 flex min-w-0 flex-1 items-center"
-        >
+        <div class="sidebar-brand-name ml-3 flex min-w-0 flex-1 items-center">
           <span class="text-theme-text truncate text-sm font-semibold">
             {{ brandName || 'Dashboard' }}
           </span>
         </div>
       }
-
     </div>
 
     <!-- Body: rail + tree columns -->
@@ -156,9 +151,7 @@
       }
 
       <!-- Tree panel -->
-      <aside
-        class="sidebar sidebar-panel flex min-w-0 flex-1 flex-col"
-      >
+      <aside class="sidebar sidebar-panel flex min-w-0 flex-1 flex-col">
         <!-- Navigation (removed from the DOM when collapsed to an icon rail) -->
         @if (!railOnlyCollapsed) {
           <div class="sidebar-content flex-1 overflow-hidden">

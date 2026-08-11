@@ -95,7 +95,10 @@
 
     // Brighten + thicken the horizontal tick so the branch reads as "lit".
     &.has-connector::before {
-      background-color: var(--theme-highlight-color, var(--theme-primary-color));
+      background-color: var(
+        --theme-highlight-color,
+        var(--theme-primary-color)
+      );
       opacity: 1;
       height: 2px;
     }
@@ -111,7 +114,10 @@
       width: 0.5rem;
       height: 0.5rem;
       border-radius: 9999px;
-      background-color: var(--theme-highlight-color, var(--theme-primary-color));
+      background-color: var(
+        --theme-highlight-color,
+        var(--theme-primary-color)
+      );
       box-shadow: 0 0 0 2px #f7f7f9;
     }
   }

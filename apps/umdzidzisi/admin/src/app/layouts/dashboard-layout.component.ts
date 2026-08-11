@@ -10,7 +10,7 @@ import {
   SidebarLayoutComponent,
   TreeNavConfig,
   TreeNavNode,
-} from '@mushaviri/ui-common';
+} from '@mushaviri/ui';
 import { DashboardTopbarComponent } from '../dashboard/components/dashboard-topbar.component';
 import { ChangePasswordDialogComponent } from '../dashboard/components/change-password-dialog.component';
 import {

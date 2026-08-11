@@ -1,7 +1,7 @@
 {
-  "name": "util-theming",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/util-theming/src",
+  "name": "util",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/util/src",
   "prefix": "org",
   "projectType": "library",
   "tags": ["scope:shared", "type:util"],

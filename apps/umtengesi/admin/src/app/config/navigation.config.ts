@@ -1,4 +1,4 @@
-import { TreeNavNode } from '@mushaviri/ui-common';
+import { TreeNavNode } from '@mushaviri/ui';
 
 /**
  * Navigation configuration for Umtengesi Admin application

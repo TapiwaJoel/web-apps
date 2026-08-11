@@ -16,6 +16,3 @@ export * from './lib/rail-flyout/rail-flyout.component';
 
 // Models
 export * from './lib/tree-navigation/tree-navigation.model';
-
-// Legacy export
-export { UiCommonComponent } from './lib/ui-common/ui-common';

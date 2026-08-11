@@ -4,7 +4,7 @@ import angular from '@analogjs/vite-plugin-angular';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/libs/util-theming',
+  cacheDir: '../../../node_modules/.vite/libs/util',
   plugins: [angular({ tsconfig: './tsconfig.lib.json' })],
   resolve: {
     tsconfigPaths: true,
@@ -14,7 +14,7 @@ export default defineConfig(() => ({
   //   plugins: () => [ nxViteTsPaths() ],
   // },
   test: {
-    name: 'util-theming',
+    name: 'util',
     watch: false,
     globals: true,
     environment: 'jsdom',
@@ -22,7 +22,7 @@ export default defineConfig(() => ({
     setupFiles: ['src/test-setup.ts'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../../coverage/libs/util-theming',
+      reportsDirectory: '../../../coverage/libs/util',
       provider: 'v8' as const,
     },
   },
