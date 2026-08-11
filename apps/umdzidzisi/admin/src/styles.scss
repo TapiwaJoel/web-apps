@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 // Import theme styles - @use must come before @import
-@use '../../../../libs/util-theming/src/lib/styles/themes.scss';
+@use '../../../../libs/util/src/lib/styles/themes.scss';
 
 @import 'tailwindcss' layer(tailwindcss);
 @config '../../../../tailwind.config.js';

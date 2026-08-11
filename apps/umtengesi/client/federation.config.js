@@ -37,12 +37,12 @@ export default withNativeFederation({
       strictVersion: true,
       requiredVersion: 'auto',
     },
-    '@mushaviri/ui-common': {
+    '@mushaviri/ui': {
       singleton: true,
       strictVersion: true,
       requiredVersion: 'auto',
     },
-    '@mushaviri/util-theming': {
+    '@mushaviri/util': {
       singleton: true,
       strictVersion: true,
       requiredVersion: 'auto',
