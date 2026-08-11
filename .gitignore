@@ -53,3 +53,6 @@ vitest.config.*.timestamp*
 .nx/self-healing
 .nx/migrate-runs
 __screenshots__/
+
+# Native-federation generated tsconfig (regenerated on every build)
+apps/**/tsconfig.federation.json
