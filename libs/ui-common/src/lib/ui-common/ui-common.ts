@@ -4,7 +4,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   selector: 'org-ui-common',
   imports: [],
   templateUrl: './ui-common.html',
-  styleUrl: './ui-common.css',
+  styleUrl: './ui-common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiCommonComponent {}

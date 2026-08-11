@@ -4,7 +4,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   selector: 'org-util-theming',
   imports: [],
   templateUrl: './util-theming.html',
-  styleUrl: './util-theming.css',
+  styleUrl: './util-theming.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UtilThemingComponent {}
