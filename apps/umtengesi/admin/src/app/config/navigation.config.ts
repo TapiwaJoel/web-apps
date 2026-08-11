@@ -138,7 +138,7 @@ export const USER_MENU_CONFIG: TreeNavNode[] = [
     id: 'logout',
     label: 'Logout',
     icon: '🚪',
-    action: () => {
+    action: (): void => {
       // Logout action will be handled by component
       console.log('Logout clicked');
     },

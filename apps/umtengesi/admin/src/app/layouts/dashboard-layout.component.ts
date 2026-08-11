@@ -1,25 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { SidebarLayoutComponent } from '@mushaviri/ui-common';
+import { SidebarLayoutComponent, TreeNavNode } from '@mushaviri/ui-common';
 import { UMTENGESI_ADMIN_NAV_CONFIG, USER_MENU_CONFIG } from '../config/navigation.config';
 
 @Component({
-  selector: 'app-dashboard-layout',
+  selector: 'org-dashboard-layout',
   standalone: true,
   imports: [SidebarLayoutComponent, RouterOutlet],
-  template: `
-    <org-sidebar-layout
-      [navigationNodes]="navConfig"
-      brandName="Umtengesi Admin"
-      [collapsible]="true"
-    >
-      <router-outlet></router-outlet>
-    </org-sidebar-layout>
-  `,
+  templateUrl: './dashboard-layout.component.html',
 })
 export class DashboardLayoutComponent {
-  private router = inject(Router);
-  navConfig = [
+  private readonly router: Router = inject(Router);
+  public navConfig: TreeNavNode[] = [
     ...UMTENGESI_ADMIN_NAV_CONFIG,
     ...USER_MENU_CONFIG.map(item => ({
       ...item,
@@ -27,7 +19,7 @@ export class DashboardLayoutComponent {
     }))
   ];
 
-  logout() {
+  public logout(): void {
     // Handle logout
     this.router.navigate(['/login']);
   }
