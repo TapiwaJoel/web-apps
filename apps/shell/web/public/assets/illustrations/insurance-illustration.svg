@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PLACEHOLDER asset for the "insurance" theme - pending real artwork. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <title>Insurance</title>
+  <defs>
+    <linearGradient id="insurance-illo-canopy" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2bbfb4" />
+      <stop offset="100%" stop-color="#00a19a" />
+    </linearGradient>
+  </defs>
+
+  <!-- Scene furniture -->
+  <circle cx="250" cy="228" r="170" fill="#f8fafb" />
+  <ellipse cx="250" cy="400" rx="185" ry="34" fill="#e4ebf2" />
+
+  <!-- Shade pool under the canopy -->
+  <ellipse cx="250" cy="394" rx="112" ry="20" fill="#a8c4e0" opacity="0.45" />
+
+  <!-- Acacia trunk: flares at the base, leans slightly -->
+  <path d="M232 396 C233 358 238 320 243 292 L259 292 C263 320 268 358 269 396 Z" fill="#1e3a5f" />
+  <!-- Main Y split -->
+  <path d="M246 300 C234 276 218 254 200 234" fill="none" stroke="#1e3a5f" stroke-width="14" stroke-linecap="round" />
+  <path d="M256 300 C268 276 284 254 302 234" fill="none" stroke="#1e3a5f" stroke-width="14" stroke-linecap="round" />
+  <!-- Secondary branching toward the flat crown -->
+  <path d="M216 254 C208 242 202 232 198 222" fill="none" stroke="#1e3a5f" stroke-width="8" stroke-linecap="round" />
+  <path d="M284 254 C292 242 298 232 302 222" fill="none" stroke="#1e3a5f" stroke-width="8" stroke-linecap="round" />
+  <path d="M208 246 C192 238 178 232 166 228" fill="none" stroke="#1e3a5f" stroke-width="7" stroke-linecap="round" />
+  <path d="M292 246 C308 238 322 232 334 228" fill="none" stroke="#1e3a5f" stroke-width="7" stroke-linecap="round" />
+  <path d="M251 292 C251 264 251 240 251 216" fill="none" stroke="#1e3a5f" stroke-width="9" stroke-linecap="round" />
+
+  <!-- Secondary foliage clump, slightly overlapping the main crown for depth -->
+  <path d="M150 200 C168 178 200 172 226 180 C214 196 200 206 176 210 C162 212 152 208 150 200 Z" fill="#00a19a" opacity="0.55" />
+
+  <!-- Flat-topped acacia canopy: level top span, shoulders drop at the outer
+       thirds, tips taper, underside carries broad soft lobes.
+       Same shape language as the insurance logo canopy. -->
+  <path d="M78 209
+           C78 209 106 196 140 187
+           C164 166 190 156 216 155
+           L284 155
+           C310 156 336 166 360 187
+           C394 196 422 209 422 209
+           C422 209 388 205 356 210
+           C338 200 320 209 296 212
+           C278 214 264 209 250 209
+           C236 209 222 214 204 212
+           C180 209 162 200 144 210
+           C112 205 78 209 78 209 Z"
+        fill="url(#insurance-illo-canopy)" />
+  <!-- Level top ridge highlight along the flat span -->
+  <path d="M216 155 L284 155 C310 156 336 166 360 187 C334 171 308 164 284 163 L216 163 C192 164 166 171 140 187 C164 166 190 156 216 155 Z" fill="#2bbfb4" />
+  <!-- Under-canopy shade band following the lobed edge -->
+  <path d="M144 210 C162 200 180 209 204 212 C222 214 236 209 250 209 C264 209 278 214 296 212 C320 209 338 200 356 210 C330 219 294 224 250 224 C206 224 170 219 144 210 Z" fill="#00a19a" />
+
+  <!-- Seated figures in the shade, clear of the trunk -->
+  <!-- Figure A (navy) - left of trunk -->
+  <g fill="#1e3a5f">
+    <path d="M186 394 C186 372 195 358 208 358 C221 358 230 372 230 394 Z" />
+    <circle cx="208" cy="345" r="12" />
+  </g>
+  <!-- Figure B (muted navy) - right of trunk -->
+  <g fill="#3c5a7d">
+    <path d="M272 394 C272 374 280 362 291 362 C302 362 310 374 310 394 Z" />
+    <circle cx="291" cy="351" r="10" />
+  </g>
+
+  <!-- Sparse rain, well clear of the canopy footprint -->
+  <path d="M56 262 C56 262 48 274 48 280 A8 8 0 0 0 64 280 C64 274 56 262 56 262 Z" fill="#7fa8d4" />
+  <path d="M74 318 C74 318 67 328 67 333 A7 7 0 0 0 81 333 C81 328 74 318 74 318 Z" fill="#a8c4e0" />
+  <path d="M44 348 C44 348 38 357 38 361 A6 6 0 0 0 50 361 C50 357 44 348 44 348 Z" fill="#7fa8d4" />
+  <path d="M444 262 C444 262 436 274 436 280 A8 8 0 0 0 452 280 C452 274 444 262 444 262 Z" fill="#7fa8d4" />
+  <path d="M426 318 C426 318 419 328 419 333 A7 7 0 0 0 433 333 C433 328 426 318 426 318 Z" fill="#a8c4e0" />
+  <path d="M456 348 C456 348 450 357 450 361 A6 6 0 0 0 462 361 C462 357 456 348 456 348 Z" fill="#7fa8d4" />
+</svg>

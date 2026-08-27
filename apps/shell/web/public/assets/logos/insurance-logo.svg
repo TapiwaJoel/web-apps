@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PLACEHOLDER asset for the "insurance" theme - pending real artwork. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Insurance</title>
+  <defs>
+    <linearGradient id="insurance-logo-canopy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00a19a" />
+      <stop offset="100%" stop-color="#2bbfb4" />
+    </linearGradient>
+  </defs>
+
+  <!-- Trunk: navy stem splitting into two sweeping limbs under the crown. -->
+  <path d="M256 452 V352" fill="none" stroke="#1e3a5f" stroke-width="36" stroke-linecap="round" />
+  <path d="M256 374 C240 338 208 320 168 312"
+        fill="none" stroke="#1e3a5f" stroke-width="26" stroke-linecap="round" />
+  <path d="M256 374 C272 338 304 320 344 312"
+        fill="none" stroke="#1e3a5f" stroke-width="26" stroke-linecap="round" />
+
+  <!-- Ground line -->
+  <path d="M158 468 H354" fill="none" stroke="#1e3a5f" stroke-width="28" stroke-linecap="round" />
+
+  <!-- Canopy: flat-topped spreading crown. The top edge runs level across the
+       middle (y=206) before the shoulders drop away, so it reads as an acacia
+       parasol rather than a dome. -->
+  <path
+    d="M22 308
+       C22 308 64 284 110 266
+       C136 226 172 206 206 206
+       L306 206
+       C340 206 376 226 402 266
+       C448 284 490 308 490 308
+       C490 308 442 296 396 304
+       C350 284 306 296 256 296
+       C206 296 162 284 116 304
+       C70 296 22 308 22 308 Z"
+    fill="url(#insurance-logo-canopy)" />
+</svg>
