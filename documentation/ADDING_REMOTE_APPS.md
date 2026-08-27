@@ -27,7 +27,9 @@ Adding a new remote application involves:
 
 **Time to Complete**: ~15-20 minutes
 
-**Important**: Remote applications in this architecture are **pure remote modules** that cannot run independently. They can ONLY be accessed through the shell application.
+**Important**: Remote applications in this architecture are **pure remote modules**. Each does have a `serve` target on its own port, but that port only serves `remoteEntry.json`; the app itself is always reached through a shell at `http://localhost:4200`.
+
+The workspace currently ships three products — `umdzidzisi`, `umtengesi` and `insurance` — each with a `website`, `admin` and `client` remote.
 
 ## Prerequisites
 
@@ -107,7 +109,7 @@ npm install @angular-architects/native-federation --save-dev
 
 Update `apps/my-remote-app/project.json` to use Native Federation as a **pure remote module**.
 
-**Important**: Remote apps do NOT have serve targets. They are build-only and can only be accessed through the shell.
+**Important**: A remote app does have `serve` and `serve-original` targets on its own dedicated port, but that port only serves the app's `remoteEntry.json` for the shell to fetch. The application itself is always used through the shell at `http://localhost:4200` — that is also why e2e tests drive `:4200` rather than the remote's port.
 
 ```json
 {
@@ -196,14 +198,14 @@ Update `apps/my-remote-app/src/main.ts` to be a pure remote module:
 ```typescript
 // This is a pure remote module - no standalone bootstrap
 // The shell application handles initialization and loading
-// All exposed modules are defined in federation.config.mjs
+// All exposed modules are defined in federation.config.js
 ```
 
 **Remove** any `initFederation()` or `bootstrapApplication()` calls. The remote app should NOT bootstrap itself.
 
 ### Step 7: Configure Federation Settings
 
-Create or update `apps/my-remote-app/federation.config.mjs`:
+Create or update `apps/my-remote-app/federation.config.js`:
 
 ```javascript
 import { withNativeFederation, shareAll } from '@angular-architects/native-federation/config';
@@ -213,6 +215,7 @@ export default withNativeFederation({
 
   exposes: {
     './Component': './apps/my-remote-app/src/app/app.ts',
+    './Routes': './apps/my-remote-app/src/app/app.routes.ts',
   },
 
   shared: {
@@ -230,10 +233,9 @@ export default withNativeFederation({
         },
       },
     ),
-    '@mushaviri/shared/data-access-auth': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    '@mushaviri/shared/ui-common': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    '@mushaviri/shared/util-event-bus': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    '@mushaviri/shared/util-theming': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    '@mushaviri/api': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    '@mushaviri/ui': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    '@mushaviri/util': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
   },
 
   skip: ['rxjs/ajax', 'rxjs/fetch', 'rxjs/testing', 'rxjs/webSocket'],
@@ -243,6 +245,27 @@ export default withNativeFederation({
   },
 });
 ```
+
+#### Exposing `./Component` and `./Routes`
+
+Not every shell asks a remote for the same thing:
+
+- `shell-web` and `shell-client` call `loadRemoteModule(name, './Component')` and wrap the default-exported component in a route.
+- `shell-admin` calls `loadRemoteModule(name, './Routes')` for admin and client remotes and uses the exported `Routes` array directly.
+
+The older `umdzidzisi` and `umtengesi` remotes expose only `./Component`, which means they can only be loaded from the shells that ask for it. The `insurance` remotes expose **both**, and that is the convention to follow for anything new: expose `./Component` _and_ `./Routes` so the remote is loadable from any shell without further changes.
+
+- `./Component` → `src/app/app.ts`, which must `export default App;`
+- `./Routes` → `src/app/app.routes.ts`, which must export a `Routes` array
+
+#### Adding a Whole New Product
+
+A single remote just needs the steps above. A new **product** (a `website` / `admin` / `client` trio, like `insurance`) also needs shell-side wiring, because each shell picks its product through an Nx build configuration that file-replaces the environment:
+
+1. Add `apps/shell/<web|admin|client>/src/environments/environment.<product>.ts` — one per shell. It declares `defaultTheme` and the `remotes` map, where each remote carries an auth mode. The convention is `website: 'none'`, `admin: 'required'`, `client: 'optional'`.
+2. Add a `<product>` configuration to each shell's `project.json`, under both `esbuild` (with the `fileReplacements` entry swapping `environment.ts` for `environment.<product>.ts`) and `serve` (pointing at `serve-original:<product>`).
+
+The shell's route guards read the auth mode out of that environment at runtime, so no guard code changes when a product is added.
 
 ### Step 8: Create App Component
 
@@ -377,10 +400,10 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from './app.routes';
-import { authInterceptor } from '@mushaviri/data-access-auth';
+import { apiInterceptor } from '@mushaviri/util';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideBrowserGlobalErrorListeners(), provideRouter(appRoutes), provideHttpClient(withInterceptors([authInterceptor]))],
+  providers: [provideBrowserGlobalErrorListeners(), provideRouter(appRoutes), provideHttpClient(withInterceptors([apiInterceptor]))],
 };
 ```
 
@@ -388,27 +411,20 @@ Use shared services in your component:
 
 ```typescript
 import { Component, inject, OnInit } from '@angular/core';
-import { AuthService } from '@mushaviri/data-access-auth';
-import { EventBusService } from '@mushaviri/util-event-bus';
-import { ThemeService } from '@mushaviri/util-theming';
+import { SessionStore, ThemeService } from '@mushaviri/util';
 
 @Component({
   // ...
 })
 export class App implements OnInit {
-  private authService = inject(AuthService);
-  private eventBus = inject(EventBusService);
+  private session = inject(SessionStore);
   private themeService = inject(ThemeService);
 
   ngOnInit() {
-    // Use shared services
-    this.authService.currentUser$.subscribe((user) => {
-      console.log('Current user:', user);
-    });
+    // Session state is exposed as signals by SessionStore
+    console.log('Current user:', this.session.user());
 
-    this.eventBus.on('DATA_UPDATED').subscribe((event) => {
-      console.log('Data updated:', event);
-    });
+    this.themeService.setTheme('my-remote-app');
   }
 }
 ```
@@ -417,23 +433,34 @@ export class App implements OnInit {
 
 Add your new remote app to the shell's federation manifest:
 
-**File**: `apps/shell/public/federation.manifest.json`
+There is no project named `shell` — there are three shells: `shell-web`, `shell-admin` and `shell-client`, living at `apps/shell/web/`, `apps/shell/admin/` and `apps/shell/client/`. Each keeps its own manifest, so add the entry to every shell that should be able to load your remote.
+
+**Files**: `apps/shell/web/public/federation.manifest.json`, `apps/shell/admin/public/federation.manifest.json`, `apps/shell/client/public/federation.manifest.json`
+
+Remote names follow a `<product>-<type>` convention (`umdzidzisi-admin`, `insurance-client`, …):
 
 ```json
 {
-  "umdzidzisi": "http://localhost:4201/remoteEntry.json",
-  "umtengesi": "http://localhost:4202/remoteEntry.json",
-  "my-remote-app": "http://localhost:4203/remoteEntry.json"
+  "umdzidzisi-website": "http://localhost:4201/remoteEntry.json",
+  "umdzidzisi-admin": "http://localhost:4203/remoteEntry.json",
+  "umdzidzisi-client": "http://localhost:4205/remoteEntry.json",
+  "umtengesi-website": "http://localhost:4202/remoteEntry.json",
+  "umtengesi-admin": "http://localhost:4204/remoteEntry.json",
+  "umtengesi-client": "http://localhost:4206/remoteEntry.json",
+  "insurance-website": "http://localhost:4207/remoteEntry.json",
+  "insurance-admin": "http://localhost:4208/remoteEntry.json",
+  "insurance-client": "http://localhost:4209/remoteEntry.json",
+  "my-remote-app": "http://localhost:4210/remoteEntry.json"
 }
 ```
 
-**Note**: Since remote apps don't have their own serve targets, the port numbers in the manifest are used by the built remoteEntry.json files.
+**Note**: The port in each manifest entry is the remote's own `serve` port — the shell fetches `remoteEntry.json` from it.
 
 ### Step 10: Add to Shell's Build Dependencies
 
 Update the shell's serve configuration to automatically build your new remote app:
 
-**File**: `apps/shell/project.json`
+**Files**: `apps/shell/web/project.json`, `apps/shell/admin/project.json`, `apps/shell/client/project.json`
 
 Find the `serve` target and add your app to the `dependsOn` array:
 
@@ -441,7 +468,7 @@ Find the `serve` target and add your app to the `dependsOn` array:
 {
   "serve": {
     "executor": "@angular-architects/native-federation:build",
-    "dependsOn": ["umdzidzisi:build", "umtengesi:build", "my-remote-app:build"],
+    "dependsOn": ["umdzidzisi-website:build", "umtengesi-website:build", "insurance-website:build", "my-remote-app:build"],
     "options": {
       "target": "shell:serve-original:development"
     }
@@ -455,21 +482,29 @@ This ensures your remote app is built before the shell starts.
 
 Update the app selector component to include your new remote app:
 
-**File**: `apps/shell/src/app/components/app-selector/app-selector.component.ts`
+**Files**: `apps/shell/web/src/app/components/app-selector/app-selector.component.ts` (and the same file under `apps/shell/admin/` / `apps/shell/client/`)
+
+Add an entry to the selector's `allApps` array:
 
 ```typescript
-availableApps: RemoteApp[] = [
+allApps: RemoteApp[] = [
   {
-    id: 'umdzidzisi',
-    name: 'Application 1',
-    description: 'First remote application module',
-    route: '/umdzidzisi'
+    id: 'umdzidzisi-website',
+    name: 'Umdzidzisi Website',
+    description: 'Public-facing website for Umdzidzisi',
+    route: '/umdzidzisi-website'
   },
   {
-    id: 'umtengesi',
-    name: 'Application 2',
-    description: 'Second remote application module',
-    route: '/umtengesi'
+    id: 'umtengesi-website',
+    name: 'Umtengesi Website',
+    description: 'Public-facing website for Umtengesi',
+    route: '/umtengesi-website'
+  },
+  {
+    id: 'insurance-website',
+    name: 'Insurance Website',
+    description: 'Public-facing website for Insurance',
+    route: '/insurance-website'
   },
   // NEW: Add your remote app here
   {
@@ -485,11 +520,11 @@ availableApps: RemoteApp[] = [
 
 Update the shell's route configuration to include the new remote:
 
-**File**: `apps/shell/src/app/app.routes.ts`
+**Files**: `apps/shell/web/src/app/app.routes.ts`, `apps/shell/admin/src/app/app.routes.ts`, `apps/shell/client/src/app/app.routes.ts`
 
 ```typescript
 import { Routes } from '@angular/router';
-import { authGuard } from '@mushaviri/data-access-auth';
+import { requiredAuthGuard } from '@mushaviri/util';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 
 export const appRoutes: Routes = [
@@ -499,14 +534,14 @@ export const appRoutes: Routes = [
   },
   {
     path: 'dashboard',
-    canActivate: [authGuard],
+    canActivate: [requiredAuthGuard],
     loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
   {
-    path: 'umdzidzisi',
-    canActivate: [authGuard],
+    path: 'umdzidzisi-website',
+    canActivate: [requiredAuthGuard],
     loadChildren: () =>
-      loadRemoteModule('umdzidzisi', './Component').then((m) => [
+      loadRemoteModule('umdzidzisi-website', './Component').then((m) => [
         {
           path: '',
           component: m.default,
@@ -514,10 +549,10 @@ export const appRoutes: Routes = [
       ]),
   },
   {
-    path: 'umtengesi',
-    canActivate: [authGuard],
+    path: 'insurance-website',
+    canActivate: [requiredAuthGuard],
     loadChildren: () =>
-      loadRemoteModule('umtengesi', './Component').then((m) => [
+      loadRemoteModule('insurance-website', './Component').then((m) => [
         {
           path: '',
           component: m.default,
@@ -527,7 +562,7 @@ export const appRoutes: Routes = [
   // NEW: Add your remote app route
   {
     path: 'my-remote-app',
-    canActivate: [authGuard],
+    canActivate: [requiredAuthGuard],
     loadChildren: () =>
       loadRemoteModule('my-remote-app', './Component').then((m) => [
         {
@@ -584,8 +619,10 @@ Start the shell application (which will automatically build all remote apps incl
 # Using npm script
 npm start
 
-# Or using nx directly
-npm exec nx serve shell
+# Or using nx directly (pick the shell you need — all three use port 4200)
+npm exec nx serve shell-web
+npm exec nx serve shell-admin
+npm exec nx serve shell-client
 ```
 
 The shell will start on `http://localhost:4200` and automatically build all remote apps (including yours) before serving.
@@ -631,11 +668,11 @@ Check the following in your browser's Developer Tools:
 **Issue**: `Cannot find module './Component'`
 
 - **Solution**: Ensure `app.ts` has `export default App;`
-- **Solution**: Check federation.config.mjs exposes './Component'
+- **Solution**: Check `federation.config.js` exposes `'./Component'` (and `'./Routes'`, which new remotes should also expose)
 
 **Issue**: Remote app doesn't appear in app selector
 
-- **Solution**: Verify you added it to `app-selector.component.ts`
+- **Solution**: Verify you added it to the shell's `app-selector.component.ts` (`allApps`)
 - **Solution**: Verify the route is defined in shell's `app.routes.ts`
 
 ## Configuration Reference
@@ -645,7 +682,7 @@ Check the following in your browser's Developer Tools:
 | File                                       | Purpose                                        | Required    |
 | ------------------------------------------ | ---------------------------------------------- | ----------- |
 | `apps/my-remote-app/project.json`          | NX and Federation build configuration          | ✅ Yes      |
-| `apps/my-remote-app/federation.config.mjs` | Native Federation configuration                | ✅ Yes      |
+| `apps/my-remote-app/federation.config.js`  | Native Federation configuration                | ✅ Yes      |
 | `apps/my-remote-app/src/main.ts`           | Entry point (should be empty for pure remotes) | ✅ Yes      |
 | `apps/my-remote-app/src/app/app.ts`        | Root component (must export default)           | ✅ Yes      |
 | `apps/my-remote-app/src/app/app.config.ts` | Application configuration                      | ⚠️ Optional |
@@ -654,20 +691,29 @@ Check the following in your browser's Developer Tools:
 **Important**: Remote apps do NOT have:
 
 - ❌ No `bootstrap.ts` file
-- ❌ No serve targets in `project.json`
 - ❌ No `initFederation()` call in `main.ts`
 - ❌ No `bootstrapApplication()` call
 
+They DO have `serve` and `serve-original` targets on a dedicated port (see the port table below) — that port exists so the shell can fetch `remoteEntry.json`, not so the app can be browsed directly.
+
 ### Application Ports
 
-| App          | Port | Can Run Independently?     |
-| ------------ | ---- | -------------------------- |
-| Shell        | 4200 | ✅ Yes (main entry point)  |
-| Umdzidzisi   | N/A  | ❌ No (pure remote module) |
-| Umtengesi    | N/A  | ❌ No (pure remote module) |
-| Your New App | N/A  | ❌ No (pure remote module) |
+| App                | Port | Purpose                                         |
+| ------------------ | ---- | ----------------------------------------------- |
+| shell-web          | 4200 | Host — the URL you browse (one shell at a time) |
+| shell-admin        | 4200 | Host — the URL you browse (one shell at a time) |
+| shell-client       | 4200 | Host — the URL you browse (one shell at a time) |
+| umdzidzisi-website | 4201 | Serves `remoteEntry.json` to the shell          |
+| umdzidzisi-admin   | 4203 | Serves `remoteEntry.json` to the shell          |
+| umdzidzisi-client  | 4205 | Serves `remoteEntry.json` to the shell          |
+| umtengesi-website  | 4202 | Serves `remoteEntry.json` to the shell          |
+| umtengesi-admin    | 4204 | Serves `remoteEntry.json` to the shell          |
+| umtengesi-client   | 4206 | Serves `remoteEntry.json` to the shell          |
+| insurance-website  | 4207 | Serves `remoteEntry.json` to the shell          |
+| insurance-admin    | 4208 | Serves `remoteEntry.json` to the shell          |
+| insurance-client   | 4209 | Serves `remoteEntry.json` to the shell          |
 
-**Note**: Remote apps do not have their own ports since they cannot run independently. They are only built to generate `remoteEntry.json` files.
+**Note**: The three shells all bind port 4200, so only one runs at a time. Every remote does have a real `serve` target on its own port, but a remote is only ever _used_ through the shell at `http://localhost:4200` — its own port is what the shell fetches `remoteEntry.json` from. That is why the e2e suites navigate to `:4200` and never to a remote's port.
 
 ### TypeScript Path Mapping
 
@@ -858,12 +904,13 @@ loadRemoteModule('my-remote-app', './Component')
 
 ### Update Federation Manifest for Production
 
-**File**: `apps/shell/public/federation.manifest.json`
+**Files**: `apps/shell/<web|admin|client>/public/federation.manifest.json`
 
 ```json
 {
-  "umdzidzisi": "https://umdzidzisi.example.com/remoteEntry.json",
-  "umtengesi": "https://umtengesi.example.com/remoteEntry.json",
+  "umdzidzisi-website": "https://umdzidzisi-website.example.com/remoteEntry.json",
+  "umtengesi-website": "https://umtengesi-website.example.com/remoteEntry.json",
+  "insurance-website": "https://insurance-website.example.com/remoteEntry.json",
   "my-remote-app": "https://my-remote-app.example.com/remoteEntry.json"
 }
 ```
@@ -875,7 +922,7 @@ loadRemoteModule('my-remote-app', './Component')
 npx nx build my-remote-app --configuration=production
 
 # Build the shell
-npx nx build shell --configuration=production
+npx nx build shell-web --configuration=production
 ```
 
 ### Deploy
@@ -893,13 +940,10 @@ Here's a complete example of a remote app with all best practices:
 **apps/my-remote-app/src/app/app.ts**:
 
 ```typescript
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
-import { AuthService } from '@mushaviri/data-access-auth';
-import { EventBusService } from '@mushaviri/util-event-bus';
-import { ThemeService } from '@mushaviri/util-theming';
+import { SessionStore, ThemeService } from '@mushaviri/util';
 
 @Component({
   imports: [CommonModule, RouterModule],
@@ -908,7 +952,9 @@ import { ThemeService } from '@mushaviri/util-theming';
     <div class="app-container">
       <div class="app-header">
         <h1>{{ title }}</h1>
-        <p *ngIf="currentUser">Welcome, {{ currentUser.name }}!</p>
+        @if (currentUser(); as user) {
+          <p>Welcome, {{ user.name }}!</p>
+        }
       </div>
       <div class="app-content">
         <router-outlet></router-outlet>
@@ -930,48 +976,18 @@ import { ThemeService } from '@mushaviri/util-theming';
     `,
   ],
 })
-export class App implements OnInit, OnDestroy {
+export class App implements OnInit {
   protected title = 'My Remote App';
-  protected currentUser: any = null;
 
-  private authService = inject(AuthService);
-  private eventBus = inject(EventBusService);
+  private session = inject(SessionStore);
   private themeService = inject(ThemeService);
-  private destroy$ = new Subject<void>();
+
+  // Session state is exposed as signals
+  protected currentUser = this.session.user;
 
   ngOnInit() {
-    // Subscribe to auth state
-    this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      this.currentUser = user;
-    });
-
-    // Listen for events
-    this.eventBus
-      .on('DATA_UPDATED')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((event) => {
-        console.log('Data updated:', event);
-        this.handleDataUpdate(event);
-      });
-
     // Set theme
     this.themeService.setTheme('my-remote-app');
-
-    // Emit app loaded event
-    this.eventBus.emit({
-      type: 'APP_LOADED',
-      payload: { appName: 'my-remote-app' },
-      source: 'my-remote-app',
-    });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  private handleDataUpdate(event: any) {
-    // Handle data updates from other apps
   }
 }
 

@@ -39,6 +39,9 @@
         },
         "umtengesi": {
           "target": "shell-admin:serve-original:umtengesi"
+        },
+        "insurance": {
+          "target": "shell-admin:serve-original:insurance"
         }
       }
     },
@@ -102,6 +105,17 @@
               "with": "apps/shell/admin/src/environments/environment.umtengesi.ts"
             }
           ]
+        },
+        "insurance": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/shell/admin/src/environments/environment.ts",
+              "with": "apps/shell/admin/src/environments/environment.insurance.ts"
+            }
+          ]
         }
       }
     },
@@ -124,6 +138,9 @@
         },
         "umtengesi": {
           "buildTarget": "shell-admin:esbuild:umtengesi"
+        },
+        "insurance": {
+          "buildTarget": "shell-admin:esbuild:insurance"
         }
       }
     },

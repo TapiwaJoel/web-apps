@@ -57,6 +57,40 @@ export const THEMES: Record<string, Theme> = {
     appVariant: 'admin',
     titleSuffix: 'Admin Portal',
   },
+  insurance: {
+    name: 'insurance',
+    primaryColor: '#1e3a5f', // Deep navy - trust/stability brand primary
+    accentColor: '#00a19a', // Teal accent
+    backgroundColor: '#ffffff', // Pure white page background
+    surfaceColor: '#f8fafb', // Cool off-white for cards/panels
+    textColor: '#0d1b2a', // Near-black navy for text
+    textSecondaryColor: '#3c5a7d', // Muted navy for secondary text
+    borderColor: '#d5dee7', // Light navy-gray for borders
+    hoverColor: '#152b46', // Darker navy for hover states
+    isDark: false,
+    loginIllustration: '/assets/illustrations/insurance-illustration.svg',
+    logo: '/assets/logos/insurance-logo.svg',
+    displayName: 'Insurance',
+    appVariant: 'admin',
+    titleSuffix: 'Admin Portal',
+  },
+  'insurance-dark': {
+    name: 'insurance-dark',
+    primaryColor: '#7fa8d4', // Light navy-blue for dark mode
+    accentColor: '#4fd1c9', // Light teal for accents
+    backgroundColor: '#0a1420', // Near-black navy
+    surfaceColor: '#132235', // Dark navy for elevated surfaces
+    textColor: '#ffffff', // Pure white for readability
+    textSecondaryColor: '#a8c4e0', // Light navy for secondary text
+    borderColor: '#1e3a5f', // Brand navy for borders
+    hoverColor: '#a8c4e0', // Lighter navy for hover states
+    isDark: true,
+    loginIllustration: '/assets/illustrations/insurance-illustration.svg',
+    logo: '/assets/logos/insurance-logo.svg',
+    displayName: 'Insurance',
+    appVariant: 'admin',
+    titleSuffix: 'Admin Portal',
+  },
   umtengesi: {
     name: 'umtengesi',
     primaryColor: '#FF725E', // Coral/salmon from illustration

@@ -51,6 +51,10 @@ export default [
               onlyDependOnLibsWithTags: ['scope:shared'],
             },
             {
+              sourceTag: 'scope:insurance',
+              onlyDependOnLibsWithTags: ['scope:shared'],
+            },
+            {
               sourceTag: 'type:feature',
               onlyDependOnLibsWithTags: [
                 'type:data-access',

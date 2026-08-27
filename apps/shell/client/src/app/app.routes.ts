@@ -4,7 +4,7 @@ import {
   noAuthGuard,
   optionalAuthGuard,
   requiredAuthGuard,
-} from '@mushaviri/api';
+} from '@mushaviri/util';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 import { AppConfigService } from './services/app-config.service';
 
@@ -105,6 +105,39 @@ export const appRoutes: Routes = [
     canActivate: [getAuthGuardForApp('umtengesi-client')], // Configured: optional auth
     loadChildren: () =>
       loadRemoteModule('umtengesi-client', './Component').then((m) => [
+        {
+          path: '',
+          component: m.default,
+        },
+      ]),
+  },
+  {
+    path: 'insurance-website',
+    canActivate: [getAuthGuardForApp('insurance-website')], // Configured: no auth
+    loadChildren: () =>
+      loadRemoteModule('insurance-website', './Component').then((m) => [
+        {
+          path: '',
+          component: m.default,
+        },
+      ]),
+  },
+  {
+    path: 'insurance-admin',
+    canActivate: [getAuthGuardForApp('insurance-admin')], // Configured: required auth
+    loadChildren: () =>
+      loadRemoteModule('insurance-admin', './Component').then((m) => [
+        {
+          path: '',
+          component: m.default,
+        },
+      ]),
+  },
+  {
+    path: 'insurance-client',
+    canActivate: [getAuthGuardForApp('insurance-client')], // Configured: optional auth
+    loadChildren: () =>
+      loadRemoteModule('insurance-client', './Component').then((m) => [
         {
           path: '',
           component: m.default,

@@ -68,6 +68,8 @@ export class ThemeService {
       themeName = 'umdzidzisi';
     } else if (baseRoute.startsWith('/umtengesi')) {
       themeName = 'umtengesi';
+    } else if (baseRoute.startsWith('/insurance')) {
+      themeName = 'insurance';
     }
 
     // If route doesn't indicate a specific theme, keep the current environment theme

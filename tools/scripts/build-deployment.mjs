@@ -26,7 +26,10 @@ const remoteConfig = {
   'umdzidzisi-client': 'umdzidzisi/client',
   'umtengesi-website': 'umtengesi/website',
   'umtengesi-admin': 'umtengesi/admin',
-  'umtengesi-client': 'umtengesi/client'
+  'umtengesi-client': 'umtengesi/client',
+  'insurance-website': 'insurance/website',
+  'insurance-admin': 'insurance/admin',
+  'insurance-client': 'insurance/client'
 };
 
 function buildBundle(remoteName) {

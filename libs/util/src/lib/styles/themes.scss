@@ -88,6 +88,74 @@
   --umdzidzisi-900: #0b0a14;
 }
 
+[data-theme='insurance'] {
+  /* Insurance Light Theme - Trust Blue Palette */
+  --theme-primary-color: #1e3a5f;
+  --theme-accent-color: #00a19a;
+  --theme-background-color: #ffffff;
+  --theme-surface-color: #f8fafb;
+  --theme-text-color: #0d1b2a;
+  --theme-text-secondary: #3c5a7d;
+  --theme-border-color: #d5dee7;
+  --theme-hover-color: #152b46;
+  --theme-shadow: rgba(30, 58, 95, 0.08);
+  --theme-sidebar-bg: #f2f6f9;
+
+  /* Bright UI accents blended with the navy brand: a deepened teal
+     active-icon highlight (white icon 5.47:1 — the brand teal #00a19a is too
+     light for white, only 3.20:1) + amber notification badges with dark navy
+     text (10.42:1), the warm complement to the cool navy/teal pair. */
+  --theme-highlight-color: #0f766e;
+  --theme-badge-color: #fbbf24;
+  --theme-badge-text: #0d1b2a;
+
+  /* Extended color scale for flexibility */
+  --insurance-50: #f8fafb;
+  --insurance-100: #e4ebf2;
+  --insurance-200: #d5dee7;
+  --insurance-300: #a8c4e0;
+  --insurance-400: #7fa8d4;
+  --insurance-500: #3c5a7d;
+  --insurance-600: #1e3a5f;
+  --insurance-700: #152b46;
+  --insurance-800: #132235;
+  --insurance-900: #0d1b2a;
+}
+
+[data-theme='insurance-dark'] {
+  /* Insurance Dark Theme - Trust Blue Palette */
+  --theme-primary-color: #7fa8d4;
+  --theme-accent-color: #4fd1c9;
+  --theme-background-color: #0a1420;
+  --theme-surface-color: #132235;
+  --theme-text-color: #ffffff;
+  --theme-text-secondary: #a8c4e0;
+  --theme-border-color: #1e3a5f;
+  --theme-hover-color: #a8c4e0;
+  --theme-shadow: rgba(127, 168, 212, 0.15);
+  /* Sidebar/header surround: a shade between the near-black bg and the surface. */
+  --theme-sidebar-bg: #0e1b2b;
+
+  /* Bright UI accents (dark mode): brighter teal highlight so it reads against
+     the near-black navy surface (dark navy icon on it 9.34:1); amber badge with
+     dark navy text carries over (10.42:1). */
+  --theme-highlight-color: #2dd4bf;
+  --theme-badge-color: #fbbf24;
+  --theme-badge-text: #0d1b2a;
+
+  /* Extended color scale (same values, different context) */
+  --insurance-50: #f8fafb;
+  --insurance-100: #e4ebf2;
+  --insurance-200: #d5dee7;
+  --insurance-300: #a8c4e0;
+  --insurance-400: #7fa8d4;
+  --insurance-500: #3c5a7d;
+  --insurance-600: #1e3a5f;
+  --insurance-700: #152b46;
+  --insurance-800: #132235;
+  --insurance-900: #0d1b2a;
+}
+
 [data-theme='umtengesi'] {
   --theme-primary-color: #ff725e;
   --theme-accent-color: #d78776;

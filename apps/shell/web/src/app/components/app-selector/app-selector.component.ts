@@ -67,6 +67,24 @@ export class AppSelectorComponent implements OnInit {
       description: 'Umtengesi client application module',
       route: '/umtengesi-client',
     },
+    {
+      id: 'insurance-website',
+      name: 'Insurance Website',
+      description: 'Insurance public website module',
+      route: '/insurance-website',
+    },
+    {
+      id: 'insurance-admin',
+      name: 'Insurance Admin',
+      description: 'Insurance admin portal module',
+      route: '/insurance-admin',
+    },
+    {
+      id: 'insurance-client',
+      name: 'Insurance Client',
+      description: 'Insurance client application module',
+      route: '/insurance-client',
+    },
   ];
 
   // Filtered list of actually available apps

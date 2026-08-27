@@ -7,6 +7,7 @@ Playwright offers multiple execution modes for e2e testing, including visual int
 ## Playwright Execution Modes
 
 ### 1. Headless Mode (Default)
+
 - No browser window shown
 - Runs in background
 - Fastest execution
@@ -14,12 +15,14 @@ Playwright offers multiple execution modes for e2e testing, including visual int
 - **This is the default mode** used by your npm scripts and Nx commands
 
 ### 2. Headed Mode
+
 - Browser window visible during test execution
 - See tests running in real-time
 - Useful for debugging and watching test behavior
 - Add `--headed` flag to any Playwright command
 
 ### 3. UI Mode (Interactive Test Runner)
+
 - **Most similar to Cypress UI**
 - Visual timeline of test execution
 - Click to step through test actions
@@ -30,6 +33,7 @@ Playwright offers multiple execution modes for e2e testing, including visual int
 - Add `--ui` flag to any Playwright command
 
 ### 4. Debug Mode (Step-Through Debugging)
+
 - Playwright Inspector opens automatically
 - Set breakpoints in test code
 - Step through test execution line-by-line
@@ -73,9 +77,13 @@ nx e2e umdzidzisi-client-e2e -- --ui
 nx e2e umtengesi-website-e2e -- --ui
 nx e2e umtengesi-admin-e2e -- --ui
 nx e2e umtengesi-client-e2e -- --ui
+nx e2e insurance-website-e2e -- --ui
+nx e2e insurance-admin-e2e -- --ui
+nx e2e insurance-client-e2e -- --ui
 ```
 
 **Advantages:**
+
 - Nx handles dev server lifecycle automatically
 - Single command
 - Works in CI/CD without modifications
@@ -99,11 +107,13 @@ npx playwright test --ui
 ```
 
 **Advantages:**
+
 - More control over dev server
 - Can inspect dev server logs separately
 - Useful for debugging server-side issues
 
 **Disadvantages:**
+
 - Requires managing two terminals
 - Must remember to start server first
 
@@ -120,12 +130,16 @@ You can add convenient npm scripts to `package.json` that combine Nx and the UI 
     "e2e:umdzidzisi:client:ui": "nx e2e umdzidzisi-client-e2e -- --ui",
     "e2e:umtengesi:website:ui": "nx e2e umtengesi-website-e2e -- --ui",
     "e2e:umtengesi:admin:ui": "nx e2e umtengesi-admin-e2e -- --ui",
-    "e2e:umtengesi:client:ui": "nx e2e umtengesi-client-e2e -- --ui"
+    "e2e:umtengesi:client:ui": "nx e2e umtengesi-client-e2e -- --ui",
+    "e2e:insurance:website:ui": "nx e2e insurance-website-e2e -- --ui",
+    "e2e:insurance:admin:ui": "nx e2e insurance-admin-e2e -- --ui",
+    "e2e:insurance:client:ui": "nx e2e insurance-client-e2e -- --ui"
   }
 }
 ```
 
 Then run:
+
 ```bash
 npm run e2e:shell:ui
 npm run e2e:umdzidzisi:website:ui
@@ -133,6 +147,7 @@ npm run e2e:umdzidzisi:website:ui
 ```
 
 **Advantages:**
+
 - Easy to remember and type
 - Consistent with existing npm script patterns
 - Team members don't need to remember Nx syntax
@@ -143,6 +158,7 @@ npm run e2e:umdzidzisi:website:ui
 The same approaches work for other Playwright modes:
 
 ### Headed Mode (Browser Visible)
+
 ```bash
 # Via Nx
 nx e2e e2e-shell -- --headed
@@ -152,6 +168,7 @@ nx e2e e2e-shell -- --headed
 ```
 
 ### Debug Mode (Step-Through)
+
 ```bash
 # Via Nx
 nx e2e e2e-shell -- --debug
@@ -161,6 +178,7 @@ nx e2e e2e-shell -- --debug
 ```
 
 ### Combine Flags
+
 ```bash
 # UI mode with headed browsers
 nx e2e e2e-shell -- --ui --headed
@@ -173,31 +191,34 @@ nx e2e e2e-shell -- --debug src/example.spec.ts
 
 If you're coming from Cypress, here's how Playwright UI mode compares:
 
-| Feature | Cypress | Playwright UI Mode |
-|---------|---------|-------------------|
-| Visual test runner | ✅ Cypress UI | ✅ Playwright UI |
-| Watch mode | ✅ Auto-reruns | ✅ Auto-reruns |
-| Time-travel debugging | ✅ Step through | ✅ Timeline with snapshots |
-| DOM inspection | ✅ Built-in | ✅ Built-in |
-| Network inspection | ✅ Via UI | ✅ Via UI |
-| Console logs | ✅ Visible | ✅ Visible |
-| Multi-browser testing | ⚠️ Limited | ✅ Chrome, Firefox, Safari, Edge |
-| Parallel execution | 💰 Paid feature | ✅ Free with Nx |
-| CI integration | ✅ Good | ✅ Excellent with Nx |
+| Feature               | Cypress         | Playwright UI Mode               |
+| --------------------- | --------------- | -------------------------------- |
+| Visual test runner    | ✅ Cypress UI   | ✅ Playwright UI                 |
+| Watch mode            | ✅ Auto-reruns  | ✅ Auto-reruns                   |
+| Time-travel debugging | ✅ Step through | ✅ Timeline with snapshots       |
+| DOM inspection        | ✅ Built-in     | ✅ Built-in                      |
+| Network inspection    | ✅ Via UI       | ✅ Via UI                        |
+| Console logs          | ✅ Visible      | ✅ Visible                       |
+| Multi-browser testing | ⚠️ Limited      | ✅ Chrome, Firefox, Safari, Edge |
+| Parallel execution    | 💰 Paid feature | ✅ Free with Nx                  |
+| CI integration        | ✅ Good         | ✅ Excellent with Nx             |
 
 ## Dev Server Port Reference
 
 This workspace uses the following dev server ports:
 
-| Application | Port |
-|------------|------|
-| shell | 4200 |
+| Application        | Port |
+| ------------------ | ---- |
+| shell              | 4200 |
 | umdzidzisi-website | 4201 |
-| umtengesi-website | 4202 |
-| umdzidzisi-admin | 4203 |
-| umtengesi-admin | 4204 |
-| umdzidzisi-client | 4205 |
-| umtengesi-client | 4206 |
+| umtengesi-website  | 4202 |
+| umdzidzisi-admin   | 4203 |
+| umtengesi-admin    | 4204 |
+| umdzidzisi-client  | 4205 |
+| umtengesi-client   | 4206 |
+| insurance-website  | 4207 |
+| insurance-admin    | 4208 |
+| insurance-client   | 4209 |
 
 ## Troubleshooting
 
@@ -212,6 +233,7 @@ This workspace uses the following dev server ports:
 **Cause:** Dev server from previous run still running.
 
 **Solution:**
+
 ```bash
 # Kill all dev servers
 npm run stop
@@ -225,6 +247,7 @@ lsof -ti :4200 | xargs kill -9
 **Cause:** Timing differences or race conditions exposed by slower rendering.
 
 **Solution:**
+
 - Check for hard-coded waits (`page.waitForTimeout`)
 - Use Playwright's built-in waiting mechanisms (`waitForSelector`, `waitForLoadState`)
 - Review auto-waiting behavior in Playwright docs
@@ -234,6 +257,7 @@ lsof -ti :4200 | xargs kill -9
 **Cause:** Playwright can't find test files.
 
 **Solution:**
+
 - Ensure you're in the correct e2e project directory
 - Check `testDir` in `playwright.config.mts` (should be `'./src'`)
 - Verify test files match pattern `**/*.spec.ts`
@@ -243,6 +267,7 @@ lsof -ti :4200 | xargs kill -9
 **Cause:** Nx caches test results for performance.
 
 **Solution:**
+
 ```bash
 # Clear Nx cache
 npx nx reset

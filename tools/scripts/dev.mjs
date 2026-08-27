@@ -49,6 +49,13 @@ const TARGETS = {
       { project: 'umtengesi-admin', port: 4204, health: '/remoteEntry.json' },
     ],
   },
+  'insurance:admin': {
+    config: 'insurance',
+    apps: [
+      { project: 'shell-admin', port: 4200, health: '/' },
+      { project: 'insurance-admin', port: 4208, health: '/remoteEntry.json' },
+    ],
+  },
   'umdzidzisi:website': {
     config: 'umdzidzisi',
     apps: [
@@ -63,6 +70,13 @@ const TARGETS = {
       { project: 'umtengesi-website', port: 4202, health: '/remoteEntry.json' },
     ],
   },
+  'insurance:website': {
+    config: 'insurance',
+    apps: [
+      { project: 'shell-web', port: 4200, health: '/' },
+      { project: 'insurance-website', port: 4207, health: '/remoteEntry.json' },
+    ],
+  },
   'umdzidzisi:client': {
     config: 'umdzidzisi',
     apps: [
@@ -75,6 +89,13 @@ const TARGETS = {
     apps: [
       { project: 'shell-client', port: 4200, health: '/' },
       { project: 'umtengesi-client', port: 4206, health: '/remoteEntry.json' },
+    ],
+  },
+  'insurance:client': {
+    config: 'insurance',
+    apps: [
+      { project: 'shell-client', port: 4200, health: '/' },
+      { project: 'insurance-client', port: 4209, health: '/remoteEntry.json' },
     ],
   },
 };

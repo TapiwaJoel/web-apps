@@ -42,12 +42,12 @@ This project implements a **micro-frontend architecture** using Angular and Nati
 
 This architecture enforces a **single entry point** through the shell application:
 
-- **Shell-Only Access**: All 6 remote applications can ONLY be accessed through the shell
+- **Shell-Only Access**: All 9 remote applications can ONLY be accessed through the shell
 - **No Independent Running**: Remote applications cannot be started or accessed independently
 - **App Selector UI**: Users select which application to run from the shell's dashboard
 - **Centralized Authentication**: All authentication and routing is handled by the shell
 - **Unified Navigation**: All inter-app navigation flows through the shell's routing system
-- **Domain Organization**: Applications organized by domain (umdzidzisi, umtengesi) with type variants (website, admin, client)
+- **Domain Organization**: Applications organized by domain (umdzidzisi, umtengesi, insurance) with type variants (website, admin, client)
 
 #### Why Single Entry Point?
 
@@ -59,9 +59,9 @@ This architecture enforces a **single entry point** through the shell applicatio
 
 ### Application Types
 
-Each domain (umdzidzisi, umtengesi) contains three distinct application types, each serving a specific purpose:
+Each domain (umdzidzisi, umtengesi, insurance) contains three distinct application types, each serving a specific purpose:
 
-#### 1. Website Applications (Ports 4201, 4202)
+#### 1. Website Applications (Ports 4201, 4202, 4207)
 
 **Purpose**: Public-facing website applications
 
@@ -82,7 +82,7 @@ Each domain (umdzidzisi, umtengesi) contains three distinct application types, e
 - Contact forms
 - Public documentation
 
-#### 2. Admin Applications (Ports 4203, 4204)
+#### 2. Admin Applications (Ports 4203, 4204, 4208)
 
 **Purpose**: Administrative portal applications
 
@@ -103,7 +103,7 @@ Each domain (umdzidzisi, umtengesi) contains three distinct application types, e
 - System monitoring and logs
 - Configuration management
 
-#### 3. Client Applications (Ports 4205, 4206)
+#### 3. Client Applications (Ports 4205, 4206, 4209)
 
 **Purpose**: Client dashboard applications
 
@@ -228,13 +228,16 @@ initFederation('federation.manifest.json')
   "umdzidzisi-client": "http://localhost:4205/remoteEntry.json",
   "umtengesi-website": "http://localhost:4202/remoteEntry.json",
   "umtengesi-admin": "http://localhost:4204/remoteEntry.json",
-  "umtengesi-client": "http://localhost:4206/remoteEntry.json"
+  "umtengesi-client": "http://localhost:4206/remoteEntry.json",
+  "insurance-website": "http://localhost:4207/remoteEntry.json",
+  "insurance-admin": "http://localhost:4208/remoteEntry.json",
+  "insurance-client": "http://localhost:4209/remoteEntry.json"
 }
 ```
 
-This manifest tells the shell where to find all 6 remote applications:
+This manifest tells the shell where to find all 9 remote applications:
 
-- **Development**: Points to localhost with dedicated ports (4201-4206)
+- **Development**: Points to localhost with dedicated ports (4201-4209)
 - **Production**: Points to actual deployed URLs
 - **Naming Convention**: `{domain}-{type}` format for clear identification
 
@@ -260,7 +263,7 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => loadRemoteModule('umdzidzisi-client', './Component').then((m) => [{ path: '', component: m.default }]),
   },
-  // Similar structure for umtengesi domain...
+  // Similar structure for umtengesi and insurance domains...
 ];
 ```
 
@@ -306,6 +309,10 @@ npm run umdzidzisi:client     # Shell + umdzidzisi-client
 npm run umtengesi:website    # Shell + umtengesi-website
 npm run umtengesi:admin      # Shell + umtengesi-admin
 npm run umtengesi:client     # Shell + umtengesi-client
+
+npm run insurance:website    # Shell + insurance-website
+npm run insurance:admin      # Shell + insurance-admin
+npm run insurance:client     # Shell + insurance-client
 ```
 
 The shell's serve configuration includes a `dependsOn` array that automatically builds remote applications before starting:
@@ -314,7 +321,7 @@ The shell's serve configuration includes a `dependsOn` array that automatically 
 {
   "serve": {
     "executor": "@angular-architects/native-federation:build",
-    "dependsOn": ["umdzidzisi-website:build", "umdzidzisi-admin:build", "umdzidzisi-client:build", "umtengesi-website:build", "umtengesi-admin:build", "umtengesi-client:build"],
+    "dependsOn": ["umdzidzisi-website:build", "umdzidzisi-admin:build", "umdzidzisi-client:build", "umtengesi-website:build", "umtengesi-admin:build", "umtengesi-client:build", "insurance-website:build", "insurance-admin:build", "insurance-client:build"],
     "options": {
       "target": "shell:serve-original:development"
     }
@@ -325,9 +332,9 @@ The shell's serve configuration includes a `dependsOn` array that automatically 
 **Important Notes:**
 
 - The shell runs on port 4200 (configured in `serve-original` target)
-- Each remote app has a dedicated port (4201-4206)
-- Remote apps do NOT have their own serve targets
-- Remote apps are built (not served) to generate `remoteEntry.json` files
+- Each remote app has a dedicated port (4201-4209)
+- Each remote app has its own `serve` / `serve-original` targets on that port, but the port only serves its `remoteEntry.json` — the app itself is reached through the shell
+- Remote apps are built to generate `remoteEntry.json` files
 - All access to remote apps must go through the shell at `http://localhost:4200`
 
 #### Remote Application Structure
@@ -352,16 +359,28 @@ apps/
 │   └── client/                 # Port 4206
 │       └── src/main.ts         # Pure remote module
 │
+├── insurance/                       # Insurance domain
+│   ├── website/                # Port 4207
+│   │   └── src/main.ts         # Pure remote module
+│   ├── admin/                  # Port 4208
+│   │   └── src/main.ts         # Pure remote module
+│   └── client/                 # Port 4209
+│       └── src/main.ts         # Pure remote module
+│
 └── e2e/                        # E2E test projects
     ├── shell/                  # E2E tests for shell application
     ├── umdzidzisi/                   # E2E tests for Umdzidzisi domain
     │   ├── website/            # E2E tests for umdzidzisi-website
     │   ├── admin/              # E2E tests for umdzidzisi-admin
     │   └── client/             # E2E tests for umdzidzisi-client
-    └── umtengesi/                   # E2E tests for Umtengesi domain
-        ├── website/            # E2E tests for umtengesi-website
-        ├── admin/              # E2E tests for umtengesi-admin
-        └── client/             # E2E tests for umtengesi-client
+    ├── umtengesi/                   # E2E tests for Umtengesi domain
+    │   ├── website/            # E2E tests for umtengesi-website
+    │   ├── admin/              # E2E tests for umtengesi-admin
+    │   └── client/             # E2E tests for umtengesi-client
+    └── insurance/                   # E2E tests for Insurance domain
+        ├── website/            # E2E tests for insurance-website
+        ├── admin/              # E2E tests for insurance-admin
+        └── client/             # E2E tests for insurance-client
 ```
 
 Each remote application's main.ts:
@@ -369,16 +388,15 @@ Each remote application's main.ts:
 ```typescript
 // This is a pure remote module - no standalone bootstrap
 // The shell application handles initialization and loading
-// All exposed modules are defined in federation.config.mjs
+// All exposed modules are defined in federation.config.js
 ```
 
 Key differences from traditional applications:
 
 - **No `initFederation()` call**: Remote apps don't initialize federation
 - **No `bootstrapApplication()` call**: Remote apps don't bootstrap themselves
-- **No serve targets**: Remote apps cannot be started independently
-- **Build-only**: Remote apps are only built to generate federation bundles
-- **Nested structure**: Organized by domain (umdzidzisi/umtengesi) and type (website/admin/client)
+- **Shell-only access**: Remote apps have `serve` targets, but their ports only serve `remoteEntry.json`; the app is reached through the shell
+- **Nested structure**: Organized by domain (umdzidzisi/umtengesi/insurance) and type (website/admin/client)
 
 #### Adding to App Selector
 
@@ -414,6 +432,13 @@ availableApps: RemoteApp[] = [
     description: 'Public-facing website for Umtengesi',
     route: '/umtengesi/website'
   },
+  // Insurance Domain
+  {
+    id: 'insurance-website',
+    name: 'Insurance Website',
+    description: 'Public-facing website for Insurance',
+    route: '/insurance/website'
+  },
   // ... and so on
 ];
 ```
@@ -423,7 +448,7 @@ availableApps: RemoteApp[] = [
 ```json
 {
   "serve": {
-    "dependsOn": ["umdzidzisi-website:build", "umdzidzisi-admin:build", "umdzidzisi-client:build", "umtengesi-website:build", "umtengesi-admin:build", "umtengesi-client:build"]
+    "dependsOn": ["umdzidzisi-website:build", "umdzidzisi-admin:build", "umdzidzisi-client:build", "umtengesi-website:build", "umtengesi-admin:build", "umtengesi-client:build", "insurance-website:build", "insurance-admin:build", "insurance-client:build"]
   }
 }
 ```
@@ -713,6 +738,7 @@ export class ThemeService {
     const routeThemeMap: Record<string, string> = {
       '/umdzidzisi': 'umdzidzisi',
       '/umtengesi': 'umtengesi',
+      '/insurance': 'insurance',
     };
     const baseRoute = '/' + route.split('/').filter(Boolean)[0];
     const themeName = routeThemeMap[baseRoute] || 'default';
@@ -749,6 +775,7 @@ export const THEMES: Record<string, Theme> = {
   },
   umdzidzisi: {/* ... */},
   umtengesi: {/* ... */},
+  insurance: {/* ... */},
 };
 ```
 
@@ -774,6 +801,12 @@ export const THEMES: Record<string, Theme> = {
   --primary-color: #3b82f6;
   --secondary-color: #8b5cf6;
   // ... other umtengesi colors
+}
+
+[data-theme='insurance'] {
+  --primary-color: #1e3a5f;
+  --secondary-color: #00a19a;
+  // ... other insurance colors
 }
 
 // Component styles use CSS variables
@@ -994,7 +1027,7 @@ apps/
 │   │   ├── bootstrap.ts                  # Application bootstrap
 │   │   └── styles.scss                   # Global styles
 │   ├── public/
-│   │   └── federation.manifest.json      # Remote app registry (6 remotes)
+│   │   └── federation.manifest.json      # Remote app registry (9 remotes)
 │   ├── project.json                      # NX configuration
 │   └── tsconfig.app.json                 # TypeScript config
 │
@@ -1031,16 +1064,25 @@ apps/
 │   ├── admin/                      # Port 4204
 │   └── client/                     # Port 4206
 │
+├── insurance/                           # Insurance domain (nested structure)
+│   ├── website/                    # Port 4207
+│   ├── admin/                      # Port 4208
+│   └── client/                     # Port 4209
+│
 └── e2e/                            # E2E test projects
     ├── shell/                      # E2E tests for shell application
     ├── umdzidzisi/                       # E2E tests for Umdzidzisi domain
     │   ├── website/                # E2E tests for umdzidzisi-website
     │   ├── admin/                  # E2E tests for umdzidzisi-admin
     │   └── client/                 # E2E tests for umdzidzisi-client
-    └── umtengesi/                       # E2E tests for Umtengesi domain
-        ├── website/                # E2E tests for umtengesi-website
-        ├── admin/                  # E2E tests for umtengesi-admin
-        └── client/                 # E2E tests for umtengesi-client
+    ├── umtengesi/                       # E2E tests for Umtengesi domain
+    │   ├── website/                # E2E tests for umtengesi-website
+    │   ├── admin/                  # E2E tests for umtengesi-admin
+    │   └── client/                 # E2E tests for umtengesi-client
+    └── insurance/                       # E2E tests for Insurance domain
+        ├── website/                # E2E tests for insurance-website
+        ├── admin/                  # E2E tests for insurance-admin
+        └── client/                 # E2E tests for insurance-client
 ```
 
 ### Library Structure

@@ -24,6 +24,7 @@ This repository showcases a **single entry point micro-frontend architecture** p
 - **Remote Applications (Pure Modules)**: Build-only remote modules organized into nested domains
   - **umdzidzisi**: Contains website (4201), admin (4203), and client (4205) applications
   - **umtengesi**: Contains website (4202), admin (4204), and client (4206) applications
+  - **insurance**: Contains website (4207), admin (4208), and client (4209) applications
 - **App Selector UI**: Dashboard interface for selecting which application to run
 - **Shared Libraries**: Reusable code shared across applications (authentication, theming, event bus, UI components)
 
@@ -77,6 +78,11 @@ This architecture enforces **single entry point access**:
 │  │  ├── umtengesi-website (Port 4202) - Public-facing website     │  │
 │  │  ├── umtengesi-admin   (Port 4204) - Administration portal     │  │
 │  │  └── umtengesi-client  (Port 4206) - Client dashboard          │  │
+│  │                                                            │  │
+│  │  Insurance Domain (Nested Structure)                           │  │
+│  │  ├── insurance-website (Port 4207) - Public-facing website     │  │
+│  │  ├── insurance-admin   (Port 4208) - Administration portal     │  │
+│  │  └── insurance-client  (Port 4209) - Client dashboard          │  │
 │  │                                                            │  │
 │  │  All remotes: Pure Modules • Build-Only • No Standalone   │  │
 │  └────────────────────────────────────────────────────────────┘  │
@@ -177,16 +183,48 @@ web-apps/
 │   │       │   └── main.ts             # Empty - pure remote module
 │   │       └── project.json            # Build-only (no serve targets)
 │   │
+│   ├── insurance/                     # Insurance domain (nested structure)
+│   │   ├── website/              # Public-facing website (port 4207)
+│   │   │   ├── src/
+│   │   │   │   ├── app/
+│   │   │   │   │   ├── app.ts          # Exposed component
+│   │   │   │   │   ├── app.config.ts
+│   │   │   │   │   └── app.routes.ts
+│   │   │   │   └── main.ts             # Empty - pure remote module
+│   │   │   └── project.json            # Build-only (no serve targets)
+│   │   │
+│   │   ├── admin/                # Administration portal (port 4208)
+│   │   │   ├── src/
+│   │   │   │   ├── app/
+│   │   │   │   │   ├── app.ts          # Exposed component
+│   │   │   │   │   ├── app.config.ts
+│   │   │   │   │   └── app.routes.ts
+│   │   │   │   └── main.ts             # Empty - pure remote module
+│   │   │   └── project.json            # Build-only (no serve targets)
+│   │   │
+│   │   └── client/               # Client dashboard (port 4209)
+│   │       ├── src/
+│   │       │   ├── app/
+│   │       │   │   ├── app.ts          # Exposed component
+│   │       │   │   ├── app.config.ts
+│   │       │   │   └── app.routes.ts
+│   │       │   └── main.ts             # Empty - pure remote module
+│   │       └── project.json            # Build-only (no serve targets)
+│   │
 │   └── e2e/                      # E2E test projects
 │       ├── shell/                # E2E tests for shell application
 │       ├── umdzidzisi/                 # E2E tests for Umdzidzisi domain
 │       │   ├── website/          # E2E tests for umdzidzisi-website
 │       │   ├── admin/            # E2E tests for umdzidzisi-admin
 │       │   └── client/           # E2E tests for umdzidzisi-client
-│       └── umtengesi/                 # E2E tests for Umtengesi domain
-│           ├── website/          # E2E tests for umtengesi-website
-│           ├── admin/            # E2E tests for umtengesi-admin
-│           └── client/           # E2E tests for umtengesi-client
+│       ├── umtengesi/                 # E2E tests for Umtengesi domain
+│       │   ├── website/          # E2E tests for umtengesi-website
+│       │   ├── admin/            # E2E tests for umtengesi-admin
+│       │   └── client/           # E2E tests for umtengesi-client
+│       └── insurance/                 # E2E tests for Insurance domain
+│           ├── website/          # E2E tests for insurance-website
+│           ├── admin/            # E2E tests for insurance-admin
+│           └── client/           # E2E tests for insurance-client
 │
 ├── libs/
 │   └── shared/                   # Shared libraries
@@ -236,23 +274,23 @@ web-apps/
 - **Pure Remote Modules**: Remote apps are build-only and cannot run independently
 - **Automatic Builds**: Remote apps built automatically when shell starts
 - **Unified Authentication**: Single authentication flow for all applications
-- **Nested Domain Structure**: Applications organized by domain (umdzidzisi, umtengesi) with multiple variants
+- **Nested Domain Structure**: Applications organized by domain (umdzidzisi, umtengesi, insurance) with multiple variants
 
 ### 2. Application Types
 
 Each domain contains three distinct application types:
 
-- **Website (Ports 4201, 4202)**: Public-facing website applications
+- **Website (Ports 4201, 4202, 4207)**: Public-facing website applications
   - Customer-facing features
   - Marketing content and landing pages
   - Public information and resources
 
-- **Admin (Ports 4203, 4204)**: Administrative portal applications
+- **Admin (Ports 4203, 4204, 4208)**: Administrative portal applications
   - Internal management tools
   - Configuration and settings
   - System administration features
 
-- **Client (Ports 4205, 4206)**: Client dashboard applications
+- **Client (Ports 4205, 4206, 4209)**: Client dashboard applications
   - Authenticated user dashboards
   - Client-specific features and data
   - Personalized user experiences
@@ -288,7 +326,7 @@ Each domain contains three distinct application types:
 
 - **Route-Based Themes**: Automatic theme switching based on active route
 - **CSS Custom Properties**: Theme variables using CSS custom properties
-- **Multiple Themes**: Support for default, umdzidzisi, and umtengesi themes
+- **Multiple Themes**: Support for default, umdzidzisi, umtengesi, and insurance themes
 - **Service-Based**: Centralized theme management
 
 ### 8. Event Bus Communication
@@ -339,11 +377,15 @@ npm run umdzidzisi:client     # Shell + umdzidzisi-client
 npm run umtengesi:website    # Shell + umtengesi-website
 npm run umtengesi:admin      # Shell + umtengesi-admin
 npm run umtengesi:client     # Shell + umtengesi-client
+
+npm run insurance:website    # Shell + insurance-website
+npm run insurance:admin      # Shell + insurance-admin
+npm run insurance:client     # Shell + insurance-client
 ```
 
 Each command will:
 
-1. Kill any existing processes on ports 4200-4206
+1. Kill any existing processes on ports 4200-4209
 2. Build the selected remote app(s)
 3. Start the shell on `http://localhost:4200`
 4. Show the app selector dashboard
@@ -370,12 +412,15 @@ npm run umdzidzisi:website    # Umdzidzisi website variant
 npm run umdzidzisi:admin      # Umdzidzisi admin variant
 npm run umdzidzisi:client     # Umdzidzisi client variant
 
+npm run umtengesi:website     # Umtengesi website variant
+npm run insurance:website     # Insurance website variant
+
 # Build commands
-npm run build:remotes   # Build all 6 remote apps
+npm run build:remotes   # Build all 9 remote apps
 npm run build:all       # Build shell + all remotes
 ```
 
-**Important**: Remote applications (umdzidzisi-website, umdzidzisi-admin, umdzidzisi-client, umtengesi-website, umtengesi-admin, umtengesi-client) do NOT have serve targets and cannot be started independently. They are built automatically when the shell starts.
+**Important**: Remote applications (umdzidzisi-website, umdzidzisi-admin, umdzidzisi-client, umtengesi-website, umtengesi-admin, umtengesi-client, insurance-website, insurance-admin, insurance-client) are always consumed through the shell at `http://localhost:4200`. Each remote does have its own `serve` target and dedicated port, but that port only serves its `remoteEntry.json` for the shell to fetch — it is not the URL you browse.
 
 ### Application Architecture
 
@@ -390,8 +435,12 @@ npm run build:all       # Build shell + all remotes
 | umtengesi-website     | 4202 | ❌ No                  | Public-facing website for Umtengesi  |
 | umtengesi-admin       | 4204 | ❌ No                  | Administration portal for Umtengesi  |
 | umtengesi-client      | 4206 | ❌ No                  | Client dashboard for Umtengesi       |
+| **Insurance Domain**  |      |                        |                                      |
+| insurance-website     | 4207 | ❌ No                  | Public-facing website for Insurance  |
+| insurance-admin       | 4208 | ❌ No                  | Administration portal for Insurance  |
+| insurance-client      | 4209 | ❌ No                  | Client dashboard for Insurance       |
 
-**Note**: All remote applications are pure modules, build-only, and cannot run independently. They are only accessible through the shell.
+**Note**: The "Can Run Independently?" column refers to browsing the app directly. Every remote has a `serve` target on the port listed above, but that port exists to serve `remoteEntry.json` to the shell — the application itself is only ever reached through the shell at `http://localhost:4200`.
 
 ## Development Workflow
 
@@ -478,7 +527,7 @@ This project uses **Husky** for automated git hooks to ensure code quality:
 
 #### Valid Scopes:
 
-`shell`, `umdzidzisi-website`, `umdzidzisi-admin`, `umdzidzisi-client`, `umtengesi-website`, `umtengesi-admin`, `umtengesi-client`, `ui-common`, `data-access-auth`, `util-event-bus`, `util-theming`, `models`, `deps`, `ci`, `workspace`
+`shell`, `umdzidzisi-website`, `umdzidzisi-admin`, `umdzidzisi-client`, `umtengesi-website`, `umtengesi-admin`, `umtengesi-client`, `insurance-website`, `insurance-admin`, `insurance-client`, `ui-common`, `data-access-auth`, `util-event-bus`, `util-theming`, `models`, `deps`, `ci`, `workspace`
 
 #### Bypassing Hooks (use sparingly):
 
@@ -652,7 +701,7 @@ export class App {
 
 The shell application uses a manifest file to discover remote applications:
 
-**Location**: `apps/shell/public/federation.manifest.json`
+**Location**: `apps/shell/<web|admin|client>/public/federation.manifest.json`
 
 ```json
 {
@@ -661,7 +710,10 @@ The shell application uses a manifest file to discover remote applications:
   "umdzidzisi-client": "http://localhost:4205/remoteEntry.json",
   "umtengesi-website": "http://localhost:4202/remoteEntry.json",
   "umtengesi-admin": "http://localhost:4204/remoteEntry.json",
-  "umtengesi-client": "http://localhost:4206/remoteEntry.json"
+  "umtengesi-client": "http://localhost:4206/remoteEntry.json",
+  "insurance-website": "http://localhost:4207/remoteEntry.json",
+  "insurance-admin": "http://localhost:4208/remoteEntry.json",
+  "insurance-client": "http://localhost:4209/remoteEntry.json"
 }
 ```
 
@@ -688,7 +740,7 @@ export const routes: Routes = [
     path: 'umdzidzisi/client',
     loadChildren: () => loadRemoteModule('umdzidzisi-client', './Component').then((m) => [{ path: '', component: m.default }]),
   },
-  // Similar structure for umtengesi...
+  // Similar structure for umtengesi and insurance...
 ];
 ```
 
@@ -774,13 +826,20 @@ dist/
 │   │   │   └── browser/          # Umdzidzisi admin build output
 │   │   └── client/
 │   │       └── browser/          # Umdzidzisi client build output
-│   └── umtengesi/
+│   ├── umtengesi/
+│   │   ├── website/
+│   │   │   └── browser/          # Umtengesi website build output
+│   │   ├── admin/
+│   │   │   └── browser/          # Umtengesi admin build output
+│   │   └── client/
+│   │       └── browser/          # Umtengesi client build output
+│   └── insurance/
 │       ├── website/
-│       │   └── browser/          # Umtengesi website build output
+│       │   └── browser/          # Insurance website build output
 │       ├── admin/
-│       │   └── browser/          # Umtengesi admin build output
+│       │   └── browser/          # Insurance admin build output
 │       └── client/
-│           └── browser/          # Umtengesi client build output
+│           └── browser/          # Insurance client build output
 ```
 
 ### Deployment Strategy
@@ -797,6 +856,9 @@ umdzidzisi-client.example.com     → Umdzidzisi client
 umtengesi-website.example.com    → Umtengesi website
 umtengesi-admin.example.com      → Umtengesi admin
 umtengesi-client.example.com     → Umtengesi client
+insurance-website.example.com    → Insurance website
+insurance-admin.example.com      → Insurance admin
+insurance-client.example.com     → Insurance client
 ```
 
 Update `federation.manifest.json` with production URLs:
@@ -808,7 +870,10 @@ Update `federation.manifest.json` with production URLs:
   "umdzidzisi-client": "https://umdzidzisi-client.example.com/remoteEntry.json",
   "umtengesi-website": "https://umtengesi-website.example.com/remoteEntry.json",
   "umtengesi-admin": "https://umtengesi-admin.example.com/remoteEntry.json",
-  "umtengesi-client": "https://umtengesi-client.example.com/remoteEntry.json"
+  "umtengesi-client": "https://umtengesi-client.example.com/remoteEntry.json",
+  "insurance-website": "https://insurance-website.example.com/remoteEntry.json",
+  "insurance-admin": "https://insurance-admin.example.com/remoteEntry.json",
+  "insurance-client": "https://insurance-client.example.com/remoteEntry.json"
 }
 ```
 
@@ -824,6 +889,9 @@ example.com/remotes/umdzidzisi-client/  → Umdzidzisi client
 example.com/remotes/umtengesi-website/ → Umtengesi website
 example.com/remotes/umtengesi-admin/   → Umtengesi admin
 example.com/remotes/umtengesi-client/  → Umtengesi client
+example.com/remotes/insurance-website/ → Insurance website
+example.com/remotes/insurance-admin/   → Insurance admin
+example.com/remotes/insurance-client/  → Insurance client
 ```
 
 #### Docker Deployment

@@ -50,6 +50,29 @@ module.exports = {
           800: '#19162c',
           900: '#0b0a14',
         },
+        // Insurance brand colors - Trust Blue Palette
+        insurance: {
+          // Trust blue light theme
+          primary: '#1e3a5f',
+          accent: '#00a19a',
+          background: '#ffffff',
+          surface: '#f8fafb',
+          text: '#0d1b2a',
+          'text-secondary': '#3c5a7d',
+          border: '#d5dee7',
+          hover: '#152b46',
+          // Complete color scale (50-900)
+          50: '#f8fafb',
+          100: '#e4ebf2',
+          200: '#d5dee7',
+          300: '#a8c4e0',
+          400: '#7fa8d4',
+          500: '#3c5a7d',
+          600: '#1e3a5f',
+          700: '#152b46',
+          800: '#132235',
+          900: '#0d1b2a',
+        },
         // Umtengesi brand colors
         umtengesi: {
           primary: '#FF725E',

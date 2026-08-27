@@ -5,13 +5,16 @@ interface RemoteConfig {
 
 interface Environment {
   production: boolean;
-  defaultTheme: 'default' | 'umdzidzisi' | 'umtengesi';
+  apiBaseUrl: string;
+  defaultTheme: 'default' | 'umdzidzisi' | 'umtengesi' | 'insurance';
   remotes: Record<string, RemoteConfig>;
 }
 
 export const environment: Environment = {
   production: false,
-  defaultTheme: 'default' as 'default' | 'umdzidzisi' | 'umtengesi',
+  apiBaseUrl: 'https://api.mushaviri.com:8443',
+  defaultTheme: 'default' as
+    'default' | 'umdzidzisi' | 'umtengesi' | 'insurance',
   remotes: {
     'umdzidzisi-client': {
       url: 'http://localhost:4205/remoteEntry.json',

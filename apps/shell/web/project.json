@@ -39,6 +39,9 @@
         },
         "umtengesi": {
           "target": "shell-web:serve-original:umtengesi"
+        },
+        "insurance": {
+          "target": "shell-web:serve-original:insurance"
         }
       }
     },
@@ -102,6 +105,17 @@
               "with": "apps/shell/web/src/environments/environment.umtengesi.ts"
             }
           ]
+        },
+        "insurance": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/shell/web/src/environments/environment.ts",
+              "with": "apps/shell/web/src/environments/environment.insurance.ts"
+            }
+          ]
         }
       }
     },
@@ -124,6 +138,9 @@
         },
         "umtengesi": {
           "buildTarget": "shell-web:esbuild:umtengesi"
+        },
+        "insurance": {
+          "buildTarget": "shell-web:esbuild:insurance"
         }
       }
     },

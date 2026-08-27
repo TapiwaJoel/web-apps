@@ -1,0 +1,9 @@
+{
+  "name": "insurance-client-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/e2e/insurance/client/src",
+  "implicitDependencies": ["insurance-client"],
+  "// targets": "to see all targets run: nx show project insurance-client-e2e --web",
+  "targets": {}
+}

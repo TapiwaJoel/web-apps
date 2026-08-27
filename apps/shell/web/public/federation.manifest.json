@@ -4,5 +4,8 @@
   "umdzidzisi-client": "http://localhost:4205/remoteEntry.json",
   "umtengesi-website": "http://localhost:4202/remoteEntry.json",
   "umtengesi-admin": "http://localhost:4204/remoteEntry.json",
-  "umtengesi-client": "http://localhost:4206/remoteEntry.json"
+  "umtengesi-client": "http://localhost:4206/remoteEntry.json",
+  "insurance-website": "http://localhost:4207/remoteEntry.json",
+  "insurance-admin": "http://localhost:4208/remoteEntry.json",
+  "insurance-client": "http://localhost:4209/remoteEntry.json"
 }

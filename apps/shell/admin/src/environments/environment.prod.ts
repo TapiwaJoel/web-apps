@@ -5,14 +5,17 @@ interface RemoteConfig {
 
 interface Environment {
   production: boolean;
-  defaultTheme: 'default' | 'admin' | 'umdzidzisi' | 'umtengesi';
+  apiBaseUrl: string;
+  defaultTheme: 'default' | 'admin' | 'umdzidzisi' | 'umtengesi' | 'insurance';
   landingApp?: string;
   remotes: Record<string, RemoteConfig>;
 }
 
 export const environment: Environment = {
   production: true,
-  defaultTheme: 'admin' as 'default' | 'admin' | 'umdzidzisi' | 'umtengesi',
+  apiBaseUrl: 'https://api.mushaviri.com:8443',
+  defaultTheme: 'admin' as
+    'default' | 'admin' | 'umdzidzisi' | 'umtengesi' | 'insurance',
   remotes: {
     'umdzidzisi-website': {
       url: './umdzidzisi-website/remoteEntry.json',
@@ -37,6 +40,18 @@ export const environment: Environment = {
     'umtengesi-client': {
       url: './umtengesi-client/remoteEntry.json',
       auth: { mode: 'optional' as const }, // E-commerce - browse freely, login for features
+    },
+    'insurance-website': {
+      url: './insurance-website/remoteEntry.json',
+      auth: { mode: 'none' as const }, // Public website - no auth required
+    },
+    'insurance-admin': {
+      url: './insurance-admin/remoteEntry.json',
+      auth: { mode: 'required' as const }, // Admin portal - immediate auth required
+    },
+    'insurance-client': {
+      url: './insurance-client/remoteEntry.json',
+      auth: { mode: 'optional' as const }, // Client portal - browse freely, login for policy features
     },
   },
 };

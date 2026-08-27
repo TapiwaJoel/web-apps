@@ -5,14 +5,17 @@ interface RemoteConfig {
 
 interface Environment {
   production: boolean;
-  defaultTheme: 'default' | 'admin' | 'umdzidzisi' | 'umtengesi';
+  apiBaseUrl: string;
+  defaultTheme: 'default' | 'admin' | 'umdzidzisi' | 'umtengesi' | 'insurance';
   landingApp?: string;
   remotes: Record<string, RemoteConfig>;
 }
 
 export const environment: Environment = {
   production: false,
-  defaultTheme: 'umtengesi' as 'default' | 'umdzidzisi' | 'umtengesi',
+  apiBaseUrl: 'https://api.mushaviri.com:8443',
+  defaultTheme: 'umtengesi' as
+    'default' | 'umdzidzisi' | 'umtengesi' | 'insurance',
   landingApp: 'umtengesi-admin',
   remotes: {
     'umdzidzisi-website': {
@@ -38,6 +41,18 @@ export const environment: Environment = {
     'umtengesi-client': {
       url: 'http://localhost:4206/remoteEntry.json',
       auth: { mode: 'optional' as const }, // E-commerce - browse freely, login for features
+    },
+    'insurance-website': {
+      url: 'http://localhost:4207/remoteEntry.json',
+      auth: { mode: 'none' as const }, // Public website - no auth required
+    },
+    'insurance-admin': {
+      url: 'http://localhost:4208/remoteEntry.json',
+      auth: { mode: 'required' as const }, // Admin portal - immediate auth required
+    },
+    'insurance-client': {
+      url: 'http://localhost:4209/remoteEntry.json',
+      auth: { mode: 'optional' as const }, // Client portal - browse freely, login for policy features
     },
   },
 };
