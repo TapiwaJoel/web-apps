@@ -1,14 +1,21 @@
 import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
+import { workspaceRoot } from '@nx/devkit';
+
+/**
+ * A remote is only ever used *through its shell*: the shell host (:4200)
+ * lazy-loads this remote at the `/umtengesi-website` route. So e2e drives the
+ * shell, not the raw remote port (which serves only `remoteEntry.json`). The
+ * `webServer` array below boots the same shell + remote pair that
+ * `tools/scripts/dev.mjs umtengesi:website` runs in dev:
+ *   - shell-web @4200, served with `--configuration umtengesi`
+ *   - umtengesi-website remote @4202
+ * `reuseExistingServer: true` means an already-running `npm run umtengesi:website`
+ * dev session is reused instead of double-booting the ports.
+ */
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
-
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import 'dotenv/config';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -28,7 +35,23 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-  /* Dev server is managed by Nx via dependsOn in the e2e target */
+  /* Boot the shell host + this remote together (mirrors dev.mjs umtengesi:website). */
+  webServer: [
+    {
+      command: 'npx nx run shell-web:serve --configuration umtengesi',
+      url: 'http://localhost:4200',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+      timeout: 180_000, // native-federation cold start is slow
+    },
+    {
+      command: 'npx nx run umtengesi-website:serve',
+      url: 'http://localhost:4202/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+      timeout: 180_000,
+    },
+  ],
   projects: [
     {
       name: 'chromium',

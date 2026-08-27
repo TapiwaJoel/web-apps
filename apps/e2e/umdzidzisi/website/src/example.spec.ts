@@ -1,8 +1,17 @@
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
-  await page.goto('/');
+/**
+ * Smoke test for the umdzidzisi-website remote, exercised through the shell host
+ * the way a real user reaches it: navigate the shell to `/umdzidzisi-website`,
+ * which lazy-loads the remote via native federation, then assert the remote's
+ * own UI rendered. The website remote is `auth: none`, so no login is needed.
+ */
+test('loads the umdzidzisi-website remote through the shell', async ({
+  page,
+}) => {
+  await page.goto('/umdzidzisi-website');
 
-  // Expect h1 to contain a substring.
-  expect(await page.locator('h1').innerText()).toContain('Welcome');
+  await expect(
+    page.getByRole('heading', { name: 'Umdzidzisi - Feature Module' }),
+  ).toBeVisible();
 });

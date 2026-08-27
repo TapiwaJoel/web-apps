@@ -29,12 +29,14 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-  /* Run your local dev server before starting the tests */
+  /* Boot the shell host on :4200. Shell-native routes (login/dashboard) need no
+     remote, so a single server is enough here. */
   webServer: {
     command: 'npx nx run shell-web:serve',
     url: 'http://localhost:4200',
     reuseExistingServer: true,
     cwd: workspaceRoot,
+    timeout: 180_000, // native-federation cold start is slow
   },
   projects: [
     {

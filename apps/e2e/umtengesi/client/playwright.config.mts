@@ -1,14 +1,21 @@
 import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
-
-// For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = process.env['BASE_URL'] || 'http://localhost:4206';
+import { workspaceRoot } from '@nx/devkit';
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
+ * A remote is only ever used *through its shell*: the shell host (:4200)
+ * lazy-loads this remote at the `/umtengesi-client` route. So e2e drives the
+ * shell, not the raw remote port (which serves only `remoteEntry.json`). The
+ * `webServer` array below boots the same shell + remote pair that
+ * `tools/scripts/dev.mjs umtengesi:client` runs in dev:
+ *   - shell-client @4200, served with `--configuration umtengesi`
+ *   - umtengesi-client remote @4206
+ * `reuseExistingServer: true` means an already-running `npm run umtengesi:client`
+ * dev session is reused instead of double-booting the ports.
  */
-// import 'dotenv/config';
+
+// For CI, you may want to set BASE_URL to the deployed application.
+const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -28,7 +35,23 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-  /* Dev server is managed by Nx via dependsOn in the e2e target */
+  /* Boot the shell host + this remote together (mirrors dev.mjs umtengesi:client). */
+  webServer: [
+    {
+      command: 'npx nx run shell-client:serve --configuration umtengesi',
+      url: 'http://localhost:4200',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+      timeout: 180_000, // native-federation cold start is slow
+    },
+    {
+      command: 'npx nx run umtengesi-client:serve',
+      url: 'http://localhost:4206/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+      timeout: 180_000,
+    },
+  ],
   projects: [
     {
       name: 'chromium',
