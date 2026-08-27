@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { API_BASE_URL } from './api-base-url';
+import { API_BASE_URL } from '@mushaviri/api';
 
 /**
  * For requests to the API gateway, flow the httpOnly auth cookie (withCredentials)

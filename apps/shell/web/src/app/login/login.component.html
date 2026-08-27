@@ -30,23 +30,44 @@
         </div>
 
         <!-- Login Form -->
-        <form (ngSubmit)="onSubmit()" class="space-y-5 md:space-y-6">
+        <form
+          [formGroup]="form"
+          (ngSubmit)="onSubmit()"
+          class="space-y-5 md:space-y-6"
+        >
+          <!-- Server error banner -->
+          @if (errorMessage(); as message) {
+            <div
+              role="alert"
+              data-testid="login-error"
+              class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              {{ message }}
+            </div>
+          }
+
           <div>
             <label
               for="username"
               class="mb-2 block text-sm font-medium text-gray-700"
             >
-              Email Address
+              Email or Phone
             </label>
             <input
-              type="email"
+              type="text"
               id="username"
               name="username"
-              [(ngModel)]="username"
-              required
+              formControlName="identifier"
+              autocomplete="username"
+              data-testid="login-identifier"
               placeholder="admin@example.com"
               class="theme-primary-ring w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:ring-2 focus:outline-none md:px-4 md:py-3"
             />
+            @if (hasError('identifier', 'required')) {
+              <p class="mt-1.5 text-sm text-red-600">
+                Email or phone number is required.
+              </p>
+            }
           </div>
 
           <div>
@@ -60,11 +81,15 @@
               type="password"
               id="password"
               name="password"
-              [(ngModel)]="password"
-              required
+              formControlName="password"
+              autocomplete="current-password"
+              data-testid="login-password"
               placeholder="Enter your password"
               class="theme-primary-ring w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:ring-2 focus:outline-none md:px-4 md:py-3"
             />
+            @if (hasError('password', 'required')) {
+              <p class="mt-1.5 text-sm text-red-600">Password is required.</p>
+            }
           </div>
 
           <div class="flex items-center justify-between text-sm">
@@ -85,8 +110,16 @@
 
           <button
             type="submit"
-            class="theme-primary-bg w-full rounded-lg px-4 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg md:py-3"
+            [disabled]="loading()"
+            data-testid="login-submit"
+            class="theme-primary-bg flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 md:py-3"
           >
+            @if (loading()) {
+              <span
+                aria-hidden="true"
+                class="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+              ></span>
+            }
             Sign In
           </button>
         </form>

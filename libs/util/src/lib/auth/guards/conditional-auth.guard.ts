@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router, type CanActivateFn } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { SessionStore } from '../session.store';
 
 /**
  * No Authentication Guard
@@ -31,19 +31,15 @@ export const optionalAuthGuard: CanActivateFn = () => {
  * Required Authentication Guard
  * For admin portals and protected apps that need immediate authentication
  *
- * This guard:
- * - Checks if user is authenticated
- * - If authenticated: allows access
- * - If NOT authenticated: redirects to login with returnUrl
+ * Reads the session synchronously from `SessionStore`; the cookie itself is
+ * httpOnly and therefore invisible here. `SessionStore.restore()` runs as an app
+ * initializer so this guard sees the real answer on a cold reload.
  */
 export const requiredAuthGuard: CanActivateFn = (route, state) => {
-  const authService: AuthService = inject(AuthService);
+  const session: SessionStore = inject(SessionStore);
   const router: Router = inject(Router);
 
-  // Use isAuthenticatedValue() method instead of calling the computed signal
-  const isAuthenticated: boolean = authService.isAuthenticatedValue();
-
-  if (isAuthenticated) {
+  if (session.isAuthenticatedValue()) {
     return true;
   }
 
