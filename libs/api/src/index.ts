@@ -4,6 +4,7 @@ export * from './lib/learning-management-service';
 export * from './lib/content-management-service';
 export * from './lib/messaging-service';
 export * from './lib/payment-gateway-service';
+export * from './lib/insurance-service';
 // content-management-service is the authoritative source for these DTOs; the
 // learning-management-service copies are simplified duplicates kept for that
 // module's own internal use. Explicit re-export resolves the `export *`

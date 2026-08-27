@@ -6,3 +6,4 @@ export const LEARNING_MANAGEMENT_PATH: string = 'learning-management-service';
 export const CONTENT_MANAGEMENT_PATH: string = 'content-management-service';
 export const MESSAGING_PATH: string = 'messaging-service';
 export const PAYMENT_GATEWAY_PATH: string = 'payment-gateway-service';
+export const INSURANCE_PATH: string = 'insurance-service';
