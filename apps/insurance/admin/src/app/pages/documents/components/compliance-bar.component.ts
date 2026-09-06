@@ -9,7 +9,7 @@ import { ComplianceSegment, DocumentStatus } from '../documents.types';
 const SEGMENT_BAR_CLASSES: Record<DocumentStatus, string> = {
   invalid: 'bg-error',
   expiring: 'bg-warning',
-  valid: 'bg-accent',
+  valid: 'bg-theme-accent',
 };
 
 @Component({
