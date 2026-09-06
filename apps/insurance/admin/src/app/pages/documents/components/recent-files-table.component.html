@@ -1,0 +1,80 @@
+<!-- apps/insurance/admin/src/app/pages/documents/components/recent-files-table.component.html -->
+<div class="bg-theme-surface border-theme-border rounded-lg border p-6">
+  <div class="mb-4 flex items-center justify-between">
+    <h3 class="text-theme-text text-lg font-semibold">Recent Files</h3>
+    <span class="text-theme-text-secondary text-sm">↗</span>
+  </div>
+
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex gap-2">
+      <button
+        type="button"
+        class="bg-insurance-600 rounded-md px-3 py-1.5 text-sm font-medium text-white"
+      >
+        Import
+      </button>
+      <button
+        type="button"
+        class="border-theme-border text-theme-text rounded-md border px-3 py-1.5 text-sm font-medium"
+      >
+        Renew
+      </button>
+      <button
+        type="button"
+        class="border-theme-border text-theme-text rounded-md border px-3 py-1.5 text-sm font-medium"
+      >
+        Complete
+      </button>
+    </div>
+    <input
+      type="search"
+      placeholder="Search.."
+      class="border-theme-border text-theme-text focus:ring-insurance-600 rounded-md border px-3 py-1.5 text-sm focus:ring-2 focus:outline-none"
+      [value]="searchTerm()"
+      (input)="onSearchInput($any($event.target).value)"
+    />
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead>
+        <tr class="text-theme-text-secondary border-theme-border border-b">
+          <th class="py-2 pr-4 font-medium">Type</th>
+          <th class="py-2 pr-4 font-medium">File ID</th>
+          <th class="py-2 pr-4 font-medium">Holder</th>
+          <th class="py-2 pr-4 font-medium">Date</th>
+          <th class="py-2 pr-4 font-medium">Expiration</th>
+          <th class="py-2 pr-4 font-medium">Source</th>
+          <th class="py-2 pr-4 font-medium">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (file of visibleFiles(); track file.id) {
+          <tr
+            class="border-theme-border text-theme-text border-b last:border-0"
+          >
+            <td class="py-3 pr-4">{{ file.type }}</td>
+            <td class="text-theme-text-secondary py-3 pr-4 tabular-nums">
+              {{ file.fileId }}
+            </td>
+            <td class="py-3 pr-4">{{ file.holderName }}</td>
+            <td class="py-3 pr-4 tabular-nums">{{ file.uploadedDate }}</td>
+            <td class="py-3 pr-4 tabular-nums">{{ file.expirationDate }}</td>
+            <td class="text-theme-text-secondary py-3 pr-4">
+              {{ file.source }}
+            </td>
+            <td class="py-3 pr-4">
+              <org-status-badge [status]="file.status" />
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="text-theme-text-secondary py-6 text-center">
+              No files match your search.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
