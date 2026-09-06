@@ -1,0 +1,66 @@
+<div class="flex flex-col gap-6 p-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-theme-text text-3xl font-bold">Documents</h1>
+    <button
+      type="button"
+      class="bg-insurance-600 rounded-md px-4 py-2 text-sm font-medium text-white"
+    >
+      + New Document
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    @for (category of data.categories; track category.label) {
+      <org-document-category-card
+        [label]="category.label"
+        [icon]="category.icon"
+        [fileCount]="category.fileCount"
+        [sizeLabel]="category.sizeLabel"
+      />
+    }
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div class="lg:col-span-2">
+      <org-recent-files-table [files]="data.recentFiles" />
+    </div>
+    <div class="flex flex-col gap-6">
+      <div class="bg-theme-surface border-theme-border rounded-lg border p-6">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-theme-text text-lg font-semibold">
+            Document Compliance
+          </h3>
+        </div>
+        <org-compliance-bar [segments]="data.complianceSegments" />
+        <div
+          class="border-theme-border mt-4 flex justify-between border-t pt-4"
+        >
+          <div>
+            <p class="text-theme-text text-2xl font-bold tabular-nums">
+              {{ data.validCount }}
+            </p>
+            <p class="text-theme-text-secondary text-sm">Valid Documents</p>
+          </div>
+          <div>
+            <p class="text-theme-text text-2xl font-bold tabular-nums">
+              {{ data.pendingReviewCount }}
+            </p>
+            <p class="text-theme-text-secondary text-sm">Pending Review</p>
+          </div>
+        </div>
+        <div
+          class="bg-warning-light border-warning mt-4 rounded-md border p-3 text-sm"
+        >
+          Some are close to expiring, incomplete, or failed validation. Review
+          now to avoid policy delays.
+        </div>
+      </div>
+      <org-storage-donut
+        [usedPct]="data.storage.usedPct"
+        [usedLabel]="data.storage.usedLabel"
+        [totalLabel]="data.storage.totalLabel"
+        [slices]="data.storage.slices"
+      />
+    </div>
+  </div>
+</div>
