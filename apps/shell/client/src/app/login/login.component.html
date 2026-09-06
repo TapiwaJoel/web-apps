@@ -35,17 +35,6 @@
           (ngSubmit)="onSubmit()"
           class="space-y-5 md:space-y-6"
         >
-          <!-- Server error banner -->
-          @if (errorMessage(); as message) {
-            <div
-              role="alert"
-              data-testid="login-error"
-              class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-            >
-              {{ message }}
-            </div>
-          }
-
           <div>
             <label
               for="username"
@@ -103,7 +92,10 @@
                 Remember me
               </label>
             </div>
-            <a href="#" class="theme-primary-link font-medium">
+            <a
+              routerLink="/forgot-password"
+              class="theme-primary-link font-medium"
+            >
               Forgot password?
             </a>
           </div>
@@ -143,3 +135,15 @@
     }
   </div>
 </div>
+
+@if (deviceChallenge(); as challenge) {
+  <org-device-verification-dialog
+    [defaultChannel]="challenge.channel"
+    [availableChannels]="challenge.availableChannels"
+    [otpValidity]="challenge.otpValidity"
+    [loading]="deviceDialogLoading()"
+    (channelChange)="onDeviceChannelChange($event)"
+    (codeSubmit)="onDeviceCodeSubmit($event)"
+    (closed)="onDeviceDialogClosed()"
+  />
+}

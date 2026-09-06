@@ -38,6 +38,13 @@ export const appRoutes: Routes = [
       import('./login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./forgot-password/forgot-password.component').then(
+        (m) => m.ForgotPasswordComponent,
+      ),
+  },
+  {
     path: 'dashboard',
     canActivate: [requiredAuthGuard], // Dashboard always requires auth
     loadComponent: () =>
