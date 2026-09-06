@@ -29,7 +29,7 @@
 - **`no-console`**: only `warn`/`error` allowed — avoid `console.log` entirely (not needed in this plan).
 - **`unused-imports/no-unused-imports`: error** — no unused imports.
 
-**Consequence for this plan's code samples:** code blocks below show `readonly x = input(...)` etc. WITHOUT accessibility modifiers for brevity. Implementers MUST add `public`/`protected` to every member per the rules above. Run `pnpm nx lint insurance-admin` before each commit — the pre-commit hook re-runs `eslint --fix` on staged files, but fixing lint errors yourself first avoids a bounced commit.
+**Consequence for this plan's code samples:** code blocks below show `readonly x = input(...)` etc. WITHOUT accessibility modifiers for brevity. Implementers MUST add `public`/`protected` to every member per the rules above. Run `npx nx lint insurance-admin` before each commit — the pre-commit hook re-runs `eslint --fix` on staged files, but fixing lint errors yourself first avoids a bounced commit.
 
 ## File Structure
 
@@ -216,13 +216,13 @@ export const MOCK_DOCUMENTS_DATA: DocumentsPageData = {
 
 - [ ] **Step 2: Verify it compiles**
 
-Run: `pnpm nx build insurance-admin`
+Run: `npx nx build insurance-admin`
 Expected: build succeeds (this file has no consumers yet, but must type-check standalone — the build compiles the whole app).
 
 - [ ] **Step 3: Lint and commit**
 
 ```bash
-pnpm nx lint insurance-admin
+npx nx lint insurance-admin
 git add apps/insurance/admin/src/app/pages/documents/documents.types.ts
 git commit -m "feat(insurance-admin): add Documents page types and mock data"
 ```
@@ -278,13 +278,13 @@ export class StatusBadgeComponent {
 
 - [ ] **Step 2: Verify it compiles**
 
-Run: `pnpm nx build insurance-admin`
+Run: `npx nx build insurance-admin`
 Expected: build succeeds.
 
 - [ ] **Step 3: Lint and commit**
 
 ```bash
-pnpm nx lint insurance-admin
+npx nx lint insurance-admin
 git add apps/insurance/admin/src/app/pages/documents/components/status-badge.component.ts
 git commit -m "feat(insurance-admin): add StatusBadgeComponent"
 ```
@@ -335,13 +335,13 @@ export class DocumentCategoryCardComponent {
 
 - [ ] **Step 2: Verify it compiles**
 
-Run: `pnpm nx build insurance-admin`
+Run: `npx nx build insurance-admin`
 Expected: build succeeds.
 
 - [ ] **Step 3: Lint and commit**
 
 ```bash
-pnpm nx lint insurance-admin
+npx nx lint insurance-admin
 git add apps/insurance/admin/src/app/pages/documents/components/document-category-card.component.ts
 git commit -m "feat(insurance-admin): add DocumentCategoryCardComponent"
 ```
@@ -412,13 +412,13 @@ export class ComplianceBarComponent {
 
 - [ ] **Step 2: Verify it compiles**
 
-Run: `pnpm nx build insurance-admin`
+Run: `npx nx build insurance-admin`
 Expected: build succeeds.
 
 - [ ] **Step 3: Lint and commit**
 
 ```bash
-pnpm nx lint insurance-admin
+npx nx lint insurance-admin
 git add apps/insurance/admin/src/app/pages/documents/components/compliance-bar.component.ts
 git commit -m "feat(insurance-admin): add ComplianceBarComponent"
 ```
@@ -494,13 +494,13 @@ export class StorageDonutComponent {
 
 - [ ] **Step 2: Verify it compiles**
 
-Run: `pnpm nx build insurance-admin`
+Run: `npx nx build insurance-admin`
 Expected: build succeeds.
 
 - [ ] **Step 3: Lint and commit**
 
 ```bash
-pnpm nx lint insurance-admin
+npx nx lint insurance-admin
 git add apps/insurance/admin/src/app/pages/documents/components/storage-donut.component.ts
 git commit -m "feat(insurance-admin): add StorageDonutComponent"
 ```
@@ -611,13 +611,13 @@ export class RecentFilesTableComponent {
 
 - [ ] **Step 3: Verify it compiles**
 
-Run: `pnpm nx build insurance-admin`
+Run: `npx nx build insurance-admin`
 Expected: build succeeds.
 
 - [ ] **Step 4: Lint and commit**
 
 ```bash
-pnpm nx lint insurance-admin
+npx nx lint insurance-admin
 git add apps/insurance/admin/src/app/pages/documents/components/recent-files-table.component.ts apps/insurance/admin/src/app/pages/documents/components/recent-files-table.component.html
 git commit -m "feat(insurance-admin): add RecentFilesTableComponent"
 ```
@@ -705,13 +705,13 @@ export class DocumentsComponent {
 
 - [ ] **Step 3: Verify it compiles**
 
-Run: `pnpm nx build insurance-admin`
+Run: `npx nx build insurance-admin`
 Expected: build succeeds.
 
 - [ ] **Step 4: Lint and commit**
 
 ```bash
-pnpm nx lint insurance-admin
+npx nx lint insurance-admin
 git add apps/insurance/admin/src/app/pages/documents/documents.component.ts apps/insurance/admin/src/app/pages/documents/documents.component.html
 git commit -m "feat(insurance-admin): add DocumentsComponent orchestrator page"
 ```
@@ -792,15 +792,15 @@ export const INSURANCE_ADMIN_NAV_CONFIG: TreeNavNode[] = [
 
 - [ ] **Step 3: Verify the route renders**
 
-Run: `pnpm nx serve insurance-admin` (serves standalone on port 4208 per `project.json`), then open `http://localhost:4208/documents` directly in a browser.
+Run: `npx nx serve insurance-admin` (serves standalone on port 4208 per `project.json`), then open `http://localhost:4208/documents` directly in a browser.
 Expected: the Documents page renders inside the sidebar shell — category cards, recent files table with colored status badges, compliance bar with 3 counts, storage donut. Also click "Documents" in the sidebar from `/dashboard` and confirm navigation works and the item highlights as active.
 
-If the shell host (`apps/shell/admin`) is used instead to view it federated, run `pnpm nx serve shell-admin` (or the equivalent project name — confirm via `pnpm nx show projects | grep shell`) and navigate to `/insurance-admin/documents` after logging in, since the remote is gated by `requiredAuthGuard`.
+If the shell host (`apps/shell/admin`) is used instead to view it federated, run `npx nx serve shell-admin` (or the equivalent project name — confirm via `npx nx show projects | grep shell`) and navigate to `/insurance-admin/documents` after logging in, since the remote is gated by `requiredAuthGuard`.
 
 - [ ] **Step 4: Lint and commit**
 
 ```bash
-pnpm nx lint insurance-admin
+npx nx lint insurance-admin
 git add apps/insurance/admin/src/app/app.routes.ts apps/insurance/admin/src/app/config/navigation.config.ts
 git commit -m "feat(insurance-admin): wire Documents route and sidebar nav entry"
 ```
@@ -809,9 +809,9 @@ git commit -m "feat(insurance-admin): wire Documents route and sidebar nav entry
 
 ## Final Verification
 
-- [ ] Run `pnpm nx lint insurance-admin` — zero errors.
-- [ ] Run `pnpm nx build insurance-admin` — build succeeds.
-- [ ] Run `pnpm nx serve insurance-admin`, open `/documents` in a browser:
+- [ ] Run `npx nx lint insurance-admin` — zero errors.
+- [ ] Run `npx nx build insurance-admin` — build succeeds.
+- [ ] Run `npx nx serve insurance-admin`, open `/documents` in a browser:
   - 4 category cards render with correct counts/sizes.
   - Recent Files table shows 6 rows with color-coded status badges (green=valid, red=invalid, amber=expiring).
   - Typing in the search box filters rows by holder name/type/file ID.
