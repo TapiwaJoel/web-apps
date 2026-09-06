@@ -6,9 +6,11 @@
   </div>
   <div class="flex h-2 w-full overflow-hidden rounded-full">
     @for (segment of segments(); track segment.label) {
+      <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
       <div
         class="h-full"
-        [class]="barClass(segment.tone) + ' ' + getWidthClass(segment.pct)"
+        [class]="barClass(segment.tone)"
+        [style.width.%]="segment.pct"
       ></div>
     }
   </div>
