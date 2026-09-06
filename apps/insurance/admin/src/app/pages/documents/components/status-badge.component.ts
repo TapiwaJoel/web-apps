@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   input,
+  type InputSignal,
   type Signal,
 } from '@angular/core';
 import { DocumentStatus } from '../documents.types';
@@ -25,7 +26,7 @@ const BADGE_STYLES: Record<DocumentStatus, BadgeStyle> = {
   templateUrl: './status-badge.component.html',
 })
 export class StatusBadgeComponent {
-  public readonly status: Signal<DocumentStatus> =
+  public readonly status: InputSignal<DocumentStatus> =
     input.required<DocumentStatus>();
 
   protected readonly style: Signal<BadgeStyle> = computed<BadgeStyle>(
