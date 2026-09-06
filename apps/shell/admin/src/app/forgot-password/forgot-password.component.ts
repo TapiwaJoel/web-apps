@@ -189,6 +189,7 @@ export class ForgotPasswordComponent {
         },
       });
   }
+
   public onBackToRequest(): void {
     this.challenge.set(null);
     this.resetForm.reset();

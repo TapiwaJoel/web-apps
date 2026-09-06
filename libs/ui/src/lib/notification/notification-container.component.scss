@@ -2,7 +2,9 @@
   position: fixed;
   top: 80px;
   right: 20px;
-  z-index: 1000;
+  // Above the device-verification/step-up dialogs (backdrop 1000, dialog 1001),
+  // so a toast triggered while a modal is open is never hidden behind it.
+  z-index: 1100;
   max-width: 400px;
   width: 100%;
 }

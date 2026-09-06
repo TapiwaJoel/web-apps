@@ -1,0 +1,88 @@
+<div
+  class="dvd-backdrop"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="dvd-dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="dvd-title"
+  (keydown.escape)="onCancel()"
+>
+  <header class="dvd-header">
+    <h2 id="dvd-title" class="dvd-title">Verify this device</h2>
+    <button
+      type="button"
+      class="dvd-close"
+      aria-label="Close"
+      [disabled]="loading()"
+      (click)="onCancel()"
+    >
+      &times;
+    </button>
+  </header>
+
+  <p class="dvd-subtitle">
+    We don't recognise this device. We sent a code to your
+    {{ currentChannel() === 'EMAIL' ? 'email' : 'phone' }} — it's valid for
+    {{ otpValidity() }} minute{{ otpValidity() === 1 ? '' : 's' }}.
+  </p>
+
+  @if (availableChannels().length > 1) {
+    <div class="dvd-channels" role="group" aria-label="Choose delivery channel">
+      @for (channel of availableChannels(); track channel) {
+        <button
+          type="button"
+          class="dvd-channel-btn"
+          [class.dvd-channel-btn-active]="currentChannel() === channel"
+          [disabled]="loading()"
+          (click)="selectChannel(channel)"
+        >
+          {{ channel === 'EMAIL' ? 'Email' : 'SMS' }}
+        </button>
+      }
+    </div>
+  }
+
+  <form class="dvd-form" (ngSubmit)="onSubmit()">
+    <label class="dvd-field">
+      <span class="dvd-label">Verification code</span>
+      <input
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        data-testid="device-verification-code"
+        placeholder="123456"
+        class="dvd-input"
+        [ngModel]="code()"
+        (ngModelChange)="code.set($event)"
+        name="code"
+        [disabled]="loading()"
+      />
+    </label>
+
+    <footer class="dvd-actions">
+      <button
+        type="button"
+        class="dvd-btn dvd-btn-ghost"
+        [disabled]="loading()"
+        (click)="onCancel()"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="dvd-btn dvd-btn-primary"
+        data-testid="device-verification-submit"
+        [disabled]="loading() || !code().trim()"
+      >
+        {{ loading() ? 'Verifying…' : 'Verify' }}
+      </button>
+    </footer>
+  </form>
+</div>

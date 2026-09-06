@@ -3,6 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import {
+  AccountRecoveryDto,
+  AccountRecoveryResponseDto,
   LoginDto,
   LogoutRequestDto,
   UserPermissionsResponseDto,
@@ -57,6 +59,24 @@ export class AuthenticationService {
           (
             r: ServiceResponse<WebAuthenticationResponseDto>,
           ): WebAuthenticationResponseDto => r.data,
+        ),
+        catchError(mapHttpError),
+      );
+  }
+
+  public accountRecovery(
+    dto: AccountRecoveryDto,
+  ): Observable<AccountRecoveryResponseDto> {
+    return this.http
+      .post<ServiceResponse<AccountRecoveryResponseDto>>(
+        this.url('authentications', 'account-recovery'),
+        dto,
+      )
+      .pipe(
+        map(
+          (
+            r: ServiceResponse<AccountRecoveryResponseDto>,
+          ): AccountRecoveryResponseDto => r.data,
         ),
         catchError(mapHttpError),
       );

@@ -1,0 +1,68 @@
+<div
+  class="sua-backdrop"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="sua-dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="sua-title"
+  (keydown.escape)="onCancel()"
+>
+  <header class="sua-header">
+    <h2 id="sua-title" class="sua-title">Confirm it's you</h2>
+    <button
+      type="button"
+      class="sua-close"
+      aria-label="Close"
+      [disabled]="loading()"
+      (click)="onCancel()"
+    >
+      &times;
+    </button>
+  </header>
+
+  <p class="sua-subtitle">
+    This is a sensitive action. Enter your password to continue.
+  </p>
+
+  <form class="sua-form" (ngSubmit)="onSubmit()">
+    <label class="sua-field">
+      <span class="sua-label">Password</span>
+      <input
+        type="password"
+        autocomplete="current-password"
+        data-testid="step-up-auth-password"
+        class="sua-input"
+        [ngModel]="password()"
+        (ngModelChange)="password.set($event)"
+        name="password"
+        [disabled]="loading()"
+      />
+    </label>
+
+    <footer class="sua-actions">
+      <button
+        type="button"
+        class="sua-btn sua-btn-ghost"
+        [disabled]="loading()"
+        (click)="onCancel()"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="sua-btn sua-btn-primary"
+        data-testid="step-up-auth-submit"
+        [disabled]="loading() || !password().trim()"
+      >
+        {{ loading() ? 'Confirming…' : 'Confirm' }}
+      </button>
+    </footer>
+  </form>
+</div>

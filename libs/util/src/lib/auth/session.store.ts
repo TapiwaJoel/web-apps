@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   AuthenticationService,
   SystemUserResponseDto,
@@ -73,18 +73,35 @@ export class SessionStore {
   /**
    * Probes an authenticated endpoint to detect a valid session cookie after a
    * reload. Returns `false` instead of throwing so it can gate app initialization.
+   *
+   * The access token cookie is short-lived, so a returning "remember me" user will
+   * usually fail the first probe here even though their device is still trusted —
+   * the refresh token cookie (long-lived when remembered) is what the server can
+   * still exchange for a fresh session. Falls back to one refresh-and-retry before
+   * giving up, so a remembered session lands the user in the app instead of at login.
    */
   public restore(): Observable<boolean> {
+    const applyPermissions: (response: UserPermissionsResponseDto) => void = (
+      response: UserPermissionsResponseDto,
+    ): void => {
+      this.permissionsSignal.set(response.permissions ?? []);
+      this.authenticatedSignal.set(true);
+    };
+
     return this.authenticationService.myPermissions().pipe(
-      tap((response: UserPermissionsResponseDto): void => {
-        this.permissionsSignal.set(response.permissions ?? []);
-        this.authenticatedSignal.set(true);
-      }),
+      tap(applyPermissions),
       map((): boolean => true),
-      catchError((): Observable<boolean> => {
-        this.clear();
-        return of(false);
-      }),
+      catchError((): Observable<boolean> =>
+        this.authenticationService.refreshToken().pipe(
+          switchMap(() => this.authenticationService.myPermissions()),
+          tap(applyPermissions),
+          map((): boolean => true),
+          catchError((): Observable<boolean> => {
+            this.clear();
+            return of(false);
+          }),
+        ),
+      ),
     );
   }
 

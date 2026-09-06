@@ -9,9 +9,12 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
+  ApiError,
   AuthenticationService,
+  VerificationChannels,
+  VerificationsService,
   WebAuthenticationResponseDto,
 } from '@mushaviri/api';
 import { CommonModule } from '@angular/common';
@@ -23,11 +26,29 @@ import {
 } from '@angular/forms';
 import { SmartNavigationService } from '../services/smart-navigation.service';
 import { SessionStore, Theme, ThemeService } from '@mushaviri/util';
+import {
+  DeviceVerificationChannel,
+  DeviceVerificationDialogComponent,
+  NotificationService,
+} from '@mushaviri/ui';
+
+/** Parsed out of the 403 body when login is blocked pending device verification. */
+interface DeviceVerificationChallenge {
+  verificationId: string;
+  channel: DeviceVerificationChannel;
+  availableChannels: DeviceVerificationChannel[];
+  otpValidity: number;
+}
 
 @Component({
   selector: 'org-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    DeviceVerificationDialogComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +58,8 @@ export class LoginComponent {
   private authenticationService: AuthenticationService = inject(
     AuthenticationService,
   );
+  private verificationsService: VerificationsService =
+    inject(VerificationsService);
   private session: SessionStore = inject(SessionStore);
   private router: Router = inject(Router);
   private route: ActivatedRoute = inject(ActivatedRoute);
@@ -46,6 +69,8 @@ export class LoginComponent {
   private themeService: ThemeService = inject(ThemeService);
   private elementRef: ElementRef<HTMLElement> = inject(ElementRef);
   private fb: FormBuilder = inject(FormBuilder);
+  private notificationService: NotificationService =
+    inject(NotificationService);
 
   // Public properties
   /**
@@ -57,7 +82,12 @@ export class LoginComponent {
     password: ['', [Validators.required]],
   });
   public readonly loading: WritableSignal<boolean> = signal(false);
-  public readonly errorMessage: WritableSignal<string | null> = signal(null);
+
+  // Device verification dialog state
+  /** Non-null while the "unrecognised device" dialog is open. */
+  public readonly deviceChallenge: WritableSignal<DeviceVerificationChallenge | null> =
+    signal(null);
+  public readonly deviceDialogLoading: WritableSignal<boolean> = signal(false);
 
   // Computed signals
   public currentThemeConfig: Signal<Theme> = computed(() =>
@@ -96,7 +126,6 @@ export class LoginComponent {
     }
 
     this.loading.set(true);
-    this.errorMessage.set(null);
 
     // The backend authenticates on `identifier`, which accepts an email or a phone
     // number. Tokens come back as httpOnly cookies, so there is nothing to store —
@@ -125,7 +154,16 @@ export class LoginComponent {
         },
         error: (error: unknown): void => {
           this.loading.set(false);
-          this.errorMessage.set(this.toErrorMessage(error));
+          const challenge: DeviceVerificationChallenge | null =
+            this.toDeviceChallenge(error);
+          if (challenge) {
+            this.deviceChallenge.set(challenge);
+            return;
+          }
+          this.notificationService.show({
+            message: this.toErrorMessage(error),
+            type: 'error',
+          });
         },
       });
   }
@@ -133,6 +171,70 @@ export class LoginComponent {
   public hasError(control: string, error: string): boolean {
     const field: ReturnType<FormGroup['get']> = this.form.get(control);
     return !!field && field.touched && field.hasError(error);
+  }
+
+  /** User picked a different channel in the dialog: resend the code on it. */
+  public onDeviceChannelChange(channel: DeviceVerificationChannel): void {
+    const challenge: DeviceVerificationChallenge | null =
+      this.deviceChallenge();
+    if (!challenge) {
+      return;
+    }
+
+    this.deviceDialogLoading.set(true);
+
+    this.verificationsService
+      .resend({
+        verificationId: challenge.verificationId,
+        channel: this.toVerificationChannel(channel),
+      })
+      .subscribe({
+        next: (): void => {
+          this.deviceDialogLoading.set(false);
+          this.deviceChallenge.set({ ...challenge, channel });
+        },
+        error: (error: unknown): void => {
+          this.deviceDialogLoading.set(false);
+          this.notificationService.show({
+            message: this.toErrorMessage(error),
+            type: 'error',
+          });
+        },
+      });
+  }
+
+  /** User entered the code from their chosen channel: verify, then retry login. */
+  public onDeviceCodeSubmit(code: string): void {
+    const challenge: DeviceVerificationChallenge | null =
+      this.deviceChallenge();
+    if (!challenge) {
+      return;
+    }
+
+    this.deviceDialogLoading.set(true);
+
+    this.verificationsService
+      .verify({ verificationId: challenge.verificationId, code })
+      .subscribe({
+        next: (): void => {
+          this.deviceDialogLoading.set(false);
+          this.deviceChallenge.set(null);
+          // Verification does not issue tokens - the device is now trusted, so the
+          // original credentials succeed on a normal retry.
+          this.onSubmit();
+        },
+        error: (error: unknown): void => {
+          this.deviceDialogLoading.set(false);
+          this.notificationService.show({
+            message: this.toErrorMessage(error),
+            type: 'error',
+          });
+        },
+      });
+  }
+
+  public onDeviceDialogClosed(): void {
+    this.deviceChallenge.set(null);
   }
 
   // Private methods
@@ -147,5 +249,61 @@ export class LoginComponent {
       return (error as { message: string }).message;
     }
     return 'Login failed. Please try again.';
+  }
+
+  /** Null unless `error` is the "Device verification required" 403 shape. */
+  private toDeviceChallenge(
+    error: unknown,
+  ): DeviceVerificationChallenge | null {
+    if (typeof error !== 'object' || error === null) {
+      return null;
+    }
+    const apiError: ApiError = error as ApiError;
+    const channel: DeviceVerificationChannel | null = this.toDeviceChannel(
+      apiError.channel,
+    );
+    const availableChannels: DeviceVerificationChannel[] = (
+      apiError.availableChannels ?? []
+    )
+      .map((value: string): DeviceVerificationChannel | null =>
+        this.toDeviceChannel(value),
+      )
+      .filter(
+        (
+          value: DeviceVerificationChannel | null,
+        ): value is DeviceVerificationChannel => value !== null,
+      );
+
+    if (
+      apiError.statusCode !== 403 ||
+      !apiError.verificationId ||
+      !channel ||
+      availableChannels.length === 0 ||
+      typeof apiError.otpValidity !== 'number'
+    ) {
+      return null;
+    }
+    return {
+      verificationId: apiError.verificationId,
+      channel,
+      availableChannels,
+      otpValidity: apiError.otpValidity,
+    };
+  }
+
+  /** Validates an untyped channel string from the HTTP error body. */
+  private toDeviceChannel(
+    value: string | undefined,
+  ): DeviceVerificationChannel | null {
+    return value === 'EMAIL' || value === 'SMS' ? value : null;
+  }
+
+  /** Converts the dialog's channel type back to the backend enum for the API call. */
+  private toVerificationChannel(
+    channel: DeviceVerificationChannel,
+  ): VerificationChannels {
+    return channel === 'EMAIL'
+      ? VerificationChannels.EMAIL
+      : VerificationChannels.SMS;
   }
 }

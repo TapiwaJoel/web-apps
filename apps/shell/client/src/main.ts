@@ -11,6 +11,5 @@ Object.entries(environment.remotes).forEach(([name, config]) => {
 // Register all remotes from environment configuration
 // This only registers URLs, actual loading happens lazily when routes are accessed
 initFederation(remoteUrls)
-  .catch((err) => console.error('Federation initialization error:', err))
   .then(() => import('./bootstrap'))
-  .catch((err) => console.error('Bootstrap error:', err));
+  .catch((err) => console.error('Federation/Bootstrap error:', err));

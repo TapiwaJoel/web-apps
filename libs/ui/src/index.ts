@@ -13,6 +13,8 @@ export * from './lib/sidebar-layout/sidebar-layout.component';
 export * from './lib/tree-navigation/tree-navigation.component';
 export * from './lib/tree-node/tree-node.component';
 export * from './lib/rail-flyout/rail-flyout.component';
+export * from './lib/device-verification-dialog/device-verification-dialog.component';
+export * from './lib/step-up-auth-dialog/step-up-auth-dialog.component';
 
 // Models
 export * from './lib/tree-navigation/tree-navigation.model';

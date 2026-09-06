@@ -13,3 +13,6 @@ export * from './lib/themes/theme-config';
 export * from './lib/auth/session.store';
 export * from './lib/auth/guards/conditional-auth.guard';
 export * from './lib/auth/interceptors/api.interceptor';
+
+// Dev tooling
+export * from './lib/dev/stale-chunk-recovery';

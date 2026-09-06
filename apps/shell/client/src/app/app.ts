@@ -8,11 +8,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 import { ThemeService, TitleService } from '@mushaviri/util';
+import { NotificationContainerComponent } from '@mushaviri/ui';
 
 @Component({
   selector: 'org-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, NotificationContainerComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
