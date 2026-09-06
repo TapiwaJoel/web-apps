@@ -11,6 +11,14 @@ export const INSURANCE_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     route: '/dashboard',
   },
   {
+    id: 'documents',
+    label: 'Documents',
+    icon: '📄',
+    iconBg: '#00a19a',
+    iconColor: '#FFFFFF',
+    route: '/documents',
+  },
+  {
     id: 'policies',
     label: 'Policies',
     icon: '📄',
