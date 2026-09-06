@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  InputSignal,
   Signal,
   computed,
   input,
@@ -14,10 +15,10 @@ import { StorageSlice } from '../documents.types';
   templateUrl: './storage-donut.component.html',
 })
 export class StorageDonutComponent {
-  public readonly usedPct: Signal<number> = input.required<number>();
-  public readonly usedLabel: Signal<string> = input.required<string>();
-  public readonly totalLabel: Signal<string> = input.required<string>();
-  public readonly slices: Signal<StorageSlice[]> =
+  public readonly usedPct: InputSignal<number> = input.required<number>();
+  public readonly usedLabel: InputSignal<string> = input.required<string>();
+  public readonly totalLabel: InputSignal<string> = input.required<string>();
+  public readonly slices: InputSignal<StorageSlice[]> =
     input.required<StorageSlice[]>();
 
   protected readonly donutGradient: Signal<string> = computed<string>(() => {
