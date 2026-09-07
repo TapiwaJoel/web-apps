@@ -1,0 +1,33 @@
+<div
+  class="bg-theme-surface border-theme-border flex flex-col gap-4 rounded-lg border p-6"
+>
+  <div class="flex items-center justify-between">
+    <h3 class="text-theme-text text-lg font-semibold">Recent Activity</h3>
+    <span class="text-insurance-600 text-sm font-medium">View All ›</span>
+  </div>
+
+  <ul class="flex flex-col gap-4">
+    @for (item of items(); track item.id; let i = $index) {
+      <li class="flex items-center gap-3">
+        <span
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+          [class]="avatarClasses(i)"
+        >
+          {{ item.initials }}
+        </span>
+        <div class="flex min-w-0 flex-1 flex-col">
+          <p class="text-theme-text truncate text-sm font-medium">
+            {{ item.name }}
+          </p>
+          <p class="text-theme-text-secondary truncate text-xs">
+            {{ item.detail }}
+          </p>
+        </div>
+        <org-status-pill
+          [label]="statusStyle(item.status).label"
+          [tone]="statusStyle(item.status).tone"
+        />
+      </li>
+    }
+  </ul>
+</div>

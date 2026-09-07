@@ -1,0 +1,18 @@
+<div
+  class="bg-theme-surface border-theme-border flex flex-col gap-4 rounded-lg border p-6"
+>
+  <h3 class="text-theme-text text-lg font-semibold">Quick Actions</h3>
+
+  <div class="grid grid-cols-2 gap-3">
+    @for (action of actions(); track action.label) {
+      <div
+        class="border-theme-border flex flex-col items-center justify-center gap-2 rounded-lg border p-4"
+      >
+        <span class="text-2xl" aria-hidden="true">{{ action.icon }}</span>
+        <span class="text-theme-text text-sm font-medium">{{
+          action.label
+        }}</span>
+      </div>
+    }
+  </div>
+</div>
