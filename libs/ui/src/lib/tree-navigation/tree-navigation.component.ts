@@ -23,6 +23,9 @@ export class TreeNavigationComponent {
     highlightActiveRoute: true,
   };
 
+  /** Whether the parent sidebar is collapsed to its icon-only width */
+  @Input() public isCollapsed: boolean = false;
+
   /**
    * TrackBy function for ngFor performance
    */

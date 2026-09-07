@@ -5,20 +5,25 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   HostBinding,
+  OnDestroy,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { OverlayModule, ConnectedPosition } from '@angular/cdk/overlay';
 import { TreeNavNode } from '../tree-navigation/tree-navigation.model';
+import { RailFlyoutComponent } from '../rail-flyout/rail-flyout.component';
 
 @Component({
   selector: 'org-tree-node',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, OverlayModule, RailFlyoutComponent],
   templateUrl: './tree-node.component.html',
   styleUrls: ['./tree-node.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TreeNodeComponent {
+export class TreeNodeComponent implements OnDestroy {
   /** The tree node data */
   @Input() public node!: TreeNavNode;
 
@@ -37,12 +42,99 @@ export class TreeNodeComponent {
   /** Whether the node can be collapsed/expanded */
   @Input() public collapsible: boolean = true;
 
+  /** Whether the parent sidebar is collapsed to its icon-only width */
+  @Input() public isCollapsed: boolean = false;
+
   /** Emits when the expand/collapse state changes */
   @Output() public expandedChange: EventEmitter<boolean> =
     new EventEmitter<boolean>();
 
   /** Emits when the action button is clicked */
   @Output() public actionClick: EventEmitter<void> = new EventEmitter<void>();
+
+  /**
+   * Whether this node's hover flyout is currently open. Only meaningful at
+   * level 0 while the sidebar is collapsed — mirrors SidebarLayoutComponent's
+   * rail flyout, but kept local since each tree node is a self-contained
+   * recursive component instance rather than a flat list the parent already
+   * iterates directly.
+   */
+  private readonly hoveredFlyout: WritableSignal<boolean> = signal(false);
+
+  /** Pending close timer, so moving into the flyout can cancel the dismissal. */
+  private closeTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /** Grace period (ms) before a flyout closes, letting the pointer cross the gap. */
+  private static readonly FLYOUT_CLOSE_DELAY_MS: number = 150;
+
+  /**
+   * Overlay positions for the flyout: anchored to the right of the icon,
+   * top-aligned, with a bottom-aligned fallback so it shifts up when there is
+   * no room below. Mirrors SidebarLayoutComponent's rail flyout positioning.
+   */
+  public readonly flyoutPositions: ConnectedPosition[] = [
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetX: 8,
+    },
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetX: 8,
+    },
+  ];
+
+  /**
+   * Whether the hover flyout should render for this node. Only top-level,
+   * non-section nodes get a flyout, and only while the sidebar is collapsed
+   * — expanded, the tree panel already shows labels (and submenus inline).
+   */
+  public get showFlyout(): boolean {
+    return (
+      this.isCollapsed &&
+      this.level === 0 &&
+      !this.isSection &&
+      this.hoveredFlyout()
+    );
+  }
+
+  /** Opens the flyout (on hover or keyboard focus). */
+  public openFlyout(): void {
+    this.cancelClose();
+    this.hoveredFlyout.set(true);
+  }
+
+  /** Schedules the flyout to close after a short grace delay. */
+  public scheduleClose(): void {
+    this.cancelClose();
+    this.closeTimer = setTimeout((): void => {
+      this.hoveredFlyout.set(false);
+      this.closeTimer = null;
+    }, TreeNodeComponent.FLYOUT_CLOSE_DELAY_MS);
+  }
+
+  /** Cancels a pending flyout close (e.g. the pointer moved into the flyout). */
+  public cancelClose(): void {
+    if (this.closeTimer !== null) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
+  }
+
+  /** Closes the flyout immediately (e.g. after following a submenu link). */
+  public closeFlyout(): void {
+    this.cancelClose();
+    this.hoveredFlyout.set(false);
+  }
+
+  public ngOnDestroy(): void {
+    this.cancelClose();
+  }
 
   /**
    * Toggles the expanded state of the node

@@ -24,6 +24,13 @@
     [attr.aria-current]="
       (node.route && rla?.isActive) || node.active ? 'page' : null
     "
+    cdkOverlayOrigin
+    #flyoutOrigin="cdkOverlayOrigin"
+    (mouseenter)="openFlyout()"
+    (mouseleave)="scheduleClose()"
+    (focus)="openFlyout()"
+    (blur)="scheduleClose()"
+    (keydown.escape)="closeFlyout()"
   >
     <!-- LEFT: small inline glyph (top-level items only; children are pure text) -->
     @if (showIcons && node.icon && shouldShowIcon) {
@@ -113,6 +120,23 @@
     </div>
   </div>
 
+  <!-- Hover flyout: label (+ submenu for nodes with children) shown when the
+       sidebar is collapsed to icon-only width. Reuses org-rail-flyout, the
+       same component the icon rail uses for this exact purpose. -->
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="flyoutOrigin"
+    [cdkConnectedOverlayOpen]="showFlyout"
+    [cdkConnectedOverlayPositions]="flyoutPositions"
+  >
+    <org-rail-flyout
+      [node]="node"
+      (navigate)="closeFlyout()"
+      (mouseenter)="cancelClose()"
+      (mouseleave)="scheduleClose()"
+    />
+  </ng-template>
+
   <!-- Children (Recursive) with connecting line -->
   @if (hasChildren && expanded) {
     <div class="tree-node-children relative">
@@ -127,6 +151,7 @@
           [showIcons]="showIcons"
           [showBadges]="showBadges"
           [collapsible]="collapsible"
+          [isCollapsed]="isCollapsed"
         ></org-tree-node>
       }
     </div>
