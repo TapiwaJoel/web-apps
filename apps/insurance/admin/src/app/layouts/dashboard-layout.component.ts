@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { SidebarLayoutComponent, TreeNavNode } from '@mushaviri/ui';
 import { AuthenticationService } from '@mushaviri/api';
@@ -7,11 +7,12 @@ import {
   INSURANCE_ADMIN_NAV_CONFIG,
   USER_MENU_CONFIG,
 } from '../config/navigation.config';
+import { DashboardTopbarComponent } from './topbar/dashboard-topbar.component';
 
 @Component({
   selector: 'org-dashboard-layout',
   standalone: true,
-  imports: [SidebarLayoutComponent, RouterOutlet],
+  imports: [SidebarLayoutComponent, RouterOutlet, DashboardTopbarComponent],
   templateUrl: './dashboard-layout.component.html',
 })
 export class DashboardLayoutComponent {
@@ -28,6 +29,16 @@ export class DashboardLayoutComponent {
       action: item.id === 'logout' ? () => this.logout() : item.action,
     })),
   ];
+
+  protected readonly currentUserName: Signal<string> = computed(
+    () => this.session.user()?.name ?? 'Admin',
+  );
+  protected readonly currentUserEmail: Signal<string> = computed(
+    () => this.session.user()?.emailAddress ?? '',
+  );
+  protected readonly currentUserRole: Signal<string> = computed(
+    () => this.session.user()?.role ?? '',
+  );
 
   public logout(): void {
     this.authenticationService.logout({}).subscribe({

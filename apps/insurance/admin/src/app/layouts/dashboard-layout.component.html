@@ -4,5 +4,19 @@
   logoUrl="/assets/logos/insurance-logo.svg"
   [collapsible]="true"
 >
-  <router-outlet></router-outlet>
+  <div class="flex flex-col">
+    <div
+      class="bg-theme-background border-theme-border sticky top-0 z-20 border-b px-6 pt-4 pb-4"
+    >
+      <org-dashboard-topbar
+        [userName]="currentUserName()"
+        [userEmail]="currentUserEmail()"
+        [userRole]="currentUserRole()"
+        (logout)="logout()"
+      />
+    </div>
+    <div class="flex-1">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </org-sidebar-layout>
