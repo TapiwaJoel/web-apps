@@ -48,19 +48,26 @@ html[data-theme='insurance']
 
 // Inactive top-level nav item labels (All Policies, Claims, Vehicles, etc.)
 // default to the shared component's primary text color — lighten to match
-// designs/img_4.png. Placed before the section-label rule below so that
-// rule (equal specificity, more specific selector target) wins the cascade
-// for Main Menu/Admin & Data.
+// designs/img_4.png.
 html[data-theme='insurance']
   .tree-node-content:not(.tree-node-active)
   .tree-node-label {
   color: var(--theme-text-secondary);
 }
 
+// Angular's ViewEncapsulation.Emulated adds an [_ngcontent-xxx] attribute
+// selector to EVERY compound segment of TreeNodeComponent's compiled
+// selector (confirmed live in the browser: the real rule is
+// ".tree-node.is-section[_ngcontent-x] > .tree-node-content[_ngcontent-x]
+// .tree-node-label[_ngcontent-x]" — 7 specificity units, not the ~4 the
+// unencapsulated SCSS source suggests). That hash is regenerated per build,
+// so matching/beating it via selector repetition is fragile — !important is
+// the appropriate tool for reliably overriding a scoped Angular component
+// style from outside the component, which is exactly this situation.
 html[data-theme='insurance'] .is-section > .tree-node-content .tree-node-label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 // Hides the bottom "collapse sidebar" footer button — the edge-hover chevron
