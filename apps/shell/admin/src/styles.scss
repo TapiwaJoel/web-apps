@@ -82,3 +82,22 @@ html[data-theme='insurance'] .is-section .tree-node-content:hover {
   background-color: transparent;
   cursor: default;
 }
+
+// Page background should read as a light gray-blue surface with white cards
+// sitting on top of it (designs/img_4.png) — not the other way round. Cards
+// use bg-theme-background (white) per their own component templates. The
+// body-level override alone isn't enough: SidebarLayoutComponent's own
+// .main-content (libs/ui/sidebar-layout.component.scss) sets
+// `background: var(--theme-background-color, #f5f5f5)` on the full-height
+// content column, which visually covers body entirely — confirmed live via
+// getComputedStyle: .main-content computed to rgb(255,255,255) despite
+// body already being fixed to the surface color. Override that scoped
+// component style directly (Emulated-encapsulation specificity, same as
+// the earlier section-label fix — !important needed for the same reason).
+html[data-theme='insurance'] body {
+  background-color: var(--theme-surface-color);
+}
+
+html[data-theme='insurance'] .main-content {
+  background: var(--theme-surface-color) !important;
+}
