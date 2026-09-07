@@ -20,7 +20,7 @@
           <tr
             class="border-theme-border text-theme-text border-b last:border-0"
           >
-            <td class="py-3 pr-4">
+            <td class="py-2 pr-4">
               <div class="flex items-center gap-3">
                 <span
                   class="bg-insurance-100 text-insurance-700 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
@@ -30,20 +30,20 @@
                 <span class="font-medium">{{ row.clientName }}</span>
               </div>
             </td>
-            <td class="text-theme-text-secondary py-3 pr-4">
+            <td class="text-theme-text-secondary py-2 pr-4">
               {{ row.vehicle }}
             </td>
-            <td class="text-theme-text-secondary py-3 pr-4 tabular-nums">
+            <td class="text-theme-text-secondary py-2 pr-4 tabular-nums">
               {{ row.policyId }}
             </td>
-            <td class="py-3 pr-4 tabular-nums">{{ row.premium }}</td>
-            <td class="py-3 pr-4">
+            <td class="py-2 pr-4 tabular-nums">{{ row.premium }}</td>
+            <td class="py-2 pr-4">
               <org-status-pill
                 [label]="statusStyle(row.status).label"
                 [tone]="statusStyle(row.status).tone"
               />
             </td>
-            <td class="py-3 pr-4">
+            <td class="py-2 pr-4">
               <button
                 type="button"
                 class="text-theme-text-secondary px-2"
