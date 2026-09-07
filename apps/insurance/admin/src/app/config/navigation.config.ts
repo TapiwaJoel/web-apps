@@ -18,16 +18,12 @@ export const INSURANCE_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     id: 'documents',
     label: 'Documents',
     icon: 'fi fi-rr-document',
-    iconBg: '#00a19a',
-    iconColor: '#FFFFFF',
     route: '/documents',
   },
   {
     id: 'policies',
     label: 'Policies',
     icon: 'fi fi-rr-shield-check',
-    iconBg: '#1e3a5f',
-    iconColor: '#FFFFFF',
     route: '/policies',
     children: [
       {
@@ -51,8 +47,6 @@ export const INSURANCE_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     id: 'claims',
     label: 'Claims',
     icon: 'fi fi-rr-life-ring',
-    iconBg: '#00a19a',
-    iconColor: '#FFFFFF',
     route: '/claims',
     children: [
       {
@@ -76,24 +70,18 @@ export const INSURANCE_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     id: 'vehicles',
     label: 'Vehicles',
     icon: 'fi fi-rr-car-side',
-    iconBg: '#1e3a5f',
-    iconColor: '#FFFFFF',
     route: '/vehicles',
   },
   {
     id: 'client-directory',
     label: 'Client Directory',
     icon: 'fi fi-rr-address-book',
-    iconBg: '#9C27B0',
-    iconColor: '#FFFFFF',
     route: '/client-directory',
   },
   {
     id: 'billing-payments',
     label: 'Billing & Payments',
     icon: 'fi fi-rr-credit-card',
-    iconBg: '#00a19a',
-    iconColor: '#FFFFFF',
     route: '/billing',
   },
   {
@@ -104,32 +92,24 @@ export const INSURANCE_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     id: 'reports',
     label: 'Reports & Analytics',
     icon: 'fi fi-rr-chart-line-up',
-    iconBg: '#4CAF50',
-    iconColor: '#FFFFFF',
     route: '/reports',
   },
   {
     id: 'agents',
     label: 'Agents',
     icon: 'fi fi-rr-users',
-    iconBg: '#1e3a5f',
-    iconColor: '#FFFFFF',
     route: '/agents',
   },
   {
     id: 'settings',
     label: 'Settings',
     icon: 'fi fi-rr-settings',
-    iconBg: '#757575',
-    iconColor: '#FFFFFF',
     route: '/settings',
   },
   {
     id: 'quotes',
     label: 'Quotes',
     icon: 'fi fi-rr-calculator',
-    iconBg: '#FF9800',
-    iconColor: '#FFFFFF',
     route: '/quotes',
   },
 ];
