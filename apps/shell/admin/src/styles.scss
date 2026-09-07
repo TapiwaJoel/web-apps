@@ -94,10 +94,22 @@ html[data-theme='insurance'] .is-section .tree-node-content:hover {
 // body already being fixed to the surface color. Override that scoped
 // component style directly (Emulated-encapsulation specificity, same as
 // the earlier section-label fix — !important needed for the same reason).
+//
+// Uses a dedicated hex (#eef2f6) rather than --theme-surface-color
+// (#f8fafb) directly — the theme token was too close to white to read as
+// a deliberate page/card contrast on screen, especially over JPEG
+// screenshot compression.
 html[data-theme='insurance'] body {
-  background-color: var(--theme-surface-color);
+  background-color: #eef2f6;
 }
 
 html[data-theme='insurance'] .main-content {
-  background: var(--theme-surface-color) !important;
+  background: #eef2f6 !important;
+}
+
+// Darken/thicken the header's bottom divider so it reads clearly against
+// the page background above, matching designs/img_4.png's visible hairline.
+html[data-theme='insurance'] .dashboard-header-divider {
+  border-bottom-width: 1px;
+  border-bottom-color: #c3cedb !important;
 }
