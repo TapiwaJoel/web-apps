@@ -22,3 +22,27 @@ body {
 * {
   box-sizing: border-box;
 }
+
+// Insurance-admin sidebar nav overrides — matches designs/img_4.png's compact
+// row height, inset list padding, and muted section-label treatment. Gated by
+// data-theme='insurance' (set at runtime by ThemeService on <html>) so this
+// only applies when the insurance tenant is active — umdzidzisi/umtengesi's
+// sidebar (same shared libs/ui TreeNodeComponent) is untouched. Lives here,
+// not in apps/insurance/admin/src/styles.scss, because native-federation only
+// exposes a remote's ./Component and ./Routes modules — a remote's own global
+// stylesheet is never loaded when the shell renders it.
+html[data-theme='insurance'] .tree-node-content-inline {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+html[data-theme='insurance'] .tree-navigation-content {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+html[data-theme='insurance'] .is-section > .tree-node-content .tree-node-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
