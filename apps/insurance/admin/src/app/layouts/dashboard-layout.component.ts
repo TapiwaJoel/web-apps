@@ -33,6 +33,9 @@ export class DashboardLayoutComponent {
   protected readonly currentUserName: Signal<string> = computed(
     () => this.session.user()?.name ?? 'Admin',
   );
+  protected readonly currentUserFirstName: Signal<string> = computed(
+    () => this.session.user()?.name?.split(' ')[0] ?? 'there',
+  );
   protected readonly currentUserEmail: Signal<string> = computed(
     () => this.session.user()?.emailAddress ?? '',
   );
