@@ -30,6 +30,25 @@
       role="img"
       aria-label="Premium growth by month bar chart"
     >
+      @for (tick of yAxisTicks(); track tick) {
+        <line
+          [attr.x1]="44"
+          [attr.x2]="width"
+          [attr.y1]="tickY(tick)"
+          [attr.y2]="tickY(tick)"
+          stroke="#e4ebf2"
+          stroke-width="1"
+        />
+        <text
+          x="40"
+          [attr.y]="tickY(tick) + 3"
+          text-anchor="end"
+          class="fill-theme-text-secondary"
+          font-size="10"
+        >
+          ${{ tick / 1000 }}K
+        </text>
+      }
       @for (bar of bars(); track $index) {
         <rect
           class="cursor-pointer"
@@ -45,7 +64,7 @@
     </svg>
 
     <div
-      class="text-theme-text-secondary mt-2 flex justify-between text-xs tabular-nums"
+      class="text-theme-text-secondary mt-2 flex justify-between pl-11 text-xs tabular-nums"
     >
       @for (month of months(); track month.label) {
         <span>{{ month.label }}</span>
