@@ -15,16 +15,16 @@
         [initialActiveIndex]="data.premiumGrowth.activeMonthIndex"
       />
     </div>
-    <org-recent-activity-list [items]="data.activity" />
+    <div class="flex h-full flex-col gap-6">
+      <org-recent-activity-list [items]="data.activity" />
+      <org-promo-banner
+        [title]="data.promo.title"
+        [description]="data.promo.description"
+        [ctaLabel]="data.promo.ctaLabel"
+      />
+    </div>
     <org-quick-actions [actions]="data.quickActions" />
   </div>
-
-  <!-- Promo banner -->
-  <org-promo-banner
-    [title]="data.promo.title"
-    [description]="data.promo.description"
-    [ctaLabel]="data.promo.ctaLabel"
-  />
 
   <!-- Applications table -->
   <org-recent-applications-table [rows]="data.applications" />
