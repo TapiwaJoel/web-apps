@@ -57,3 +57,10 @@ html[data-theme='insurance'] .is-section > .tree-node-content .tree-node-label {
 html[data-theme='insurance'] .sidebar-footer {
   display: none;
 }
+
+// Section labels ("Main Menu"/"Admin & Data") are quiet group headers, not
+// clickable nav items — suppress the shared component's hover wash/cursor.
+html[data-theme='insurance'] .is-section .tree-node-content:hover {
+  background-color: transparent;
+  cursor: default;
+}
