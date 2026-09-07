@@ -5,3 +5,17 @@
 
 @import 'tailwindcss' layer(tailwindcss);
 @config '../../../../tailwind.config.js';
+
+// Sidebar nav overrides — insurance-admin only, matches designs/img_4.png's
+// compact row height and muted section-label treatment. Deliberately not
+// changed in libs/ui/tree-node (shared with umdzidzisi-admin).
+.tree-node-content-inline {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.is-section > .tree-node-content .tree-node-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--theme-text-secondary);
+}
