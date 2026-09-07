@@ -1,0 +1,66 @@
+<div class="bg-theme-surface border-theme-border rounded-lg border p-6">
+  <div class="mb-4 flex items-center justify-between">
+    <h3 class="text-theme-text text-lg font-semibold">Recent Applications</h3>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead>
+        <tr class="text-theme-text-secondary border-theme-border border-b">
+          <th class="py-2 pr-4 font-medium">Client</th>
+          <th class="py-2 pr-4 font-medium">Vehicle</th>
+          <th class="py-2 pr-4 font-medium">Policy ID</th>
+          <th class="py-2 pr-4 font-medium">Premium</th>
+          <th class="py-2 pr-4 font-medium">Status</th>
+          <th class="py-2 pr-4 font-medium">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.id) {
+          <tr
+            class="border-theme-border text-theme-text border-b last:border-0"
+          >
+            <td class="py-3 pr-4">
+              <div class="flex items-center gap-3">
+                <span
+                  class="bg-insurance-100 text-insurance-700 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                >
+                  {{ row.initials }}
+                </span>
+                <span class="font-medium">{{ row.clientName }}</span>
+              </div>
+            </td>
+            <td class="text-theme-text-secondary py-3 pr-4">
+              {{ row.vehicle }}
+            </td>
+            <td class="text-theme-text-secondary py-3 pr-4 tabular-nums">
+              {{ row.policyId }}
+            </td>
+            <td class="py-3 pr-4 tabular-nums">{{ row.premium }}</td>
+            <td class="py-3 pr-4">
+              <org-status-pill
+                [label]="statusStyle(row.status).label"
+                [tone]="statusStyle(row.status).tone"
+              />
+            </td>
+            <td class="py-3 pr-4">
+              <button
+                type="button"
+                class="text-theme-text-secondary px-2"
+                aria-label="More actions"
+              >
+                ⋮
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-theme-text-secondary py-6 text-center">
+              No applications found.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
