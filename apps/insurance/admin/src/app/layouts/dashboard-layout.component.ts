@@ -3,10 +3,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { SidebarLayoutComponent, TreeNavNode } from '@mushaviri/ui';
 import { AuthenticationService } from '@mushaviri/api';
 import { SessionStore } from '@mushaviri/util';
-import {
-  INSURANCE_ADMIN_NAV_CONFIG,
-  USER_MENU_CONFIG,
-} from '../config/navigation.config';
+import { INSURANCE_ADMIN_NAV_CONFIG } from '../config/navigation.config';
 import { DashboardTopbarComponent } from './topbar/dashboard-topbar.component';
 
 @Component({
@@ -22,13 +19,7 @@ export class DashboardLayoutComponent {
   );
   private readonly session: SessionStore = inject(SessionStore);
 
-  public navConfig: TreeNavNode[] = [
-    ...INSURANCE_ADMIN_NAV_CONFIG,
-    ...USER_MENU_CONFIG.map((item) => ({
-      ...item,
-      action: item.id === 'logout' ? () => this.logout() : item.action,
-    })),
-  ];
+  public navConfig: TreeNavNode[] = INSURANCE_ADMIN_NAV_CONFIG;
 
   protected readonly currentUserName: Signal<string> = computed(
     () => this.session.user()?.name ?? 'Admin',
