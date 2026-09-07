@@ -1,0 +1,55 @@
+<div class="bg-theme-surface border-theme-border rounded-lg border p-6">
+  <div class="mb-4 flex items-start justify-between">
+    <div>
+      <h3 class="text-theme-text text-lg font-semibold">Premium Growth</h3>
+      <p class="text-theme-text-secondary text-sm">by Month</p>
+    </div>
+    <span
+      class="bg-info-light text-info inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold tabular-nums"
+    >
+      ↗ +{{ growthPct() }}%
+    </span>
+  </div>
+
+  <div class="relative">
+    <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+    <div
+      class="bg-insurance-600 pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md px-3 py-2 text-xs text-white shadow-lg"
+      [style.left.%]="tooltipLeftPct()"
+      [style.top.px]="activeBar().y - 8"
+    >
+      <p class="font-semibold">{{ activeMonth().label }}</p>
+      <p class="tabular-nums">Premium: ${{ activeMonth().value | number }}</p>
+    </div>
+
+    <svg
+      class="w-full"
+      [attr.viewBox]="'0 0 ' + width + ' ' + height"
+      [attr.height]="height"
+      preserveAspectRatio="none"
+      role="img"
+      aria-label="Premium growth by month bar chart"
+    >
+      @for (bar of bars(); track $index) {
+        <rect
+          class="cursor-pointer"
+          [attr.x]="bar.x"
+          [attr.y]="bar.y"
+          [attr.width]="bar.w"
+          [attr.height]="bar.h"
+          rx="4"
+          [attr.fill]="barFill($index)"
+          (mouseenter)="onBarHover($index)"
+        />
+      }
+    </svg>
+
+    <div
+      class="text-theme-text-secondary mt-2 flex justify-between text-xs tabular-nums"
+    >
+      @for (month of months(); track month.label) {
+        <span>{{ month.label }}</span>
+      }
+    </div>
+  </div>
+</div>
