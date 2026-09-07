@@ -1,0 +1,31 @@
+<div class="flex flex-col gap-6 p-6">
+  <!-- KPI row -->
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+    @for (kpi of data.kpis; track kpi.label) {
+      <org-kpi-stat-card [card]="kpi" />
+    }
+  </div>
+
+  <!-- Chart + Activity + Quick Actions -->
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+    <div class="lg:col-span-2">
+      <org-premium-growth-chart
+        [months]="data.premiumGrowth.months"
+        [growthPct]="data.premiumGrowth.growthPct"
+        [initialActiveIndex]="data.premiumGrowth.activeMonthIndex"
+      />
+    </div>
+    <org-recent-activity-list [items]="data.activity" />
+    <org-quick-actions [actions]="data.quickActions" />
+  </div>
+
+  <!-- Promo banner -->
+  <org-promo-banner
+    [title]="data.promo.title"
+    [description]="data.promo.description"
+    [ctaLabel]="data.promo.ctaLabel"
+  />
+
+  <!-- Applications table -->
+  <org-recent-applications-table [rows]="data.applications" />
+</div>
