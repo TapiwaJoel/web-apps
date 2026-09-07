@@ -1,0 +1,24 @@
+<div
+  class="bg-theme-surface border-theme-border flex flex-col gap-3 rounded-lg border p-5"
+>
+  <div class="flex items-center justify-between">
+    <span class="text-theme-text-secondary text-sm font-medium">{{
+      card().label
+    }}</span>
+    <span class="text-xl" aria-hidden="true">{{ card().icon }}</span>
+  </div>
+  <p class="text-theme-text text-2xl font-bold tabular-nums">
+    {{ card().value }}
+  </p>
+  @if (card().badge; as badge) {
+    <span
+      class="inline-flex w-fit items-center rounded-full px-2 py-0.5 text-xs font-medium"
+      [class.bg-success-light]="badge.tone === 'success'"
+      [class.text-success]="badge.tone === 'success'"
+      [class.bg-info-light]="badge.tone === 'info'"
+      [class.text-info]="badge.tone === 'info'"
+    >
+      {{ badge.text }}
+    </span>
+  }
+</div>
