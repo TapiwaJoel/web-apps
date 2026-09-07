@@ -36,7 +36,12 @@ html[data-theme='insurance'] .tree-node-content-inline {
   padding-bottom: 0.625rem;
 }
 
-html[data-theme='insurance'] .tree-navigation-content {
+// Only apply the wider list inset when expanded — the collapsed sidebar is
+// only 4rem (64px) wide, and this padding left no room for a centered icon
+// or its hover background, squeezing both.
+html[data-theme='insurance']
+  .sidebar-shell:not(.sidebar-collapsed)
+  .tree-navigation-content {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
@@ -45,4 +50,10 @@ html[data-theme='insurance'] .is-section > .tree-node-content .tree-node-label {
   font-size: 0.75rem;
   font-weight: 500;
   color: #94a3b8;
+}
+
+// Hides the bottom "collapse sidebar" footer button — the edge-hover chevron
+// chip (.sidebar-edge-toggle) remains as the sidebar's collapse/expand control.
+html[data-theme='insurance'] .sidebar-footer {
+  display: none;
 }
