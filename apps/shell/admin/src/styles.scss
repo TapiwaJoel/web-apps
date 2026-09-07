@@ -46,6 +46,17 @@ html[data-theme='insurance']
   padding-right: 1.5rem;
 }
 
+// Inactive top-level nav item labels (All Policies, Claims, Vehicles, etc.)
+// default to the shared component's primary text color — lighten to match
+// designs/img_4.png. Placed before the section-label rule below so that
+// rule (equal specificity, more specific selector target) wins the cascade
+// for Main Menu/Admin & Data.
+html[data-theme='insurance']
+  .tree-node-content:not(.tree-node-active)
+  .tree-node-label {
+  color: var(--theme-text-secondary);
+}
+
 html[data-theme='insurance'] .is-section > .tree-node-content .tree-node-label {
   font-size: 0.75rem;
   font-weight: 500;
