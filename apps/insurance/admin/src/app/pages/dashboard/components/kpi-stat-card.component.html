@@ -5,11 +5,11 @@
     <span class="text-theme-text-secondary text-sm font-medium">{{
       card().label
     }}</span>
-    <span class="text-xl" aria-hidden="true">{{ card().icon }}</span>
+    <i
+      class="{{ card().icon }} text-theme-text-secondary text-lg"
+      aria-hidden="true"
+    ></i>
   </div>
-  <p class="text-theme-text text-2xl font-bold tabular-nums">
-    {{ card().value }}
-  </p>
   @if (card().badge; as badge) {
     <span
       class="inline-flex w-fit items-center rounded-full px-2 py-0.5 text-xs font-medium"
@@ -21,4 +21,7 @@
       {{ badge.text }}
     </span>
   }
+  <p class="text-theme-text text-2xl font-bold tabular-nums">
+    {{ card().value }}
+  </p>
 </div>

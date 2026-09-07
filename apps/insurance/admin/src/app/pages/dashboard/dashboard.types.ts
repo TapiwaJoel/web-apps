@@ -63,16 +63,16 @@ export interface DashboardPageData {
 
 export const MOCK_DASHBOARD_DATA: DashboardPageData = {
   kpis: [
-    { label: 'Active Clients', value: '3,596', icon: '👥' },
+    { label: 'Active Clients', value: '3,596', icon: 'fi fi-rr-users' },
     {
       label: 'Active Policies',
       value: '12,548',
-      icon: '🛡️',
+      icon: 'fi fi-rr-shield-check',
       badge: { text: '+12% Last month', tone: 'success' },
     },
-    { label: 'Total Premium', value: '$4.38M', icon: '💲' },
-    { label: 'Renewal Rate', value: '94.2%', icon: '📈' },
-    { label: 'Open Claims', value: '24', icon: '⚠️' },
+    { label: 'Total Premium', value: '$4.38M', icon: 'fi fi-rr-dollar' },
+    { label: 'Renewal Rate', value: '94.2%', icon: 'fi fi-rr-chart-line-up' },
+    { label: 'Open Claims', value: '24', icon: 'fi fi-rr-triangle-warning' },
   ],
   premiumGrowth: {
     months: [
