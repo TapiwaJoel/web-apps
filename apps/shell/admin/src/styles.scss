@@ -32,8 +32,8 @@ body {
 // exposes a remote's ./Component and ./Routes modules — a remote's own global
 // stylesheet is never loaded when the shell renders it.
 html[data-theme='insurance'] .tree-node-content-inline {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
 }
 
 html[data-theme='insurance'] .tree-navigation-content {
