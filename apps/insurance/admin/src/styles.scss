@@ -14,8 +14,21 @@
   padding-bottom: 0.5rem;
 }
 
+// Inset the whole nav list from the sidebar panel's edges — the default
+// 0.75rem (12px) from tree-navigation.component.scss reads too tight
+// against designs/img_4.png, where items (and the active pill) sit clear
+// of both edges.
+.tree-navigation-content {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+// --theme-text-secondary (#3c5a7d for insurance) is a mid-value blue tuned
+// for secondary body text, not a quiet section label — at this size/weight
+// it still reads close to the item labels. Use a genuinely light, desaturated
+// gray instead, matching the design's washed-out "Main Menu"/"Admin & Data".
 .is-section > .tree-node-content .tree-node-label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--theme-text-secondary);
+  color: #94a3b8;
 }
