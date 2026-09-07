@@ -1,0 +1,125 @@
+<button
+  type="button"
+  class="border-theme-border text-theme-text-secondary hover:text-theme-text focus:ring-theme-primary bg-theme-surface relative grid h-9 w-9 place-items-center rounded-full border focus:ring-2 focus:outline-none"
+  aria-label="Notifications"
+  [attr.aria-expanded]="isOpen()"
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  (click)="toggle()"
+>
+  <i class="fi fi-rr-bell" aria-hidden="true"></i>
+  @if (unreadCount() > 0) {
+    <span
+      class="bg-insurance-600 absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full"
+      aria-hidden="true"
+    ></span>
+    <span class="sr-only">{{ unreadCount() }} unread notifications</span>
+  }
+</button>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPositions]="[
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+  ]"
+  (backdropClick)="close()"
+  (overlayOutsideClick)="close()"
+  (detach)="close()"
+>
+  <div
+    class="bg-theme-surface border-theme-border w-88 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border shadow-md"
+    role="dialog"
+    aria-label="Notifications"
+    (keydown.escape)="close()"
+  >
+    <header
+      class="border-theme-border flex items-center justify-between gap-2 border-b px-4 py-3"
+    >
+      <span class="text-theme-text text-sm font-semibold">Notifications</span>
+      @if (!allRead()) {
+        <button
+          type="button"
+          class="text-insurance-600 hover:bg-insurance-50 rounded-md px-1.5 py-0.5 text-xs font-semibold"
+          (click)="markAllRead()"
+        >
+          Mark all read
+        </button>
+      }
+    </header>
+
+    @if (allRead()) {
+      <div class="flex flex-col items-center gap-1 px-4 py-9 text-center">
+        <i
+          class="fi fi-rr-bell-slash text-theme-text-secondary mb-1 text-2xl"
+          aria-hidden="true"
+        ></i>
+        <p class="text-theme-text text-sm font-semibold">
+          You're all caught up
+        </p>
+        <p class="text-theme-text-secondary text-xs">
+          No new notifications right now.
+        </p>
+      </div>
+    } @else {
+      <ul class="m-0 max-h-96 list-none overflow-y-auto p-1.5">
+        @for (item of notifications(); track trackById($index, item)) {
+          <li>
+            <button
+              type="button"
+              class="hover:bg-insurance-50 flex w-full items-start gap-3 rounded-lg px-2.5 py-2.5 text-left"
+              [class.bg-insurance-50]="!item.read"
+              (click)="markRead(item.id)"
+            >
+              <span
+                class="bg-insurance-100 text-insurance-600 grid h-8 w-8 flex-shrink-0 place-items-center rounded-full text-sm"
+                aria-hidden="true"
+              >
+                <i [class]="item.icon"></i>
+              </span>
+              <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span class="text-theme-text text-[0.82rem] font-semibold">{{
+                  item.title
+                }}</span>
+                <span class="text-theme-text-secondary text-xs leading-tight">{{
+                  item.body
+                }}</span>
+              </span>
+              <span class="flex flex-shrink-0 flex-col items-end gap-1.5">
+                <span
+                  class="text-theme-text-secondary text-[0.7rem] tabular-nums"
+                  >{{ item.time }}</span
+                >
+                @if (!item.read) {
+                  <span
+                    class="bg-insurance-600 h-2 w-2 rounded-full"
+                    aria-hidden="true"
+                  ></span>
+                }
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    <footer class="border-theme-border border-t p-2">
+      <button
+        type="button"
+        class="text-insurance-600 hover:bg-insurance-50 w-full rounded-lg px-2 py-2 text-sm font-semibold"
+        (click)="close()"
+      >
+        View all
+      </button>
+    </footer>
+  </div>
+</ng-template>

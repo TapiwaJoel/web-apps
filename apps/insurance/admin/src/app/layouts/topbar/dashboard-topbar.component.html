@@ -1,0 +1,14 @@
+<header class="flex items-center gap-3">
+  <org-global-search />
+
+  <div class="ml-auto flex items-center gap-3">
+    <org-notifications-menu />
+
+    <org-profile-menu
+      [userName]="userName()"
+      [userEmail]="userEmail()"
+      [userRole]="userRole()"
+      (logout)="logout.emit()"
+    />
+  </div>
+</header>
