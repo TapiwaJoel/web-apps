@@ -15,7 +15,8 @@ import { PremiumMonth } from '../dashboard.types';
 const CHART_WIDTH: number = 520;
 const CHART_HEIGHT: number = 180;
 const TOP_PADDING: number = 10;
-const DRAWABLE_HEIGHT: number = CHART_HEIGHT - TOP_PADDING;
+const BOTTOM_PADDING: number = 10;
+const DRAWABLE_HEIGHT: number = CHART_HEIGHT - TOP_PADDING - BOTTOM_PADDING;
 const AXIS_WIDTH: number = 44;
 const BARS_WIDTH: number = CHART_WIDTH - AXIS_WIDTH;
 const ACTIVE_BAR_FILL: string = '#1e3a5f';
@@ -74,7 +75,7 @@ export class PremiumGrowthChartComponent {
       const h: number = (value / max) * DRAWABLE_HEIGHT;
       return {
         x: AXIS_WIDTH + i * (barWidth + gap),
-        y: CHART_HEIGHT - h,
+        y: CHART_HEIGHT - BOTTOM_PADDING - h,
         w: barWidth,
         h,
       };
@@ -103,6 +104,8 @@ export class PremiumGrowthChartComponent {
   }
 
   protected tickY(tick: number): number {
-    return CHART_HEIGHT - (tick / this.yAxisMax()) * DRAWABLE_HEIGHT;
+    return (
+      CHART_HEIGHT - BOTTOM_PADDING - (tick / this.yAxisMax()) * DRAWABLE_HEIGHT
+    );
   }
 }
