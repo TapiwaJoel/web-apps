@@ -4,7 +4,7 @@ import {
   input,
   type InputSignal,
 } from '@angular/core';
-import { KpiCard } from '../dashboard.types';
+import { KpiCard } from '../../../shared/types/dashboard/dashboard.types';
 
 @Component({
   selector: 'org-kpi-stat-card',

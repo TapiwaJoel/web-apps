@@ -31,23 +31,23 @@
       role="img"
       aria-label="Premium growth by month bar chart"
     >
-      @for (tick of yAxisTicks(); track tick) {
+      @for (tick of yAxisTicks(); track tick.value) {
         <line
           [attr.x1]="44"
           [attr.x2]="width"
-          [attr.y1]="tickY(tick)"
-          [attr.y2]="tickY(tick)"
+          [attr.y1]="tick.y"
+          [attr.y2]="tick.y"
           stroke="#e4ebf2"
           stroke-width="1"
         />
         <text
           x="40"
-          [attr.y]="tickY(tick) + 3"
+          [attr.y]="tick.y + 3"
           text-anchor="end"
           class="fill-theme-text-secondary"
           font-size="10"
         >
-          ${{ tick / 1000 }}K
+          ${{ tick.value / 1000 }}K
         </text>
       }
       @for (bar of bars(); track $index) {
@@ -58,7 +58,7 @@
           [attr.width]="bar.w"
           [attr.height]="bar.h"
           rx="4"
-          [attr.fill]="barFill($index)"
+          [attr.fill]="bar.fill"
           (mouseenter)="onBarHover($index)"
         />
       }

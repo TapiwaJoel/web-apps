@@ -110,10 +110,10 @@ export const MOCK_DASHBOARD_DATA: DashboardPageData = {
     },
   ],
   quickActions: [
-    { label: 'New Quote', icon: '➕' },
-    { label: 'New Policy', icon: '📄' },
-    { label: 'Send Claim', icon: '📤' },
-    { label: 'Calculator', icon: '🧮' },
+    { label: 'New Quote', icon: 'fi fi-rr-plus' },
+    { label: 'New Policy', icon: 'fi fi-rr-document' },
+    { label: 'Send Claim', icon: 'fi fi-rr-paper-plane' },
+    { label: 'Calculator', icon: 'fi fi-rr-calculator' },
   ],
   promo: {
     title: 'Boost your premiums: Bundle & Save Campaign is live!',

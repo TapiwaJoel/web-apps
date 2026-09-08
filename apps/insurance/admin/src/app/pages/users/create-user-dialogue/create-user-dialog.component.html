@@ -1,0 +1,114 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border p-8 shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-user-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="mb-6 flex items-center justify-between">
+    <h2 id="create-user-title" class="text-theme-text text-xl font-semibold">
+      Create System User
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+    <div>
+      <label
+        for="user-name"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Name</label
+      >
+      <input
+        id="user-name"
+        type="text"
+        class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().name"
+        (ngModelChange)="updateForm('name', $event)"
+      />
+    </div>
+    <div>
+      <label
+        for="user-phone"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Phone Number</label
+      >
+      <input
+        id="user-phone"
+        type="tel"
+        placeholder="+263771234567"
+        class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().phoneNumber"
+        (ngModelChange)="updateForm('phoneNumber', $event)"
+      />
+    </div>
+    <div>
+      <label
+        for="user-email"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Email Address</label
+      >
+      <input
+        id="user-email"
+        type="email"
+        class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().emailAddress"
+        (ngModelChange)="updateForm('emailAddress', $event)"
+      />
+    </div>
+    <div>
+      <label
+        for="user-role"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Role</label
+      >
+      <select
+        id="user-role"
+        class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().role"
+        (ngModelChange)="updateForm('role', $event)"
+      >
+        <option value="" disabled>Select a role</option>
+        @for (role of roles(); track role._id) {
+          <option [value]="role._id">{{ role.name }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="mt-8 flex items-center justify-end gap-3">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-insurance-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create User' }}
+    </button>
+  </div>
+</div>

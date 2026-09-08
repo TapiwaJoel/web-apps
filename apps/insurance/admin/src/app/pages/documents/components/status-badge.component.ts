@@ -6,18 +6,11 @@ import {
   type InputSignal,
   type Signal,
 } from '@angular/core';
-import { DocumentStatus } from '../documents.types';
-
-interface BadgeStyle {
-  label: string;
-  classes: string;
-}
-
-const BADGE_STYLES: Record<DocumentStatus, BadgeStyle> = {
-  valid: { label: 'Valid', classes: 'bg-success-light text-success' },
-  invalid: { label: 'Invalid', classes: 'bg-error-light text-error' },
-  expiring: { label: 'Expiring', classes: 'bg-warning-light text-warning' },
-};
+import { DocumentStatus } from '../../../shared/types/documents/documents.types';
+import {
+  BADGE_STYLES,
+  BadgeStyle,
+} from '../../../shared/types/documents/components/status-badge.types';
 
 @Component({
   selector: 'org-status-badge',

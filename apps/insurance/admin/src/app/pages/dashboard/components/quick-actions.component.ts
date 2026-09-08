@@ -4,7 +4,7 @@ import {
   input,
   type InputSignal,
 } from '@angular/core';
-import { QuickAction } from '../dashboard.types';
+import { QuickAction } from '../../../shared/types/dashboard/dashboard.types';
 
 @Component({
   selector: 'org-quick-actions',

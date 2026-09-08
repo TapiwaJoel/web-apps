@@ -1,2 +1,14 @@
-// Custom SCSS for notification component (if needed)
-// Tailwind handles most styling, but complex animations or edge cases can go here
+@keyframes notification-progress-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.notification-progress {
+  animation-name: notification-progress-shrink;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}

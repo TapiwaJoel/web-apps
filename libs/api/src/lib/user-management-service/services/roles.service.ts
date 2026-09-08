@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -35,9 +35,21 @@ export class RolesService {
       );
   }
 
-  public list(): Observable<PaginateResult<RoleResponseDto>> {
+  public list(
+    query: { serviceName?: string } = {},
+  ): Observable<PaginateResult<RoleResponseDto>> {
+    let params: HttpParams = new HttpParams();
+    (Object.entries(query) as [string, unknown][]).forEach(
+      ([key, value]: [string, unknown]): void => {
+        if (value !== undefined && value !== null && value !== '') {
+          params = params.set(key, String(value));
+        }
+      },
+    );
     return this.http
-      .get<ServiceResponse<PaginateResult<RoleResponseDto>>>(this.url())
+      .get<ServiceResponse<PaginateResult<RoleResponseDto>>>(this.url(), {
+        params,
+      })
       .pipe(
         map(
           (

@@ -9,8 +9,9 @@ import {
   type WritableSignal,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { BarRect } from '../chart-geometry';
-import { PremiumMonth } from '../dashboard.types';
+import { BarRect } from '../../../shared/utils/chart-geometry';
+import { PremiumMonth } from '../../../shared/types/dashboard/dashboard.types';
+import { AxisTick } from '../../../shared/types/dashboard/components/premium-growth-chart.types';
 
 const CHART_WIDTH: number = 520;
 const CHART_HEIGHT: number = 180;
@@ -55,15 +56,25 @@ export class PremiumGrowthChartComponent {
     return Math.max(Math.ceil(max / AXIS_STEP) * AXIS_STEP, AXIS_STEP);
   });
 
-  protected readonly yAxisTicks: Signal<number[]> = computed<number[]>(() => {
-    const max: number = this.yAxisMax();
-    return Array.from(
-      { length: AXIS_TICK_COUNT },
-      (_, i: number): number => max - (max / (AXIS_TICK_COUNT - 1)) * i,
-    );
-  });
+  protected readonly yAxisTicks: Signal<AxisTick[]> = computed<AxisTick[]>(
+    () => {
+      const max: number = this.yAxisMax();
+      return Array.from(
+        { length: AXIS_TICK_COUNT },
+        (_, i: number): AxisTick => {
+          const value: number = max - (max / (AXIS_TICK_COUNT - 1)) * i;
+          return {
+            value,
+            y: CHART_HEIGHT - BOTTOM_PADDING - (value / max) * DRAWABLE_HEIGHT,
+          };
+        },
+      );
+    },
+  );
 
-  protected readonly bars: Signal<BarRect[]> = computed<BarRect[]>(() => {
+  protected readonly bars: Signal<(BarRect & { fill: string })[]> = computed<
+    (BarRect & { fill: string })[]
+  >(() => {
     const max: number = this.yAxisMax();
     const values: number[] = this.months().map(
       (m: PremiumMonth): number => m.value,
@@ -71,15 +82,24 @@ export class PremiumGrowthChartComponent {
     const gap: number = 12;
     const totalGap: number = gap * (values.length - 1);
     const barWidth: number = (BARS_WIDTH - totalGap) / values.length;
-    return values.map((value: number, i: number): BarRect => {
-      const h: number = (value / max) * DRAWABLE_HEIGHT;
-      return {
-        x: AXIS_WIDTH + i * (barWidth + gap),
-        y: CHART_HEIGHT - BOTTOM_PADDING - h,
-        w: barWidth,
-        h,
-      };
-    });
+    const activeIdx: number = this.activeIdx();
+    return values.map(
+      (
+        value: number,
+        i: number,
+      ): BarRect & {
+        fill: string;
+      } => {
+        const h: number = (value / max) * DRAWABLE_HEIGHT;
+        return {
+          x: AXIS_WIDTH + i * (barWidth + gap),
+          y: CHART_HEIGHT - BOTTOM_PADDING - h,
+          w: barWidth,
+          h,
+          fill: i === activeIdx ? ACTIVE_BAR_FILL : INACTIVE_BAR_FILL,
+        };
+      },
+    );
   });
 
   protected readonly activeBar: Signal<BarRect> = computed<BarRect>(
@@ -97,15 +117,5 @@ export class PremiumGrowthChartComponent {
 
   protected onBarHover(index: number): void {
     this.hoverOverride.set(index);
-  }
-
-  protected barFill(index: number): string {
-    return index === this.activeIdx() ? ACTIVE_BAR_FILL : INACTIVE_BAR_FILL;
-  }
-
-  protected tickY(tick: number): number {
-    return (
-      CHART_HEIGHT - BOTTOM_PADDING - (tick / this.yAxisMax()) * DRAWABLE_HEIGHT
-    );
   }
 }

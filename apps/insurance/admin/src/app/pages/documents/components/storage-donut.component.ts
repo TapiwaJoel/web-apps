@@ -6,7 +6,7 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { StorageSlice } from '../documents.types';
+import { StorageSlice } from '../../../shared/types/documents/documents.types';
 
 @Component({
   selector: 'org-storage-donut',

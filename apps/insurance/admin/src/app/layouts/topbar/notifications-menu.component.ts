@@ -7,7 +7,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { AppNotification } from './notification.model';
+import { AppNotification } from '../../shared/types/layouts/topbar/notification.model';
 
 /**
  * Header notifications dropdown: a bell trigger with an unread count dot and a

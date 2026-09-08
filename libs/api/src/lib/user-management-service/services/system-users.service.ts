@@ -49,7 +49,7 @@ export class SystemUsersService {
   }
 
   public list(
-    query: Partial<PaginationParams> = {},
+    query: Partial<PaginationParams> & { serviceName?: string } = {},
   ): Observable<PaginateResult<SystemUserResponseDto>> {
     let params: HttpParams = new HttpParams();
     (Object.entries(query) as [string, unknown][]).forEach(

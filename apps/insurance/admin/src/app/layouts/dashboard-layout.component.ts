@@ -1,4 +1,10 @@
-import { Component, computed, inject, Signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  Signal,
+} from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { SidebarLayoutComponent, TreeNavNode } from '@mushaviri/ui';
 import { AuthenticationService } from '@mushaviri/api';
@@ -10,6 +16,7 @@ import { DashboardTopbarComponent } from './topbar/dashboard-topbar.component';
   selector: 'org-dashboard-layout',
   standalone: true,
   imports: [SidebarLayoutComponent, RouterOutlet, DashboardTopbarComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard-layout.component.html',
 })
 export class DashboardLayoutComponent {
@@ -32,6 +39,9 @@ export class DashboardLayoutComponent {
   );
   protected readonly currentUserRole: Signal<string> = computed(
     () => this.session.user()?.role ?? '',
+  );
+  protected readonly currentUserPhone: Signal<string> = computed(
+    () => this.session.user()?.phoneNumber ?? '',
   );
 
   public logout(): void {

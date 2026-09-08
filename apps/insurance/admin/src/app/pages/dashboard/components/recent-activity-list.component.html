@@ -7,11 +7,11 @@
   </div>
 
   <ul class="flex flex-col gap-4">
-    @for (item of items(); track item.id; let i = $index) {
+    @for (item of rows(); track item.id) {
       <li class="flex items-center gap-3">
         <span
           class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-          [class]="avatarClasses(i)"
+          [class]="item.avatarClass"
         >
           {{ item.initials }}
         </span>
@@ -23,10 +23,7 @@
             {{ item.detail }}
           </p>
         </div>
-        <org-status-pill
-          [label]="statusStyle(item.status).label"
-          [tone]="statusStyle(item.status).tone"
-        />
+        <org-status-pill [label]="item.style.label" [tone]="item.style.tone" />
       </li>
     }
   </ul>

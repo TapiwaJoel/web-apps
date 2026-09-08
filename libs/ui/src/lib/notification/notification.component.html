@@ -1,47 +1,58 @@
 <div
-  class="shadow-notification animate-slide-in mb-2 flex items-center justify-between rounded bg-white p-3"
-  [ngClass]="{
-    'border-success border-l-4': notification.type === 'success',
-    'border-error border-l-4': notification.type === 'error',
-    'border-warning border-l-4': notification.type === 'warning',
-    'border-info border-l-4': notification.type === 'info',
-  }"
+  class="shadow-notification animate-slide-in bg-theme-background border-theme-border text-theme-text relative mb-2 flex items-stretch overflow-hidden rounded-lg border"
 >
-  <div class="flex flex-1 items-center gap-3">
-    <span
-      class="flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold"
-      [ngClass]="{
-        'bg-success-light text-success': notification.type === 'success',
-        'bg-error-light text-error': notification.type === 'error',
-        'bg-warning-light text-warning': notification.type === 'warning',
-        'bg-info-light text-info': notification.type === 'info',
-      }"
-    >
-      @switch (notification.type) {
-        @case ('success') {
-          <span>&#10003;</span>
-        }
-        @case ('error') {
-          <span>&#10005;</span>
-        }
-        @case ('warning') {
-          <span>&#9888;</span>
-        }
-        @case ('info') {
-          <span>&#8505;</span>
-        }
-      }
-    </span>
-    <span class="flex-1 text-sm leading-relaxed">{{
-      notification.message
-    }}</span>
-  </div>
-  <button
-    type="button"
-    class="flex h-6 w-6 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-2xl text-gray-600 transition-colors duration-200 hover:text-gray-800"
-    (click)="onDismiss()"
-    aria-label="Dismiss notification"
+  <span
+    class="flex w-14 flex-shrink-0 items-center justify-center text-lg font-bold"
+    [ngClass]="{
+      'bg-success-light text-success': notification.type === 'success',
+      'bg-error-light text-error': notification.type === 'error',
+      'bg-warning-light text-warning': notification.type === 'warning',
+      'bg-info-light text-info': notification.type === 'info',
+    }"
   >
-    &times;
-  </button>
+    @switch (notification.type) {
+      @case ('success') {
+        <span>&#10003;</span>
+      }
+      @case ('error') {
+        <span>&#10005;</span>
+      }
+      @case ('warning') {
+        <span>&#9888;</span>
+      }
+      @case ('info') {
+        <span>&#8505;</span>
+      }
+    }
+  </span>
+  <div class="flex flex-1 items-center justify-between gap-3 p-3">
+    <div class="flex-1">
+      <p class="text-theme-text text-sm font-semibold">
+        {{ notification.title }}
+      </p>
+      <p class="text-theme-text-secondary text-sm leading-relaxed">
+        {{ notification.message }}
+      </p>
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:text-theme-text flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-2xl transition-colors duration-200"
+      (click)="onDismiss()"
+      aria-label="Dismiss notification"
+    >
+      &times;
+    </button>
+  </div>
+  @if (notification.duration) {
+    <div
+      #progressBar
+      class="notification-progress absolute bottom-0 left-0 h-[3px] w-full origin-left"
+      [ngClass]="{
+        'bg-success': notification.type === 'success',
+        'bg-error': notification.type === 'error',
+        'bg-warning': notification.type === 'warning',
+        'bg-info': notification.type === 'info',
+      }"
+    ></div>
+  }
 </div>

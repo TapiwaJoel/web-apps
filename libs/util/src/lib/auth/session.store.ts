@@ -3,6 +3,8 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   AuthenticationService,
+  AuthenticationSettingsResponseDto,
+  DeviceResponseDto,
   SystemUserResponseDto,
   UserPermissionsResponseDto,
   UserResponseDto,
@@ -44,6 +46,30 @@ export class SessionStore {
    */
   private readonly authenticatedSignal: ReturnType<typeof signal<boolean>> =
     signal<boolean>(false);
+  private readonly accountIdSignal: ReturnType<typeof signal<string | null>> =
+    signal<string | null>(null);
+  private readonly authenticationSettingsSignal: ReturnType<
+    typeof signal<AuthenticationSettingsResponseDto | null>
+  > = signal<AuthenticationSettingsResponseDto | null>(null);
+  private readonly devicesSignal: ReturnType<
+    typeof signal<Partial<DeviceResponseDto>[]>
+  > = signal<Partial<DeviceResponseDto>[]>([]);
+  private readonly accountCreatedAtSignal: ReturnType<
+    typeof signal<string | null>
+  > = signal<string | null>(null);
+  private readonly accountUpdatedAtSignal: ReturnType<
+    typeof signal<string | null>
+  > = signal<string | null>(null);
+  private readonly roleIdSignal: ReturnType<typeof signal<string | null>> =
+    signal<string | null>(null);
+  private readonly roleNameSignal: ReturnType<typeof signal<string | null>> =
+    signal<string | null>(null);
+  private readonly roleDescriptionSignal: ReturnType<
+    typeof signal<string | null>
+  > = signal<string | null>(null);
+  private readonly currentDeviceIdSignal: ReturnType<
+    typeof signal<string | null>
+  > = signal<string | null>(null);
 
   // Public signals
   public readonly user: Signal<UserResponseDto | null> =
@@ -54,6 +80,27 @@ export class SessionStore {
     this.permissionsSignal.asReadonly();
   public readonly isAuthenticated: ReturnType<typeof computed<boolean>> =
     computed(() => this.authenticatedSignal());
+  public readonly accountId: Signal<string | null> =
+    this.accountIdSignal.asReadonly();
+  public readonly authenticationSettings: Signal<AuthenticationSettingsResponseDto | null> =
+    this.authenticationSettingsSignal.asReadonly();
+  public readonly devices: Signal<Partial<DeviceResponseDto>[]> =
+    this.devicesSignal.asReadonly();
+  public readonly accountCreatedAt: Signal<string | null> =
+    this.accountCreatedAtSignal.asReadonly();
+  public readonly accountUpdatedAt: Signal<string | null> =
+    this.accountUpdatedAtSignal.asReadonly();
+  public readonly roleId: Signal<string | null> =
+    this.roleIdSignal.asReadonly();
+  public readonly roleName: Signal<string | null> =
+    this.roleNameSignal.asReadonly();
+  public readonly roleDescription: Signal<string | null> =
+    this.roleDescriptionSignal.asReadonly();
+  public readonly currentDeviceId: Signal<string | null> =
+    this.currentDeviceIdSignal.asReadonly();
+  public readonly isTwoFactorEnabled: Signal<boolean> = computed(
+    () => this.authenticationSettingsSignal()?.isTwoFactorEnabled ?? false,
+  );
 
   // Public methods
   /** Adopt the session returned by a successful login or token refresh. */
@@ -61,6 +108,13 @@ export class SessionStore {
     this.userSignal.set(response.user ?? null);
     this.systemUserSignal.set(response.systemUser ?? null);
     this.authenticatedSignal.set(true);
+    this.accountIdSignal.set(response._id ?? null);
+    this.authenticationSettingsSignal.set(
+      response.authenticationSettings ?? null,
+    );
+    this.devicesSignal.set(response.device ?? []);
+    this.accountCreatedAtSignal.set(response.createdAt ?? null);
+    this.accountUpdatedAtSignal.set(response.updatedAt ?? null);
   }
 
   public clear(): void {
@@ -68,33 +122,62 @@ export class SessionStore {
     this.systemUserSignal.set(null);
     this.permissionsSignal.set([]);
     this.authenticatedSignal.set(false);
+    this.accountIdSignal.set(null);
+    this.authenticationSettingsSignal.set(null);
+    this.devicesSignal.set([]);
+    this.accountCreatedAtSignal.set(null);
+    this.accountUpdatedAtSignal.set(null);
+    this.roleIdSignal.set(null);
+    this.roleNameSignal.set(null);
+    this.roleDescriptionSignal.set(null);
+    this.currentDeviceIdSignal.set(null);
   }
 
   /**
    * Probes an authenticated endpoint to detect a valid session cookie after a
    * reload. Returns `false` instead of throwing so it can gate app initialization.
    *
-   * The access token cookie is short-lived, so a returning "remember me" user will
-   * usually fail the first probe here even though their device is still trusted —
-   * the refresh token cookie (long-lived when remembered) is what the server can
-   * still exchange for a fresh session. Falls back to one refresh-and-retry before
-   * giving up, so a remembered session lands the user in the app instead of at login.
+   * The access token cookie is short-lived, so a returning user's `refreshToken()`
+   * call is expected to succeed on most reloads — it's tried first (not as a
+   * fallback) specifically because, unlike `myPermissions()`, its response is
+   * shaped exactly like a login response (`user`, `systemUser`,
+   * `authenticationSettings`, `device[]`), so `set()` can repopulate the full
+   * session from it. Without this, a reload would leave `user()`/`systemUser()`
+   * null for the rest of the tab's lifetime — no page depends on that today,
+   * but a reload while sitting on the shell's own routes shouldn't silently
+   * downgrade the session either. `myPermissions()` is still needed afterwards
+   * since only it returns `roleId`/`roleName`/`roleDescription`/`permissions`.
+   *
+   * Falls back to `myPermissions()` alone if `refreshToken()` fails — covers the
+   * case where the access token is still valid but the refresh-token cookie isn't
+   * (e.g. it already rotated in another tab). Only clears the session if both
+   * calls fail.
    */
   public restore(): Observable<boolean> {
     const applyPermissions: (response: UserPermissionsResponseDto) => void = (
       response: UserPermissionsResponseDto,
     ): void => {
       this.permissionsSignal.set(response.permissions ?? []);
+      this.roleIdSignal.set(response.roleId ?? null);
+      this.roleNameSignal.set(response.roleName ?? null);
+      this.roleDescriptionSignal.set(response.roleDescription ?? null);
+      this.currentDeviceIdSignal.set(response.deviceId ?? null);
+    };
+    const applyPermissionsOnly: (
+      response: UserPermissionsResponseDto,
+    ) => void = (response: UserPermissionsResponseDto): void => {
+      applyPermissions(response);
       this.authenticatedSignal.set(true);
     };
 
-    return this.authenticationService.myPermissions().pipe(
+    return this.authenticationService.refreshToken().pipe(
+      tap((response: WebAuthenticationResponseDto): void => this.set(response)),
+      switchMap(() => this.authenticationService.myPermissions()),
       tap(applyPermissions),
       map((): boolean => true),
       catchError((): Observable<boolean> =>
-        this.authenticationService.refreshToken().pipe(
-          switchMap(() => this.authenticationService.myPermissions()),
-          tap(applyPermissions),
+        this.authenticationService.myPermissions().pipe(
+          tap(applyPermissionsOnly),
           map((): boolean => true),
           catchError((): Observable<boolean> => {
             this.clear();

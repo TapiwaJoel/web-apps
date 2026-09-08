@@ -1,21 +1,21 @@
 <div class="flex flex-col gap-3">
   <div class="flex justify-between text-sm font-medium">
-    @for (segment of segments(); track segment.label) {
+    @for (segment of rows(); track segment.label) {
       <span class="text-theme-text tabular-nums">{{ segment.pct }}%</span>
     }
   </div>
   <div class="flex h-2 w-full overflow-hidden rounded-full">
-    @for (segment of segments(); track segment.label) {
+    @for (segment of rows(); track segment.label) {
       <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
       <div
         class="h-full"
-        [class]="barClass(segment.tone)"
+        [class]="segment.barClass"
         [style.width.%]="segment.pct"
       ></div>
     }
   </div>
   <div class="grid grid-cols-3 gap-2">
-    @for (segment of segments(); track segment.label) {
+    @for (segment of rows(); track segment.label) {
       <div class="border-theme-border rounded-md border px-3 py-2 text-center">
         <p class="text-theme-text text-lg font-semibold tabular-nums">
           {{ segment.count }}

@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocumentsPageData, MOCK_DOCUMENTS_DATA } from './documents.types';
+import {
+  DocumentsPageData,
+  MOCK_DOCUMENTS_DATA,
+} from '../../shared/types/documents/documents.types';
 import { DocumentCategoryCardComponent } from './components/document-category-card.component';
 import { RecentFilesTableComponent } from './components/recent-files-table.component';
 import { ComplianceBarComponent } from './components/compliance-bar.component';

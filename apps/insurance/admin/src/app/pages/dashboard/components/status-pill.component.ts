@@ -6,7 +6,7 @@ import {
   type InputSignal,
   type Signal,
 } from '@angular/core';
-import { PillTone } from '../dashboard.types';
+import { PillTone } from '../../../shared/types/dashboard/dashboard.types';
 
 const TONE_CLASSES: Record<PillTone, string> = {
   success: 'bg-success-light text-success',

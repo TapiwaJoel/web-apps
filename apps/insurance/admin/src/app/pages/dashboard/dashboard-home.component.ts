@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DashboardPageData, MOCK_DASHBOARD_DATA } from './dashboard.types';
+import {
+  DashboardPageData,
+  MOCK_DASHBOARD_DATA,
+} from '../../shared/types/dashboard/dashboard.types';
 import { KpiStatCardComponent } from './components/kpi-stat-card.component';
 import { PremiumGrowthChartComponent } from './components/premium-growth-chart.component';
 import { RecentActivityListComponent } from './components/recent-activity-list.component';

@@ -3,4 +3,5 @@ export interface UserPermissionsResponseDto {
   roleName: string;
   roleDescription?: string;
   permissions: string[];
+  deviceId?: string;
 }

@@ -8,7 +8,7 @@ import {
   type Signal,
   type WritableSignal,
 } from '@angular/core';
-import { DocumentFile } from '../documents.types';
+import { DocumentFile } from '../../../shared/types/documents/documents.types';
 import { StatusBadgeComponent } from './status-badge.component';
 
 @Component({

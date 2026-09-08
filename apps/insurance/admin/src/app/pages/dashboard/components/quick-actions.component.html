@@ -6,9 +6,14 @@
   <div class="grid flex-1 grid-cols-2 grid-rows-2 gap-3">
     @for (action of actions(); track action.label) {
       <div
-        class="border-theme-border flex flex-col items-center justify-center gap-2 rounded-lg border p-4"
+        class="group bg-theme-surface hover:bg-theme-background flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg p-4 transition-all hover:shadow-md"
       >
-        <span class="text-2xl" aria-hidden="true">{{ action.icon }}</span>
+        <i
+          class="{{
+            action.icon
+          }} text-theme-text-secondary group-hover:text-theme-primary text-xl transition-colors"
+          aria-hidden="true"
+        ></i>
         <span class="text-theme-text text-sm font-medium">{{
           action.label
         }}</span>

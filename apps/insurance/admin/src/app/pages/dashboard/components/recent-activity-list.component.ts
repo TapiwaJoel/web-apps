@@ -1,22 +1,17 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   type InputSignal,
+  type Signal,
 } from '@angular/core';
-import { ActivityItem, ActivityStatus, PillTone } from '../dashboard.types';
+import { ActivityItem } from '../../../shared/types/dashboard/dashboard.types';
 import { StatusPillComponent } from './status-pill.component';
-
-interface ActivityStatusStyle {
-  tone: PillTone;
-  label: string;
-}
-
-const ACTIVITY_STATUS_STYLES: Record<ActivityStatus, ActivityStatusStyle> = {
-  expiring: { tone: 'warning', label: 'Policy Expiring' },
-  approved: { tone: 'success', label: 'Policy Approved' },
-  pending: { tone: 'info', label: 'Docs Pending' },
-};
+import {
+  ACTIVITY_STATUS_STYLES,
+  type ActivityRow,
+} from '../../../shared/types/dashboard/components/recent-activity-list.types';
 
 const AVATAR_PALETTE: string[] = [
   'bg-insurance-100 text-insurance-700',
@@ -35,11 +30,11 @@ export class RecentActivityListComponent {
   public readonly items: InputSignal<ActivityItem[]> =
     input.required<ActivityItem[]>();
 
-  protected statusStyle(status: ActivityStatus): ActivityStatusStyle {
-    return ACTIVITY_STATUS_STYLES[status];
-  }
-
-  protected avatarClasses(index: number): string {
-    return AVATAR_PALETTE[index % AVATAR_PALETTE.length];
-  }
+  protected readonly rows: Signal<ActivityRow[]> = computed<ActivityRow[]>(() =>
+    this.items().map((item: ActivityItem, index: number): ActivityRow => ({
+      ...item,
+      style: ACTIVITY_STATUS_STYLES[item.status],
+      avatarClass: AVATAR_PALETTE[index % AVATAR_PALETTE.length],
+    })),
+  );
 }

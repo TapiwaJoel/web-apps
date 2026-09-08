@@ -1,29 +1,17 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   type InputSignal,
+  type Signal,
 } from '@angular/core';
-import {
-  ApplicationRow,
-  ApplicationStatus,
-  PillTone,
-} from '../dashboard.types';
+import { ApplicationRow } from '../../../shared/types/dashboard/dashboard.types';
 import { StatusPillComponent } from './status-pill.component';
-
-interface ApplicationStatusStyle {
-  tone: PillTone;
-  label: string;
-}
-
-const APPLICATION_STATUS_STYLES: Record<
-  ApplicationStatus,
-  ApplicationStatusStyle
-> = {
-  active: { tone: 'success', label: 'Active' },
-  pending: { tone: 'warning', label: 'Pending' },
-  expiring: { tone: 'warning', label: 'Expiring' },
-};
+import {
+  APPLICATION_STATUS_STYLES,
+  ApplicationDisplayRow,
+} from '../../../shared/types/dashboard/components/recent-applications-table.types';
 
 @Component({
   selector: 'org-recent-applications-table',
@@ -36,7 +24,12 @@ export class RecentApplicationsTableComponent {
   public readonly rows: InputSignal<ApplicationRow[]> =
     input.required<ApplicationRow[]>();
 
-  protected statusStyle(status: ApplicationStatus): ApplicationStatusStyle {
-    return APPLICATION_STATUS_STYLES[status];
-  }
+  protected readonly displayRows: Signal<ApplicationDisplayRow[]> = computed<
+    ApplicationDisplayRow[]
+  >(() =>
+    this.rows().map((row) => ({
+      ...row,
+      style: APPLICATION_STATUS_STYLES[row.status],
+    })),
+  );
 }
