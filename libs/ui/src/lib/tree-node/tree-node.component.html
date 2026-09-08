@@ -1,159 +1,161 @@
-<div
-  class="tree-node"
-  [class.has-children]="hasChildren"
-  [class.expanded]="expanded"
-  [class.is-section]="isSection"
-  [attr.data-level]="level"
->
-  <!-- Node Content -->
+@if (!hideWhenCollapsed) {
   <div
-    class="tree-node-content tree-node-content-inline group flex cursor-pointer items-center px-3 py-4"
-    role="button"
-    tabindex="0"
-    [attr.aria-expanded]="hasChildren ? expanded : null"
-    [class.tree-node-disabled]="node.disabled"
-    [class.has-connector]="level > 0"
-    [class.tree-node-active]="(node.route && rla?.isActive) || node.active"
-    [class]="node.cssClass"
-    (click)="toggleExpanded()"
-    (keydown.enter)="toggleExpanded()"
-    [routerLink]="node.route || null"
-    routerLinkActive
-    #rla="routerLinkActive"
-    [routerLinkActiveOptions]="{ exact: true }"
-    [attr.aria-current]="
-      (node.route && rla?.isActive) || node.active ? 'page' : null
-    "
-    cdkOverlayOrigin
-    #flyoutOrigin="cdkOverlayOrigin"
-    (mouseenter)="openFlyout()"
-    (mouseleave)="scheduleClose()"
-    (focus)="openFlyout()"
-    (blur)="scheduleClose()"
-    (keydown.escape)="closeFlyout()"
+    class="tree-node"
+    [class.has-children]="hasChildren"
+    [class.expanded]="expanded"
+    [class.is-section]="isSection"
+    [attr.data-level]="level"
   >
-    <!-- LEFT: small inline glyph (top-level items only; children are pure text) -->
-    @if (showIcons && node.icon && shouldShowIcon) {
-      <span
-        class="tree-node-icon-container inline-flex h-5 w-5 flex-shrink-0 items-center justify-center"
-        [class.has-bg]="!!node.iconBg"
-      >
-        <i [class]="node.icon" class="tree-node-icon"></i>
-      </span>
-    }
-
-    <!-- CENTER: Label (flex-1 to take available space) -->
-    @if (node.route) {
-      <a
-        [routerLink]="node.route"
-        class="tree-node-label flex-1 truncate text-sm transition-colors"
-        (click)="$event.stopPropagation()"
-      >
-        {{ node.label }}
-      </a>
-    } @else {
-      <span class="tree-node-label flex-1 truncate text-sm transition-colors">
-        {{ node.label }}
-      </span>
-    }
-
-    <!-- RIGHT: Badge + Action Button + Arrow -->
-    <div class="tree-node-right flex flex-shrink-0 items-center gap-2">
-      <!-- Badge (solid accent fill) -->
-      @if (showBadges && node.badge) {
+    <!-- Node Content -->
+    <div
+      class="tree-node-content tree-node-content-inline group flex cursor-pointer items-center px-3 py-4"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="hasChildren ? expanded : null"
+      [class.tree-node-disabled]="node.disabled"
+      [class.has-connector]="level > 0"
+      [class.tree-node-active]="(node.route && rla?.isActive) || node.active"
+      [class]="node.cssClass"
+      (click)="toggleExpanded()"
+      (keydown.enter)="toggleExpanded()"
+      [routerLink]="node.route || null"
+      routerLinkActive
+      #rla="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [attr.aria-current]="
+        (node.route && rla?.isActive) || node.active ? 'page' : null
+      "
+      cdkOverlayOrigin
+      #flyoutOrigin="cdkOverlayOrigin"
+      (mouseenter)="openFlyout()"
+      (mouseleave)="scheduleClose()"
+      (focus)="openFlyout()"
+      (blur)="scheduleClose()"
+      (keydown.escape)="closeFlyout()"
+    >
+      <!-- LEFT: small inline glyph (top-level items only; children are pure text) -->
+      @if (showIcons && node.icon && shouldShowIcon) {
         <span
-          class="tree-node-badge inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold"
+          class="tree-node-icon-container inline-flex h-5 w-5 flex-shrink-0 items-center justify-center"
+          [class.has-bg]="!!node.iconBg"
         >
-          {{ node.badge }}
+          <i [class]="node.icon" class="tree-node-icon"></i>
         </span>
       }
 
-      <!-- Action Button -->
-      @if (node.action) {
-        <button
-          type="button"
-          class="tree-node-action text-theme-text-secondary hover:text-theme-primary flex h-5 w-5 items-center justify-center rounded opacity-0 transition-all group-hover:opacity-100"
-          (click)="onActionClick($event)"
-          [attr.aria-label]="'Add item to ' + node.label"
+      <!-- CENTER: Label (flex-1 to take available space) -->
+      @if (node.route) {
+        <a
+          [routerLink]="node.route"
+          class="tree-node-label flex-1 truncate text-sm transition-colors"
+          (click)="$event.stopPropagation()"
         >
-          <svg
-            class="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-        </button>
+          {{ node.label }}
+        </a>
+      } @else {
+        <span class="tree-node-label flex-1 truncate text-sm transition-colors">
+          {{ node.label }}
+        </span>
       }
 
-      <!-- Expand/Collapse Arrow (on right) -->
-      @if (hasChildren && collapsible) {
-        <button
-          type="button"
-          class="tree-node-toggle text-theme-text-secondary hover:text-theme-text flex h-4 w-4 flex-shrink-0 items-center justify-center transition-transform duration-200"
-          [class.expanded]="expanded"
-          (click)="toggleExpanded(); $event.stopPropagation()"
-          [attr.aria-label]="expanded ? 'Collapse' : 'Expand'"
-          [attr.aria-expanded]="expanded"
-        >
-          <svg
-            class="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      <!-- RIGHT: Badge + Action Button + Arrow -->
+      <div class="tree-node-right flex flex-shrink-0 items-center gap-2">
+        <!-- Badge (solid accent fill) -->
+        @if (showBadges && node.badge) {
+          <span
+            class="tree-node-badge inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-      }
+            {{ node.badge }}
+          </span>
+        }
+
+        <!-- Action Button -->
+        @if (node.action) {
+          <button
+            type="button"
+            class="tree-node-action text-theme-text-secondary hover:text-theme-primary flex h-5 w-5 items-center justify-center rounded opacity-0 transition-all group-hover:opacity-100"
+            (click)="onActionClick($event)"
+            [attr.aria-label]="'Add item to ' + node.label"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </button>
+        }
+
+        <!-- Expand/Collapse Arrow (on right) -->
+        @if (hasChildren && collapsible) {
+          <button
+            type="button"
+            class="tree-node-toggle text-theme-text-secondary hover:text-theme-text flex h-4 w-4 flex-shrink-0 items-center justify-center transition-transform duration-200"
+            [class.expanded]="expanded"
+            (click)="toggleExpanded(); $event.stopPropagation()"
+            [attr.aria-label]="expanded ? 'Collapse' : 'Expand'"
+            [attr.aria-expanded]="expanded"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        }
+      </div>
     </div>
-  </div>
 
-  <!-- Hover flyout: label (+ submenu for nodes with children) shown when the
+    <!-- Hover flyout: label (+ submenu for nodes with children) shown when the
        sidebar is collapsed to icon-only width. Reuses org-rail-flyout, the
        same component the icon rail uses for this exact purpose. -->
-  <ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="flyoutOrigin"
-    [cdkConnectedOverlayOpen]="showFlyout"
-    [cdkConnectedOverlayPositions]="flyoutPositions"
-  >
-    <org-rail-flyout
-      [node]="node"
-      (navigate)="closeFlyout()"
-      (mouseenter)="cancelClose()"
-      (mouseleave)="scheduleClose()"
-    />
-  </ng-template>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="flyoutOrigin"
+      [cdkConnectedOverlayOpen]="showFlyout"
+      [cdkConnectedOverlayPositions]="flyoutPositions"
+    >
+      <org-rail-flyout
+        [node]="node"
+        (navigate)="closeFlyout()"
+        (mouseenter)="cancelClose()"
+        (mouseleave)="scheduleClose()"
+      />
+    </ng-template>
 
-  <!-- Children (Recursive) with connecting line -->
-  @if (hasChildren && expanded) {
-    <div class="tree-node-children relative">
-      <!-- Vertical connecting line -->
-      <div class="tree-node-connector"></div>
+    <!-- Children (Recursive) with connecting line -->
+    @if (hasChildren && expanded) {
+      <div class="tree-node-children relative">
+        <!-- Vertical connecting line -->
+        <div class="tree-node-connector"></div>
 
-      @for (child of node.children; track trackByFn($index, child)) {
-        <org-tree-node
-          [node]="child"
-          [level]="level + 1"
-          [expanded]="child.expanded || false"
-          [showIcons]="showIcons"
-          [showBadges]="showBadges"
-          [collapsible]="collapsible"
-          [isCollapsed]="isCollapsed"
-        ></org-tree-node>
-      }
-    </div>
-  }
-</div>
+        @for (child of node.children; track trackByFn($index, child)) {
+          <org-tree-node
+            [node]="child"
+            [level]="level + 1"
+            [expanded]="child.expanded || false"
+            [showIcons]="showIcons"
+            [showBadges]="showBadges"
+            [collapsible]="collapsible"
+            [isCollapsed]="isCollapsed"
+          ></org-tree-node>
+        }
+      </div>
+    }
+  </div>
+}

@@ -103,6 +103,19 @@ export class TreeNodeComponent implements OnDestroy {
     );
   }
 
+  /**
+   * Whether this node should render nothing at all while the sidebar is
+   * collapsed. Only applies to section-header rows with no icon of their own
+   * (e.g. insurance-admin's "Main Menu"/"Admin & Data") — at icon-rail width
+   * their label has nothing to render but clipped text ("M.", "A.."), so they
+   * are hidden entirely rather than shown broken. Section nodes that DO carry
+   * an icon (e.g. umdzidzisi-admin's expandable "Examinations"/"Subjects"
+   * groups) are real navigation, not dead labels, and stay visible.
+   */
+  public get hideWhenCollapsed(): boolean {
+    return this.isCollapsed && this.isSection && !this.node.icon;
+  }
+
   /** Opens the flyout (on hover or keyboard focus). */
   public openFlyout(): void {
     this.cancelClose();
