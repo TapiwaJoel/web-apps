@@ -93,8 +93,13 @@
           </button>
         }
 
-        <!-- Expand/Collapse Arrow (on right) -->
-        @if (hasChildren && collapsible) {
+        <!-- Expand/Collapse Arrow (on right). Hidden while the sidebar is
+             collapsed to icon-rail width: there's no room to show inline
+             children then (the hover flyout covers that instead), and the
+             row's flex layout has no space left for it — rendering it
+             anyway pushes it outside the row and it gets clipped by the
+             nav panel's overflow-x: hidden. -->
+        @if (hasChildren && collapsible && !isCollapsed) {
           <button
             type="button"
             class="tree-node-toggle text-theme-text-secondary hover:text-theme-text flex h-4 w-4 flex-shrink-0 items-center justify-center transition-transform duration-200"
