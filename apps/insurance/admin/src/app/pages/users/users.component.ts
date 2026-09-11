@@ -10,11 +10,10 @@ import {
 import { DatePipe } from '@angular/common';
 import {
   CreateSystemUserDto,
-  INSURANCE_PATH,
   RoleResponseDto,
-  RolesService,
+  RolesStore,
   SystemUserResponseDto,
-  SystemUsersService,
+  UsersStore,
 } from '@mushaviri/api';
 import { NotificationService } from '@mushaviri/ui';
 import { CreateUserDialogComponent } from './create-user-dialogue/create-user-dialog.component';
@@ -31,19 +30,16 @@ import {
   templateUrl: './users.component.html',
 })
 export class UsersComponent {
-  private readonly systemUsersService: SystemUsersService =
-    inject(SystemUsersService);
-  private readonly rolesService: RolesService = inject(RolesService);
+  private readonly store: InstanceType<typeof UsersStore> = inject(UsersStore);
+  private readonly rolesStore: InstanceType<typeof RolesStore> =
+    inject(RolesStore);
   private readonly notificationService: NotificationService =
     inject(NotificationService);
 
-  protected readonly users: WritableSignal<SystemUserResponseDto[]> = signal(
-    [],
-  );
-  protected readonly usersLoading: WritableSignal<boolean> = signal(true);
-  protected readonly usersError: WritableSignal<string | null> = signal(null);
-
-  protected readonly roles: WritableSignal<RoleResponseDto[]> = signal([]);
+  protected readonly users: Signal<SystemUserResponseDto[]> = this.store.users;
+  protected readonly usersLoading: Signal<boolean> = this.store.usersLoading;
+  protected readonly usersError: Signal<string | null> = this.store.usersError;
+  protected readonly roles: Signal<RoleResponseDto[]> = this.rolesStore.roles;
 
   protected readonly showCreateForm: WritableSignal<boolean> = signal(false);
   protected readonly creating: WritableSignal<boolean> = signal(false);
@@ -67,12 +63,8 @@ export class UsersComponent {
   );
 
   public constructor() {
-    this.loadUsers();
-
-    this.rolesService.list({ serviceName: INSURANCE_PATH }).subscribe({
-      next: (result): void => this.roles.set(result.docs),
-      error: (): void => this.roles.set([]),
-    });
+    this.store.loadUsers();
+    this.rolesStore.loadRoles();
   }
 
   protected openCreateForm(): void {
@@ -86,7 +78,7 @@ export class UsersComponent {
   protected submitCreate(dto: CreateSystemUserDto): void {
     this.creating.set(true);
 
-    this.systemUsersService.create(dto).subscribe({
+    this.store.createUser(dto, {
       next: (): void => {
         this.creating.set(false);
         this.showCreateForm.set(false);
@@ -94,44 +86,11 @@ export class UsersComponent {
           message: 'User created successfully.',
           type: 'success',
         });
-        this.loadUsers();
       },
-      error: (error: unknown): void => {
+      error: (message: string): void => {
         this.creating.set(false);
-        this.notificationService.show({
-          message: this.toErrorMessage(error),
-          type: 'error',
-        });
+        this.notificationService.show({ message, type: 'error' });
       },
     });
-  }
-
-  private loadUsers(): void {
-    this.usersLoading.set(true);
-    this.usersError.set(null);
-
-    this.systemUsersService.list({ serviceName: INSURANCE_PATH }).subscribe({
-      next: (result): void => {
-        this.users.set(result.docs);
-        this.usersLoading.set(false);
-      },
-      error: (error: unknown): void => {
-        this.usersLoading.set(false);
-        this.usersError.set(this.toErrorMessage(error));
-      },
-    });
-  }
-
-  /** `mapHttpError` surfaces the backend's ServiceResponse.message as `ApiError`. */
-  private toErrorMessage(error: unknown): string {
-    if (
-      typeof error === 'object' &&
-      error !== null &&
-      'message' in error &&
-      typeof (error as { message: unknown }).message === 'string'
-    ) {
-      return (error as { message: string }).message;
-    }
-    return 'Something went wrong. Please try again.';
   }
 }

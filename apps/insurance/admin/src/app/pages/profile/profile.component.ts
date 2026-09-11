@@ -10,7 +10,7 @@ import {
 import { DatePipe } from '@angular/common';
 import {
   DeviceResponseDto,
-  DevicesService,
+  DevicesStore,
   SystemUserResponseDto,
   UserResponseDto,
   UserStatus,
@@ -32,7 +32,8 @@ import {
 })
 export class ProfileComponent {
   private readonly session: SessionStore = inject(SessionStore);
-  private readonly devicesService: DevicesService = inject(DevicesService);
+  private readonly store: InstanceType<typeof DevicesStore> =
+    inject(DevicesStore);
   private readonly notificationService: NotificationService =
     inject(NotificationService);
 
@@ -51,10 +52,12 @@ export class ProfileComponent {
   protected readonly accountUpdatedAt: Signal<string | null> =
     this.session.accountUpdatedAt;
 
-  protected readonly devices: WritableSignal<Partial<DeviceResponseDto>[]> =
-    signal([]);
-  protected readonly devicesLoading: WritableSignal<boolean> = signal(true);
-  protected readonly devicesError: WritableSignal<string | null> = signal(null);
+  protected readonly devices: Signal<Partial<DeviceResponseDto>[]> =
+    this.store.devices;
+  protected readonly devicesLoading: Signal<boolean> =
+    this.store.devicesLoading;
+  protected readonly devicesError: Signal<string | null> =
+    this.store.devicesError;
 
   /** deviceId currently showing the inline "confirm deactivate?" prompt. */
   protected readonly confirmingDeviceId: WritableSignal<string | null> =
@@ -93,16 +96,7 @@ export class ProfileComponent {
   );
 
   public constructor() {
-    this.devicesService.list().subscribe({
-      next: (result): void => {
-        this.devices.set(result.docs);
-        this.devicesLoading.set(false);
-      },
-      error: (error: unknown): void => {
-        this.devicesLoading.set(false);
-        this.devicesError.set(this.toErrorMessage(error));
-      },
-    });
+    this.store.loadDevices();
   }
 
   protected requestDeactivate(deviceId: string | undefined): void {
@@ -122,13 +116,8 @@ export class ProfileComponent {
     }
     this.deactivatingDeviceId.set(deviceId);
 
-    this.devicesService.update(deviceId, { isActive: false }).subscribe({
-      next: (updated: DeviceResponseDto): void => {
-        this.devices.update((current: Partial<DeviceResponseDto>[]) =>
-          current.map((device: Partial<DeviceResponseDto>) =>
-            device.deviceId === deviceId ? updated : device,
-          ),
-        );
+    this.store.deactivateDevice(deviceId, {
+      next: (): void => {
         this.deactivatingDeviceId.set(null);
         this.confirmingDeviceId.set(null);
         this.notificationService.show({
@@ -136,26 +125,10 @@ export class ProfileComponent {
           type: 'success',
         });
       },
-      error: (error: unknown): void => {
+      error: (message: string): void => {
         this.deactivatingDeviceId.set(null);
-        this.notificationService.show({
-          message: this.toErrorMessage(error),
-          type: 'error',
-        });
+        this.notificationService.show({ message, type: 'error' });
       },
     });
-  }
-
-  /** `mapHttpError` surfaces the backend's ServiceResponse.message as `ApiError`. */
-  private toErrorMessage(error: unknown): string {
-    if (
-      typeof error === 'object' &&
-      error !== null &&
-      'message' in error &&
-      typeof (error as { message: unknown }).message === 'string'
-    ) {
-      return (error as { message: string }).message;
-    }
-    return 'Something went wrong. Please try again.';
   }
 }

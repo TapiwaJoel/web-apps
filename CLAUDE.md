@@ -33,3 +33,8 @@
 
 - Use **SCSS**, never plain CSS. All stylesheets are `.scss` (component `styleUrl`s point to
   `.scss`, global styles are `.scss`). If a `.css` file is generated, convert it to `.scss`.
+
+## Commits
+
+- Do NOT include Anthropic/Claude attribution trailers in commit messages
+  (e.g. `Co-Authored-By: Claude ...`, `Claude-Session: ...`). Omit them entirely.
