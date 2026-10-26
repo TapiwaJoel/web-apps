@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -10,9 +10,11 @@ import {
 } from '../dtos';
 import {
   API_BASE_URL,
+  HeaderPaginationParams,
   LEARNING_MANAGEMENT_PATH,
   PaginateResult,
   ServiceResponse,
+  buildPaginationHeaders,
   buildUrl,
   mapHttpError,
 } from '../../common';
@@ -42,6 +44,7 @@ export class GradesService {
 
   public list(
     query: GetGradesQueryDto = {},
+    page: HeaderPaginationParams = {},
   ): Observable<PaginateResult<GradeResponseDto>> {
     let params: HttpParams = new HttpParams();
     (Object.entries(query) as [string, unknown][]).forEach(
@@ -51,8 +54,10 @@ export class GradesService {
         }
       },
     );
+    const headers: HttpHeaders = buildPaginationHeaders(page);
     return this.http
       .get<ServiceResponse<PaginateResult<GradeResponseDto>>>(this.url(), {
+        headers,
         params,
       })
       .pipe(

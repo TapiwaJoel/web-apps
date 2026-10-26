@@ -1,0 +1,286 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="role-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="role-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ role()?.name ?? 'Role' }}
+      </h2>
+      @if (role(); as r) {
+        <org-status-pill [label]="r.status" [tone]="statusTone()" />
+        <span class="text-theme-text-secondary shrink-0 text-xs">
+          {{ permissionCount() }}
+          {{ permissionCount() === 1 ? 'permission' : 'permissions' }}
+        </span>
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (rolesLoading() && !role()) {
+      <p class="text-theme-text-secondary text-sm">Loading role…</p>
+    } @else if (!role()) {
+      <p class="text-error text-sm">Role not found.</p>
+    } @else {
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="role-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name</label
+            >
+            <input
+              id="role-name"
+              type="text"
+              class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+          </div>
+          <div>
+            <label class="flex items-center gap-2">
+              <input
+                type="checkbox"
+                class="border-theme-border rounded"
+                [ngModel]="formValue().isSensitive"
+                (ngModelChange)="updateForm('isSensitive', $event)"
+              />
+              <span class="text-theme-text text-sm font-medium"
+                >Sensitive role</span
+              >
+            </label>
+          </div>
+          <div>
+            <label
+              for="role-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="role-description"
+              rows="3"
+              class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between">
+          @if (role()?.status === EntityStatus.DELETED) {
+            <button
+              type="button"
+              class="border-theme-border text-theme-text hover:bg-theme-background cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+              [disabled]="deleting()"
+              (click)="restore()"
+            >
+              {{ deleting() ? 'Restoring…' : 'Restore Role' }}
+            </button>
+          } @else if (confirmingDrawerDelete()) {
+            <div class="flex items-center gap-2">
+              <span class="text-theme-text-secondary text-xs"
+                >Delete this role?</span
+              >
+              <button
+                type="button"
+                class="bg-error cursor-pointer rounded-md px-2.5 py-1.5 text-xs font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                [disabled]="deleting()"
+                (click)="deleteFromDrawer()"
+              >
+                {{ deleting() ? 'Deleting…' : 'Confirm' }}
+              </button>
+              <button
+                type="button"
+                class="border-theme-border text-theme-text hover:bg-theme-surface cursor-pointer rounded-md border px-2.5 py-1.5 text-xs font-medium"
+                [disabled]="deleting()"
+                (click)="cancelDrawerDelete()"
+              >
+                Cancel
+              </button>
+            </div>
+          } @else {
+            <button
+              type="button"
+              class="text-error hover:bg-error-light cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium"
+              (click)="confirmDrawerDelete()"
+            >
+              Delete Role
+            </button>
+          }
+
+          <button
+            type="button"
+            class="bg-theme-primary cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving()"
+            (click)="saveRole()"
+          >
+            {{ saving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-theme-surface rounded-lg p-5">
+        <h3 class="text-theme-text mb-4 text-base font-semibold">
+          Permissions
+        </h3>
+
+        @if (permissionsLoading()) {
+          <p class="text-theme-text-secondary text-sm">Loading permissions…</p>
+        } @else if (permissionsError()) {
+          <p class="text-error text-sm">{{ permissionsError() }}</p>
+        } @else if (!hasAnyPermissions()) {
+          <p class="text-theme-text-secondary text-sm">
+            No permissions are available to assign.
+          </p>
+        } @else {
+          <button
+            type="button"
+            class="border-theme-border text-theme-text-secondary hover:bg-theme-background mb-4 flex w-full items-center gap-2 rounded-lg border px-3.5 py-2.5 text-left text-sm"
+            [attr.aria-expanded]="dropdownOpen()"
+            cdkOverlayOrigin
+            #permissionDropdownTrigger="cdkOverlayOrigin"
+            (click)="toggleDropdown()"
+          >
+            <i class="fi fi-rr-plus text-xs" aria-hidden="true"></i>
+            Add a permission…
+          </button>
+
+          <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOrigin]="permissionDropdownTrigger"
+            [cdkConnectedOverlayOpen]="dropdownOpen()"
+            [cdkConnectedOverlayHasBackdrop]="true"
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            [cdkConnectedOverlayWidth]="
+              permissionDropdownTrigger.elementRef.nativeElement.offsetWidth
+            "
+            [cdkConnectedOverlayPositions]="[
+              {
+                originX: 'start',
+                originY: 'bottom',
+                overlayX: 'start',
+                overlayY: 'top',
+                offsetY: 8,
+              },
+            ]"
+            (backdropClick)="closeDropdown()"
+            (overlayOutsideClick)="closeDropdown()"
+            (detach)="closeDropdown()"
+          >
+            <div
+              class="bg-theme-background border-theme-border flex max-h-96 flex-col overflow-hidden rounded-xl border shadow-md"
+              role="dialog"
+              aria-label="Add a permission"
+              tabindex="-1"
+              (keydown.escape)="closeDropdown()"
+            >
+              <div class="border-theme-border border-b p-3">
+                <input
+                  type="search"
+                  placeholder="Search permissions…"
+                  class="border-theme-border text-theme-text w-full rounded-lg border px-3 py-2 text-sm"
+                  [ngModel]="permissionSearch()"
+                  (ngModelChange)="updatePermissionSearch($event)"
+                />
+              </div>
+              <div class="flex-1 overflow-y-auto p-3">
+                @if (unassignedGroups().length === 0) {
+                  <p class="text-theme-text-secondary p-2 text-sm">
+                    @if (permissionSearch().trim() === '') {
+                      All available permissions are already assigned.
+                    } @else {
+                      No permissions match your search.
+                    }
+                  </p>
+                } @else {
+                  <div class="flex flex-col gap-4">
+                    @for (group of unassignedGroups(); track group.resource) {
+                      <div>
+                        <h4
+                          class="text-theme-text-secondary mb-1.5 text-xs font-semibold tracking-wide uppercase"
+                        >
+                          {{ group.resource }}
+                        </h4>
+                        <div class="flex flex-col gap-1">
+                          @for (
+                            permission of group.permissions;
+                            track permission._id
+                          ) {
+                            <button
+                              type="button"
+                              class="hover:bg-theme-surface flex w-full flex-col rounded-lg px-2.5 py-2 text-left disabled:cursor-not-allowed disabled:opacity-50"
+                              [disabled]="
+                                togglingPermissionId() === permission._id
+                              "
+                              (click)="assign(permission._id)"
+                            >
+                              <span
+                                class="text-theme-text text-sm font-medium"
+                                >{{ permission.name }}</span
+                              >
+                              <span class="text-theme-text-secondary text-xs">{{
+                                permission.description
+                              }}</span>
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </ng-template>
+
+          @if (assignedPermissions().length > 0) {
+            <div class="flex flex-wrap gap-2">
+              @for (permission of assignedPermissions(); track permission._id) {
+                <span
+                  class="bg-theme-background border-theme-border text-theme-text inline-flex items-center gap-1.5 rounded-full border py-1 pr-1.5 pl-3 text-xs font-medium"
+                >
+                  {{ permission.name }}
+                  <button
+                    type="button"
+                    class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-4 w-4 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+                    [attr.aria-label]="'Remove ' + permission.name"
+                    [disabled]="togglingPermissionId() === permission._id"
+                    (click)="revoke(permission._id)"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </span>
+              }
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>

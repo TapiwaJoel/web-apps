@@ -2,11 +2,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { CreateSystemUserDto, SystemUserResponseDto } from '../dtos';
+import {
+  ActivateSystemUserDto,
+  CreateSystemUserDto,
+  GetSystemUsersQueryDto,
+  SystemUserResponseDto,
+  UpdateSystemUserDto,
+} from '../dtos';
 import {
   API_BASE_URL,
   PaginateResult,
-  PaginationParams,
   ServiceResponse,
   USER_MANAGEMENT_PATH,
   buildUrl,
@@ -32,7 +37,7 @@ export class SystemUsersService {
 
   public update(
     systemUserId: string,
-    dto: Partial<CreateSystemUserDto>,
+    dto: UpdateSystemUserDto,
   ): Observable<SystemUserResponseDto> {
     return this.http
       .patch<ServiceResponse<SystemUserResponseDto>>(
@@ -49,7 +54,7 @@ export class SystemUsersService {
   }
 
   public list(
-    query: Partial<PaginationParams> & { serviceName?: string } = {},
+    query: GetSystemUsersQueryDto = {},
   ): Observable<PaginateResult<SystemUserResponseDto>> {
     let params: HttpParams = new HttpParams();
     (Object.entries(query) as [string, unknown][]).forEach(
@@ -68,6 +73,23 @@ export class SystemUsersService {
           (
             r: ServiceResponse<PaginateResult<SystemUserResponseDto>>,
           ): PaginateResult<SystemUserResponseDto> => r.data,
+        ),
+        catchError(mapHttpError),
+      );
+  }
+
+  public activate(
+    dto: ActivateSystemUserDto,
+  ): Observable<SystemUserResponseDto> {
+    return this.http
+      .patch<ServiceResponse<SystemUserResponseDto>>(
+        this.url('activations'),
+        dto,
+      )
+      .pipe(
+        map(
+          (r: ServiceResponse<SystemUserResponseDto>): SystemUserResponseDto =>
+            r.data,
         ),
         catchError(mapHttpError),
       );

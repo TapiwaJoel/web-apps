@@ -1,6 +1,6 @@
-import { EntityStatus, PaginationParams } from '../../../common';
+import { EntityStatus } from '../../../common';
 
-export interface GetGradingScalesQueryDto extends PaginationParams {
+export interface GetGradingScalesQueryDto {
   _id?: string;
   gradingSystemId?: string;
   status?: EntityStatus;

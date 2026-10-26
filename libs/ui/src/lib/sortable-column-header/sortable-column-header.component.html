@@ -1,0 +1,21 @@
+<button
+  type="button"
+  (click)="onClick()"
+  class="hover:text-theme-text inline-flex items-center gap-1 font-medium"
+>
+  <ng-content />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="h-3 w-3 transition-transform"
+    [class.opacity-30]="direction === null"
+    [class.rotate-180]="direction === 'desc'"
+  >
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+</button>

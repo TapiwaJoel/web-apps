@@ -1,10 +1,5 @@
 import { CompletionStatus, ResourceType } from '../../enums';
-
-export interface BookmarkDto {
-  position: number;
-  label: string;
-  createdAt: string;
-}
+import { BookmarkDto } from './bookmark.dto';
 
 export interface ContentProgressResponseDto {
   _id: string;

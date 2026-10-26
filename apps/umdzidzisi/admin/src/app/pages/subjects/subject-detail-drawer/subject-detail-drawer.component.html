@@ -1,0 +1,254 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="subject-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="subject-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ subject()?.name ?? 'Subject' }}
+      </h2>
+      @if (subject(); as s) {
+        <span class="text-theme-text-secondary font-mono text-xs">{{
+          s.code
+        }}</span>
+        <org-status-pill [label]="s.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (subjectsLoading() && !subject()) {
+      <p class="text-theme-text-secondary text-sm">Loading subject…</p>
+    } @else if (subject(); as s) {
+      <div class="mb-4 flex flex-col gap-2">
+        <a
+          class="border-theme-border hover:bg-theme-surface text-theme-text flex items-center justify-between rounded-lg border px-4 py-3 text-sm font-medium no-underline transition-colors"
+          [routerLink]="['topics']"
+          [relativeTo]="curriculumRoute"
+          [queryParams]="{ subjectId: s._id }"
+        >
+          <span class="flex items-center gap-2.5">
+            <i
+              class="fi fi-rr-list text-theme-primary text-sm"
+              aria-hidden="true"
+            ></i>
+            View topics
+          </span>
+          <span class="text-theme-primary" aria-hidden="true">&rarr;</span>
+        </a>
+        <a
+          class="border-theme-border hover:bg-theme-surface text-theme-text flex items-center justify-between rounded-lg border px-4 py-3 text-sm font-medium no-underline transition-colors"
+          [routerLink]="['../examinations/papers']"
+          [relativeTo]="curriculumRoute"
+          [queryParams]="{ subjectId: s._id }"
+        >
+          <span class="flex items-center gap-2.5">
+            <i
+              class="fi fi-rr-document text-theme-primary text-sm"
+              aria-hidden="true"
+            ></i>
+            View examination papers
+          </span>
+          <span class="text-theme-primary" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <span class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Cover image</span
+            >
+            <org-cms-image-picker
+              [value]="formValue().image || null"
+              [disabled]="saving()"
+              (valueChange)="updateForm('image', $event)"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                for="subject-detail-board"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Examination board</label
+              >
+              <select
+                id="subject-detail-board"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().examinationBoardId"
+                (ngModelChange)="updateForm('examinationBoardId', $event)"
+              >
+                <option value="" disabled>Select a board</option>
+                @for (board of examinationBoards(); track board._id) {
+                  <option [value]="board._id">{{ board.name }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label
+                for="subject-detail-level"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Educational level</label
+              >
+              <select
+                id="subject-detail-level"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().educationalLevelId"
+                (ngModelChange)="updateForm('educationalLevelId', $event)"
+              >
+                <option value="" disabled>Select a level</option>
+                @for (level of availableLevels(); track level._id) {
+                  <option [value]="level._id">{{ level.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem]">
+            <div>
+              <label
+                for="subject-detail-name"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Name</label
+              >
+              <input
+                id="subject-detail-name"
+                type="text"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().name"
+                (ngModelChange)="updateForm('name', $event)"
+              />
+            </div>
+            <div>
+              <label
+                for="subject-detail-code"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Code</label
+              >
+              <input
+                id="subject-detail-code"
+                type="text"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 font-mono text-sm"
+                [ngModel]="formValue().code"
+                (ngModelChange)="updateForm('code', $event)"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                for="subject-detail-type"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Subject type</label
+              >
+              <select
+                id="subject-detail-type"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().subjectType"
+                (ngModelChange)="updateForm('subjectType', $event)"
+              >
+                @for (option of subjectTypeOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label
+                for="subject-detail-status"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Status</label
+              >
+              <select
+                id="subject-detail-status"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().status"
+                (ngModelChange)="updateForm('status', $event)"
+              >
+                @for (option of statusOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="subject-detail-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="subject-detail-description"
+              rows="3"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Created</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ s.createdAt | date: 'mediumDate' }}
+              </p>
+            </div>
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Last updated</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ s.updatedAt | date: 'mediumDate' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving() || !isDirty() || !isValid()"
+            (click)="saveSubject()"
+          >
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="text-error text-sm">
+        Subject not found. Check the link, or close this panel to return to the
+        list.
+      </p>
+    }
+  </div>
+</div>

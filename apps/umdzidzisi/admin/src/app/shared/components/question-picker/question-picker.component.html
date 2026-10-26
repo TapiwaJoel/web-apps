@@ -1,0 +1,163 @@
+<section
+  class="flex flex-col gap-3"
+  [attr.aria-labelledby]="pickerId + '-title'"
+>
+  <h3 [id]="pickerId + '-title'" class="sr-only">Add questions</h3>
+
+  <div class="flex flex-col gap-2 sm:flex-row">
+    <div class="flex-1">
+      <label
+        [for]="pickerId + '-search'"
+        class="text-theme-text-secondary mb-1 block text-xs font-medium"
+        >Search questions</label
+      >
+      <div
+        class="border-theme-border bg-theme-background focus-within:border-umdzidzisi-500 flex items-center gap-2 rounded-md border px-2.5 py-1.5"
+      >
+        <i
+          class="fi fi-rr-search text-theme-text-secondary text-xs"
+          aria-hidden="true"
+        ></i>
+        <input
+          [id]="pickerId + '-search'"
+          type="search"
+          autocomplete="off"
+          placeholder="Article title, tag or type…"
+          class="text-theme-text min-w-0 flex-1 bg-transparent text-sm outline-none"
+          [attr.aria-controls]="pickerId + '-results'"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+        />
+      </div>
+    </div>
+    <div>
+      <label
+        [for]="pickerId + '-type'"
+        class="text-theme-text-secondary mb-1 block text-xs font-medium"
+        >Type</label
+      >
+      <select
+        [id]="pickerId + '-type'"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+        [ngModel]="typeFilter()"
+        (ngModelChange)="typeFilter.set($event)"
+      >
+        <option value="">All types</option>
+        @for (type of typeOptions; track type) {
+          <option [value]="type">{{ QUESTION_TYPE_LABELS[type] }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label
+        [for]="pickerId + '-status'"
+        class="text-theme-text-secondary mb-1 block text-xs font-medium"
+        >Status</label
+      >
+      <select
+        [id]="pickerId + '-status'"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event)"
+      >
+        <option value="">All statuses</option>
+        @for (status of statusOptions; track status) {
+          <option [value]="status">{{ status }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <p class="sr-only" role="status" aria-live="polite">
+    {{ availableCount() }} questions available to add.
+  </p>
+
+  @if (questionsLoading() && results().length === 0) {
+    <p class="text-theme-text-secondary py-6 text-center text-sm" role="status">
+      Loading questions…
+    </p>
+  } @else if (questionsError() && results().length === 0) {
+    <p class="text-error py-6 text-center text-sm" role="alert">
+      {{ questionsError() }}
+    </p>
+  } @else if (results().length === 0) {
+    <div class="flex flex-col items-center gap-2 py-6 text-center">
+      <p class="text-theme-text-secondary text-sm">
+        No questions match your search.
+      </p>
+      @if (searchTerm() || typeFilter() || statusFilter()) {
+        <button
+          type="button"
+          class="text-umdzidzisi-500 text-xs font-medium hover:underline"
+          (click)="clearFilters()"
+        >
+          Clear filters
+        </button>
+      }
+    </div>
+  } @else {
+    <ul
+      [id]="pickerId + '-results'"
+      class="border-theme-border divide-theme-border max-h-96 divide-y overflow-y-auto rounded-lg border"
+      aria-label="Matching questions"
+    >
+      @for (question of results(); track question.id) {
+        @let excluded = excludedSet().has(question.id);
+        <li
+          class="flex items-start justify-between gap-3 p-3"
+          [class.opacity-60]="excluded"
+        >
+          <div class="min-w-0 flex-1">
+            <p
+              class="text-theme-text truncate text-sm font-medium"
+              [title]="stem(question)"
+            >
+              {{ stem(question) }}
+            </p>
+            <div class="mt-1 flex flex-wrap items-center gap-1.5">
+              <span
+                class="bg-umdzidzisi-500/15 text-theme-text rounded px-1.5 py-0.5 text-xs"
+                >{{ QUESTION_TYPE_LABELS[question.questionType] }}</span
+              >
+              <org-status-pill
+                [label]="question.status"
+                [tone]="QUESTION_STATUS_TONES[question.status]"
+              />
+              @for (tag of question.tags; track tag) {
+                <span
+                  class="border-theme-border text-theme-text-secondary rounded border px-1.5 py-0.5 text-xs"
+                  >#{{ tag }}</span
+                >
+              }
+            </div>
+          </div>
+          <button
+            type="button"
+            class="inline-flex shrink-0 items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium disabled:cursor-not-allowed"
+            [class.bg-umdzidzisi-600]="!excluded"
+            [class.text-white]="!excluded"
+            [class.hover:opacity-90]="!excluded"
+            [class.border]="excluded"
+            [class.border-theme-border]="excluded"
+            [class.text-theme-text-secondary]="excluded"
+            [disabled]="excluded"
+            [attr.aria-label]="
+              excluded
+                ? 'Already added: ' + stem(question)
+                : 'Add question: ' + stem(question)
+            "
+            (click)="pick(question)"
+          >
+            <i
+              class="fi text-xs"
+              [class.fi-rr-plus]="!excluded"
+              [class.fi-rr-check]="excluded"
+              aria-hidden="true"
+            ></i>
+            {{ excluded ? 'Added' : 'Add' }}
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

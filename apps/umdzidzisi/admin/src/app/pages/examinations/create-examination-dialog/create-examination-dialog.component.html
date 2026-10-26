@@ -1,0 +1,150 @@
+<div
+  class="bg-umdzidzisi-900/50 fixed inset-0 z-40"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border p-8 shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-examination-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="mb-6 flex items-center justify-between">
+    <h2
+      id="create-examination-title"
+      class="text-theme-text text-xl font-semibold"
+    >
+      Create Examination
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-y-5">
+    <div>
+      <label
+        for="examination-board"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Examination Board <span class="text-error">*</span></label
+      >
+      <select
+        id="examination-board"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().examinationBoardId"
+        (ngModelChange)="updateForm('examinationBoardId', $event)"
+      >
+        <option value="" disabled>Select an examination board</option>
+        @for (board of examinationBoards(); track board._id) {
+          <option [value]="board._id">{{ board.name }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label
+        for="examination-level"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Educational Level <span class="text-error">*</span></label
+      >
+      <select
+        id="examination-level"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm disabled:opacity-60"
+        [disabled]="!form().examinationBoardId"
+        [ngModel]="form().educationalLevelId"
+        (ngModelChange)="updateForm('educationalLevelId', $event)"
+      >
+        <option value="" disabled>
+          {{
+            form().examinationBoardId
+              ? 'Select an educational level'
+              : 'Choose a board first'
+          }}
+        </option>
+        @for (level of availableEducationalLevels(); track level._id) {
+          <option [value]="level._id">{{ level.name }}</option>
+        }
+      </select>
+      @if (
+        form().examinationBoardId && availableEducationalLevels().length === 0
+      ) {
+        <p class="text-theme-text-secondary mt-1.5 text-xs">
+          This board has no educational levels yet.
+        </p>
+      }
+    </div>
+    <div>
+      <label
+        for="examination-name"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Name <span class="text-error">*</span></label
+      >
+      <input
+        id="examination-name"
+        type="text"
+        placeholder="e.g. IGCSE Mathematics"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().name"
+        (ngModelChange)="updateForm('name', $event)"
+      />
+    </div>
+    <div>
+      <label
+        for="examination-qualification"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Qualification</label
+      >
+      <input
+        id="examination-qualification"
+        type="text"
+        placeholder="e.g. International GCSE"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().qualification"
+        (ngModelChange)="updateForm('qualification', $event)"
+      />
+    </div>
+    <div>
+      <label
+        for="examination-description"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Description</label
+      >
+      <textarea
+        id="examination-description"
+        rows="3"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().description"
+        (ngModelChange)="updateForm('description', $event)"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="mt-8 flex items-center justify-end gap-3">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create Examination' }}
+    </button>
+  </div>
+</div>

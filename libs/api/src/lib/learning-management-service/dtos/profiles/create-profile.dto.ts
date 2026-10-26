@@ -1,12 +1,10 @@
-import { EntityStatus } from '../../../common';
-import { ProfileType } from '../../enums';
+import { CreateAdminProfileDto } from './create-admin-profile.dto';
+import { CreateStudentProfileDto } from './create-student-profile.dto';
+import { CreateTutorProfileDto } from './create-tutor-profile.dto';
 
-export interface CreateProfileDto {
-  systemUser: string;
-  type: ProfileType;
-  image: string;
-  educationalLevel?: string;
-  grade?: string;
-  bio?: string;
-  status?: EntityStatus;
-}
+/**
+ * Body of `POST /profiles`, discriminated on `type` so the type-specific
+ * required fields enforced by the backend are required here too.
+ */
+export type CreateProfileDto =
+  CreateStudentProfileDto | CreateTutorProfileDto | CreateAdminProfileDto;

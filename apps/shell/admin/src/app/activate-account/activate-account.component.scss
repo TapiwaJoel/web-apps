@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  --theme-primary-color: var(--primary-color, #4f46e5);
+  --theme-bg-color: var(--bg-color, #f3f4f6);
+}
+
+.theme-primary-text {
+  color: var(--theme-primary-color);
+}
+
+.theme-primary-bg {
+  background-color: var(--theme-primary-color);
+}
+
+.theme-bg {
+  background-color: var(--theme-bg-color);
+}
+
+.theme-primary-ring {
+  &:focus {
+    --tw-ring-color: var(--theme-primary-color);
+  }
+}
+
+.theme-primary-link {
+  color: var(--theme-primary-color);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,206 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="educational-level-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="min-w-0">
+      <div class="flex min-w-0 items-center gap-2.5">
+        <h2
+          id="educational-level-detail-title"
+          class="text-theme-text truncate text-lg font-semibold"
+        >
+          {{ educationalLevel()?.name ?? 'Educational Level' }}
+        </h2>
+        @if (educationalLevel(); as level) {
+          <org-status-pill [label]="level.status" [tone]="statusTone()" />
+        }
+      </div>
+      @if (educationalLevel()) {
+        <p class="text-theme-text-secondary truncate text-xs">
+          {{ examinationBoardName() }}
+        </p>
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (educationalLevelsLoading() && !educationalLevel()) {
+      <p class="text-theme-text-secondary text-sm">
+        Loading educational level…
+      </p>
+    } @else if (!educationalLevel()) {
+      <div class="flex flex-col items-start gap-3">
+        <p class="text-error text-sm">
+          This educational level doesn't exist or was removed.
+        </p>
+        <button
+          type="button"
+          class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium"
+          (click)="close()"
+        >
+          Back to levels
+        </button>
+      </div>
+    } @else {
+      <nav
+        class="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-3"
+        aria-label="Related records"
+      >
+        <a
+          class="bg-umdzidzisi-100 text-umdzidzisi-600 flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium no-underline hover:opacity-90"
+          [routerLink]="['../../grades']"
+          [queryParams]="{ educationalLevelId: educationalLevelId() }"
+        >
+          <span>View grades</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a
+          class="bg-umdzidzisi-100 text-umdzidzisi-600 flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium no-underline hover:opacity-90"
+          [routerLink]="['../../subjects']"
+          [queryParams]="{ educationalLevelId: educationalLevelId() }"
+        >
+          <span>View subjects</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a
+          class="bg-umdzidzisi-100 text-umdzidzisi-600 flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium no-underline hover:opacity-90"
+          [routerLink]="['../../../examinations/all']"
+          [queryParams]="{ educationalLevelId: educationalLevelId() }"
+        >
+          <span>View examinations</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </nav>
+
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="educational-level-board"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Examination board <span class="text-error">*</span></label
+            >
+            <select
+              id="educational-level-board"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().examinationBoardId"
+              (ngModelChange)="updateForm('examinationBoardId', $event)"
+            >
+              <option value="" disabled>Select an examination board</option>
+              @for (board of examinationBoards(); track board._id) {
+                <option [value]="board._id">
+                  {{ board.name }} ({{ board.country }})
+                </option>
+              }
+            </select>
+          </div>
+          <div>
+            <label
+              for="educational-level-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name <span class="text-error">*</span></label
+            >
+            <input
+              id="educational-level-name"
+              type="text"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+            @if (isDuplicate()) {
+              <p class="text-warning mt-1.5 flex items-center gap-1.5 text-xs">
+                <i class="fi fi-rr-triangle-warning" aria-hidden="true"></i>
+                This board already has another level with this name.
+              </p>
+            }
+          </div>
+          <div>
+            <label
+              for="educational-level-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="educational-level-description"
+              rows="3"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+          <div>
+            <label
+              for="educational-level-status"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Status</label
+            >
+            <select
+              id="educational-level-status"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().status"
+              (ngModelChange)="updateForm('status', $event)"
+            >
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <p class="text-theme-text-secondary mt-1.5 text-xs">
+              Set to Inactive to retire this level. Levels can't be deleted.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Created</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ educationalLevel()?.createdAt | date: 'mediumDate' }}
+              </p>
+            </div>
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Last updated</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ educationalLevel()?.updatedAt | date: 'mediumDate' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="!isDirty() || !isValid() || saving()"
+            (click)="saveEducationalLevel()"
+          >
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

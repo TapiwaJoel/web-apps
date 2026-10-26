@@ -1,0 +1,143 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-2xl flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="assessment-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <div class="min-w-0">
+        <h2
+          id="assessment-detail-title"
+          class="text-theme-text truncate text-lg font-semibold"
+        >
+          {{ assessment()?.title ?? 'Assessment' }}
+        </h2>
+        @if (paper(); as currentPaper) {
+          <p class="text-theme-text-secondary truncate text-xs">
+            {{ currentPaper.name }} · {{ currentPaper.marks }} marks ·
+            {{ currentPaper.duration }} min
+          </p>
+        }
+      </div>
+      @if (assessment(); as current) {
+        <org-status-pill [label]="current.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if ((assessmentsLoading() || lookingUp()) && !assessment()) {
+      <p class="text-theme-text-secondary text-sm">Loading assessment…</p>
+    } @else if (!assessment()) {
+      <div class="flex flex-col items-start gap-3">
+        <p class="text-error text-sm">
+          This assessment doesn't exist or is no longer available.
+        </p>
+        <button
+          type="button"
+          class="text-theme-primary text-sm font-medium hover:underline"
+          (click)="close()"
+        >
+          Back to assessments
+        </button>
+      </div>
+    } @else {
+      <div class="bg-theme-surface mb-5 rounded-lg p-5">
+        <org-assessment-fields
+          idPrefix="edit-assessment"
+          [form]="formValue()"
+          [options]="options()"
+          (fieldChange)="updateForm($event)"
+        />
+        @if (paper(); as currentPaper) {
+          <a
+            class="text-theme-primary mt-4 inline-block text-sm font-medium no-underline hover:underline"
+            [routerLink]="['../../papers', currentPaper._id]"
+          >
+            Open paper →
+          </a>
+        }
+      </div>
+
+      <div class="bg-theme-surface mb-5 rounded-lg p-5">
+        <org-assessment-question-builder
+          [questions]="questionsValue()"
+          [labels]="questionLabels()"
+          [paperMarks]="paper()?.marks ?? null"
+          [paperQuestionCount]="paper()?.numberOfQuestions ?? null"
+          (questionsChange)="updateQuestions($event)"
+          (questionPicked)="cacheQuestion($event)"
+        />
+      </div>
+
+      <dl class="grid grid-cols-2 gap-4 px-1">
+        <div>
+          <dt class="text-theme-text-secondary text-xs font-medium">Created</dt>
+          <dd class="text-theme-text mt-0.5 text-sm">
+            {{ assessment()?.createdAt | date: 'mediumDate' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-theme-text-secondary text-xs font-medium">
+            Last updated
+          </dt>
+          <dd class="text-theme-text mt-0.5 text-sm">
+            {{ assessment()?.updatedAt | date: 'medium' }}
+          </dd>
+        </div>
+      </dl>
+    }
+  </div>
+
+  @if (assessment()) {
+    <div
+      class="border-theme-border bg-theme-background flex items-center justify-end gap-3 border-t px-5 py-4"
+    >
+      @if (!isValid()) {
+        <span class="text-error mr-auto text-xs"
+          >Fill in the required fields and fix any invalid question rows.</span
+        >
+      } @else if (isDirty()) {
+        <span class="text-theme-text-secondary mr-auto text-xs"
+          >Unsaved changes</span
+        >
+      }
+      <button
+        type="button"
+        class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium"
+        (click)="close()"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        [disabled]="saving() || !isValid() || !isDirty()"
+        (click)="saveAssessment()"
+      >
+        {{ saving() ? 'Saving…' : 'Save Changes' }}
+      </button>
+    </div>
+  }
+</div>

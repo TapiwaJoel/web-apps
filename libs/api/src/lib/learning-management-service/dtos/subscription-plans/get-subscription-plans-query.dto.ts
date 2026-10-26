@@ -1,7 +1,7 @@
-import { Currency, EntityStatus, PaginationParams } from '../../../common';
+import { Currency, EntityStatus } from '../../../common';
 import { BillingCycle } from '../../enums';
 
-export interface GetSubscriptionPlansQueryDto extends PaginationParams {
+export interface GetSubscriptionPlansQueryDto {
   _id?: string;
   educationalLevelId?: string;
   examinationBoardId?: string;

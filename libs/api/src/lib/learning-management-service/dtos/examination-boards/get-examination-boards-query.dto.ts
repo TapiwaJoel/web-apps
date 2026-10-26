@@ -1,6 +1,6 @@
-import { CountryStatus, PaginationParams } from '../../../common';
+import { CountryStatus } from '../../../common';
 
-export interface GetExaminationBoardsQueryDto extends PaginationParams {
+export interface GetExaminationBoardsQueryDto {
   _id?: string;
   name?: string;
   country?: string;

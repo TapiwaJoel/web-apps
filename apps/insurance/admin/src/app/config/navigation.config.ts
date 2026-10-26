@@ -85,10 +85,6 @@ export const INSURANCE_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     route: 'billing',
   },
   {
-    label: 'Admin & Data',
-    variant: 'section',
-  },
-  {
     id: 'reports',
     label: 'Reports & Analytics',
     icon: 'fi fi-rr-chart-line-up',
@@ -101,22 +97,66 @@ export const INSURANCE_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     route: 'agents',
   },
   {
-    id: 'settings',
-    label: 'Settings',
-    icon: 'fi fi-rr-settings',
-    route: 'settings',
-  },
-  {
     id: 'quotes',
     label: 'Quotes',
     icon: 'fi fi-rr-calculator',
     route: 'quotes',
   },
   {
+    label: 'Settings',
+    variant: 'section',
+  },
+  {
+    id: 'vehicle-usages',
+    label: 'Vehicle Usages',
+    icon: 'fi fi-rr-car-side',
+    route: 'vehicle-usages',
+  },
+  {
+    id: 'vehicle-types',
+    label: 'Vehicle Types',
+    icon: 'fi fi-rr-car-side',
+    route: 'vehicle-types',
+  },
+  {
+    id: 'policy-periods',
+    label: 'Policy Periods',
+    icon: 'fi fi-rr-calendar-clock',
+    route: 'policy-periods',
+  },
+  {
+    id: 'insurance-companies',
+    label: 'Insurance Companies',
+    icon: 'fi fi-rr-building',
+    route: 'insurance-companies',
+  },
+  {
+    id: 'insurance-coverage-types',
+    label: 'Insurance Coverage Types',
+    icon: 'fi fi-rr-shield-check',
+    route: 'insurance-coverage-types',
+  },
+  {
+    id: 'comprehensive-rates',
+    label: 'Comprehensive Rates',
+    icon: 'fi fi-rr-percentage',
+    route: 'comprehensive-rates',
+  },
+  {
+    label: 'Admin',
+    variant: 'section',
+  },
+  {
     id: 'users',
     label: 'Users',
     icon: 'fi fi-rr-user-gear',
     route: 'users',
+  },
+  {
+    id: 'roles',
+    label: 'Roles',
+    icon: 'fi fi-rr-lock',
+    route: 'roles',
   },
 ];
 

@@ -1,0 +1,60 @@
+<div class="flex flex-wrap items-center justify-between gap-3 text-sm">
+  <div class="text-theme-text-secondary">
+    @if (total > 0) {
+      Showing {{ rangeStart() }}–{{ rangeEnd() }} of {{ total }}
+    } @else {
+      No results
+    }
+  </div>
+
+  <div class="flex items-center gap-3">
+    <label class="text-theme-text-secondary flex items-center gap-2">
+      Rows per page
+      <select
+        [ngModel]="pageSize"
+        (ngModelChange)="onPageSizeChange($event)"
+        class="border-theme-border text-theme-text rounded-md border py-1 pr-6 pl-2"
+      >
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </label>
+
+    <div class="flex items-center gap-1">
+      <button
+        type="button"
+        [disabled]="page <= 1"
+        (click)="goToPage(page - 1)"
+        aria-label="Previous page"
+        class="text-theme-text rounded-md px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        ‹
+      </button>
+
+      @for (number of pageNumbers(); track number) {
+        <button
+          type="button"
+          (click)="goToPage(number)"
+          [attr.aria-current]="number === page ? 'page' : null"
+          class="rounded-md px-2 py-1"
+          [class.bg-theme-primary]="number === page"
+          [class.text-white]="number === page"
+          [class.text-theme-text]="number !== page"
+        >
+          {{ number }}
+        </button>
+      }
+
+      <button
+        type="button"
+        [disabled]="page >= pageCount()"
+        (click)="goToPage(page + 1)"
+        aria-label="Next page"
+        class="text-theme-text rounded-md px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        ›
+      </button>
+    </div>
+  </div>
+</div>

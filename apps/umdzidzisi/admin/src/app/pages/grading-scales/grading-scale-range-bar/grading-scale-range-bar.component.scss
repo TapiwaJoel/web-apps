@@ -1,0 +1,21 @@
+// Scores are inclusive integers, so 0–100 spans 101 slots. Each band gets a
+// `from-N len-M` class pair (first slot, slot count) instead of inline styles;
+// the pair only sets custom properties so the generated CSS stays small.
+$score-slots: 101;
+
+.band {
+  left: calc(var(--from) * 100% / #{$score-slots});
+  width: calc(var(--len) * 100% / #{$score-slots});
+}
+
+@for $slot from 0 through $score-slots - 1 {
+  .from-#{$slot} {
+    --from: #{$slot};
+  }
+}
+
+@for $count from 1 through $score-slots {
+  .len-#{$count} {
+    --len: #{$count};
+  }
+}

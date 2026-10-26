@@ -13,7 +13,9 @@
     <!-- Search/header stays on the off-white, sticky at the top -->
     <div class="dashboard-surround sticky top-0 z-20 px-6 pt-6">
       <org-dashboard-topbar
-        userName="Umdzidzisi Admin"
+        [userName]="currentUserName()"
+        [userEmail]="currentUserEmail()"
+        [userRole]="currentUserRole()"
         (logout)="logout()"
         (changePassword)="changePasswordOpen.set(true)"
       />

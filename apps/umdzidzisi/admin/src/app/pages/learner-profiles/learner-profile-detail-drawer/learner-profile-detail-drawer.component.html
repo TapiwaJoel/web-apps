@@ -1,0 +1,215 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="learner-profile-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="learner-profile-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ user()?.name ?? 'Profile' }}
+      </h2>
+      @if (profile(); as current) {
+        <org-status-pill [label]="current.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (profilesLoading() && !profile()) {
+      <p class="text-theme-text-secondary text-sm">Loading profile…</p>
+    } @else if (profile(); as current) {
+      <dl
+        class="border-theme-border mb-5 grid grid-cols-2 gap-4 rounded-lg border p-4"
+      >
+        <div>
+          <dt class="text-theme-text-secondary text-xs">Type</dt>
+          <dd class="text-theme-text mt-0.5 text-sm font-medium">
+            {{ typeLabel() }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-theme-text-secondary text-xs">Phone</dt>
+          <dd class="text-theme-text mt-0.5 text-sm">
+            {{ user()?.phoneNumber ?? '—' }}
+          </dd>
+        </div>
+        <div class="col-span-2">
+          <dt class="text-theme-text-secondary text-xs">System user ID</dt>
+          <dd class="text-theme-text mt-0.5 font-mono text-xs break-all">
+            {{ current.systemUser }}
+          </dd>
+        </div>
+      </dl>
+
+      @if (current.type === ProfileType.TUTOR) {
+        <p
+          class="text-theme-text-secondary bg-theme-surface mb-5 flex items-center gap-2 rounded-lg px-3.5 py-2.5 text-xs"
+        >
+          <i class="fi fi-rr-info" aria-hidden="true"></i>
+          Tutor profiles can only change their bio and status.
+        </p>
+      }
+
+      <div class="bg-theme-surface rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <span class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Profile image
+              @if (canEditImage()) {
+                <span class="text-error">*</span>
+              }
+            </span>
+            <org-cms-image-picker
+              [value]="formValue().image || null"
+              [disabled]="!canEditImage() || saving()"
+              (valueChange)="updateForm('image', $event)"
+            />
+          </div>
+
+          @if (canEditLevel()) {
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  for="profile-edit-level"
+                  class="text-theme-text mb-1.5 block text-sm font-medium"
+                  >Educational level <span class="text-error">*</span></label
+                >
+                <select
+                  id="profile-edit-level"
+                  class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                  [ngModel]="formValue().educationalLevel"
+                  (ngModelChange)="updateForm('educationalLevel', $event)"
+                >
+                  <option value="" disabled>Select a level</option>
+                  @for (level of educationalLevels(); track level._id) {
+                    <option [value]="level._id">{{ level.name }}</option>
+                  }
+                </select>
+              </div>
+              <div>
+                <label
+                  for="profile-edit-grade"
+                  class="text-theme-text mb-1.5 block text-sm font-medium"
+                  >Grade <span class="text-error">*</span></label
+                >
+                <select
+                  id="profile-edit-grade"
+                  class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                  [ngModel]="formValue().grade"
+                  (ngModelChange)="updateForm('grade', $event)"
+                >
+                  <option value="" disabled>
+                    {{
+                      availableGrades().length
+                        ? 'Select a grade'
+                        : 'No grades for this level'
+                    }}
+                  </option>
+                  @for (grade of availableGrades(); track grade._id) {
+                    <option [value]="grade._id">{{ grade.name }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          }
+
+          @if (canEditBio()) {
+            <div>
+              <label
+                for="profile-edit-bio"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Bio <span class="text-error">*</span></label
+              >
+              <textarea
+                id="profile-edit-bio"
+                rows="5"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().bio"
+                (ngModelChange)="updateForm('bio', $event)"
+              ></textarea>
+            </div>
+          }
+
+          <div>
+            <label
+              for="profile-edit-status"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Status</label
+            >
+            <select
+              id="profile-edit-status"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().status"
+              (ngModelChange)="updateForm('status', $event)"
+            >
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Created</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ current.createdAt | date: 'medium' }}
+              </p>
+            </div>
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Last updated</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ current.updatedAt | date: 'medium' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="!isDirty() || !isValid() || saving()"
+            (click)="saveProfile()"
+          >
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="py-10 text-center">
+        <p class="text-error text-sm">This profile doesn't exist.</p>
+        <p class="text-theme-text-secondary mt-1 text-xs">
+          It may have been removed, or the link is wrong.
+        </p>
+      </div>
+    }
+  </div>
+</div>

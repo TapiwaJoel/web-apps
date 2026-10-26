@@ -1,14 +1,4 @@
-/**
- * StreamStatusFilter
- *
- * Possible status values for filtering streams.
- */
-export enum StreamStatusFilter {
-  SCHEDULED = 'scheduled',
-  LIVE = 'live',
-  PAUSED = 'paused',
-  ENDED = 'ended',
-}
+import { StreamStatusFilter } from '../../enums';
 
 /**
  * GetStreamsQueryDto

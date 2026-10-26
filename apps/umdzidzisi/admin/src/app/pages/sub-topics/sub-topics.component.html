@@ -1,0 +1,491 @@
+<div class="p-6">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-theme-text text-xl font-semibold">Sub-topics</h1>
+  </div>
+
+  <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    @for (card of subTopicStats(); track card.label) {
+      <org-kpi-stat-card [card]="card" />
+    }
+  </div>
+
+  <div
+    class="bg-theme-background border-theme-border rounded-xl border p-6 shadow-sm"
+  >
+    @if (subTopicsLoading()) {
+      <p class="text-theme-text-secondary text-sm">Loading sub-topics…</p>
+    } @else if (subTopicsError()) {
+      <p class="text-error text-sm">{{ subTopicsError() }}</p>
+    } @else if (rows().length === 0) {
+      <div class="flex flex-col items-center py-16 text-center">
+        <div
+          class="bg-umdzidzisi-100 mb-4 flex h-16 w-16 items-center justify-center rounded-full"
+        >
+          <i
+            class="fi fi-rr-list-check text-umdzidzisi-600 text-2xl"
+            aria-hidden="true"
+          ></i>
+        </div>
+        <h2 class="text-theme-text text-lg font-semibold">No sub-topics yet</h2>
+        <p class="text-theme-text-secondary mt-1 max-w-sm text-sm">
+          Sub-topics are the lessons inside a topic: learning objectives, a time
+          estimate and an optional article.
+        </p>
+        <button
+          type="button"
+          class="bg-umdzidzisi-600 text-umdzidzisi-50 mt-5 rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90"
+          (click)="openCreateForm()"
+        >
+          Add sub-topic
+        </button>
+      </div>
+    } @else {
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          @if (filters().topicId; as topicId) {
+            <span
+              class="border-theme-border bg-theme-surface text-theme-text inline-flex items-center gap-1.5 rounded-full border py-1 pr-1.5 pl-3 text-xs"
+            >
+              Topic: {{ topicLabelsById().get(topicId) ?? topicId }}
+              <button
+                type="button"
+                class="text-theme-text-secondary hover:text-theme-text grid h-4 w-4 place-items-center rounded-full"
+                aria-label="Remove topic filter"
+                (click)="clearTopicFilter()"
+              >
+                &times;
+              </button>
+            </span>
+          }
+        </div>
+
+        <div class="ml-auto flex items-center gap-2">
+          <button
+            type="button"
+            class="border-theme-border text-theme-text hover:bg-theme-surface relative rounded-lg border p-2.5 transition-colors"
+            aria-label="Filters"
+            [attr.aria-expanded]="filtersOpen()"
+            cdkOverlayOrigin
+            #filtersTrigger="cdkOverlayOrigin"
+            (click)="toggleFilters()"
+          >
+            <i class="fi fi-rr-filter text-sm" aria-hidden="true"></i>
+            @if (activeFilterCount() > 0) {
+              <span
+                class="bg-umdzidzisi-600 text-umdzidzisi-50 absolute -top-1.5 -right-1.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[0.65rem] font-semibold"
+                >{{ activeFilterCount() }}</span
+              >
+            }
+          </button>
+
+          <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOrigin]="filtersTrigger"
+            [cdkConnectedOverlayOpen]="filtersOpen()"
+            [cdkConnectedOverlayHasBackdrop]="true"
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            [cdkConnectedOverlayPositions]="[
+              {
+                originX: 'end',
+                originY: 'bottom',
+                overlayX: 'end',
+                overlayY: 'top',
+                offsetY: 8,
+              },
+            ]"
+            (backdropClick)="closeFilters()"
+            (overlayOutsideClick)="closeFilters()"
+            (detach)="closeFilters()"
+          >
+            <div
+              class="bg-theme-surface border-theme-border w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border shadow-md"
+              role="dialog"
+              aria-label="Filters"
+              tabindex="-1"
+              (keydown.escape)="closeFilters()"
+            >
+              <div
+                class="border-theme-border flex items-center justify-between border-b p-4"
+              >
+                <span class="text-theme-text text-sm font-semibold"
+                  >Filters</span
+                >
+                @if (activeFilterCount() > 0) {
+                  <button
+                    type="button"
+                    class="text-theme-text-secondary hover:text-theme-text text-xs font-medium"
+                    (click)="resetFilters()"
+                  >
+                    Reset
+                  </button>
+                }
+              </div>
+
+              <div class="flex flex-col gap-4 p-4">
+                <div>
+                  <label
+                    for="filter-topic"
+                    class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                    >Topic</label
+                  >
+                  <select
+                    id="filter-topic"
+                    [ngModel]="filters().topicId"
+                    (ngModelChange)="onFilterChange('topicId', $event)"
+                    class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                  >
+                    <option value="">All</option>
+                    @for (option of topicOptions(); track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      for="filter-status"
+                      class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                      >Status</label
+                    >
+                    <select
+                      id="filter-status"
+                      [ngModel]="filters().status"
+                      (ngModelChange)="onFilterChange('status', $event)"
+                      class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                    >
+                      <option value="">All</option>
+                      @for (option of statusOptions; track option.value) {
+                        <option [value]="option.value">
+                          {{ option.label }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      for="filter-access"
+                      class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                      >Access</label
+                    >
+                    <select
+                      id="filter-access"
+                      [ngModel]="filters().accessLevel"
+                      (ngModelChange)="onFilterChange('accessLevel', $event)"
+                      class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                    >
+                      <option value="">All</option>
+                      @for (option of accessLevelOptions; track option.value) {
+                        <option [value]="option.value">
+                          {{ option.label }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    for="filter-article"
+                    class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                    >Article</label
+                  >
+                  <select
+                    id="filter-article"
+                    [ngModel]="filters().article"
+                    (ngModelChange)="onFilterChange('article', $event)"
+                    class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                  >
+                    <option value="">Any</option>
+                    <option value="linked">Article linked</option>
+                    <option value="none">No article</option>
+                  </select>
+                </div>
+
+                <div>
+                  <span
+                    class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                    >Created</span
+                  >
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="date"
+                      aria-label="Created from"
+                      [ngModel]="filters().createdFrom"
+                      (ngModelChange)="onFilterChange('createdFrom', $event)"
+                      class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                    />
+                    <span class="text-theme-text-secondary text-xs">to</span>
+                    <input
+                      type="date"
+                      aria-label="Created to"
+                      [ngModel]="filters().createdTo"
+                      (ngModelChange)="onFilterChange('createdTo', $event)"
+                      class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="border-theme-border flex items-center justify-end border-t p-4"
+              >
+                <button
+                  type="button"
+                  class="bg-umdzidzisi-600 text-umdzidzisi-50 rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90"
+                  (click)="closeFilters()"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </ng-template>
+
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 text-umdzidzisi-50 rounded-lg p-2.5 transition-colors hover:opacity-90"
+            aria-label="New sub-topic"
+            (click)="openCreateForm()"
+          >
+            <i class="fi fi-rr-plus text-sm" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr
+              class="text-theme-text-secondary border-theme-border border-b text-xs"
+            >
+              <th class="w-16 pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="sortKey() === 'order' ? sortDirection() : null"
+                  (sortChange)="onSortChange('order', $event)"
+                >
+                  Order
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="sortKey() === 'name' ? sortDirection() : null"
+                  (sortChange)="onSortChange('name', $event)"
+                >
+                  Sub-topic
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="
+                    sortKey() === 'topicLabel' ? sortDirection() : null
+                  "
+                  (sortChange)="onSortChange('topicLabel', $event)"
+                >
+                  Topic · Subject
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="
+                    sortKey() === 'estimatedDurationMinutes'
+                      ? sortDirection()
+                      : null
+                  "
+                  (sortChange)="
+                    onSortChange('estimatedDurationMinutes', $event)
+                  "
+                >
+                  Duration
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5 font-medium">Article</th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="
+                    sortKey() === 'accessLevel' ? sortDirection() : null
+                  "
+                  (sortChange)="onSortChange('accessLevel', $event)"
+                >
+                  Access
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="sortKey() === 'status' ? sortDirection() : null"
+                  (sortChange)="onSortChange('status', $event)"
+                >
+                  Status
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="
+                    sortKey() === 'createdAt' ? sortDirection() : null
+                  "
+                  (sortChange)="onSortChange('createdAt', $event)"
+                >
+                  Created
+                </org-sortable-column-header>
+              </th>
+              <th class="pb-1.5 text-right font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredTotal() === 0) {
+              <tr>
+                <td
+                  colspan="9"
+                  class="text-theme-text-secondary py-8 text-center"
+                >
+                  No sub-topics match your search or filters.
+                </td>
+              </tr>
+            }
+            @for (subTopic of pagedRows(); track subTopic._id) {
+              <tr
+                class="border-theme-border hover:bg-theme-surface border-t transition-colors"
+              >
+                <td class="text-theme-text py-2 pr-4 tabular-nums">
+                  {{ subTopic.order }}
+                </td>
+                <td class="text-theme-text py-2 pr-4 font-medium">
+                  {{ subTopic.name }}
+                </td>
+                <td class="py-2 pr-4">
+                  <span class="text-theme-text">{{ subTopic.topicName }}</span>
+                  @if (subTopic.subjectName) {
+                    <span class="text-theme-text-secondary">
+                      · {{ subTopic.subjectName }}</span
+                    >
+                  }
+                </td>
+                <td class="text-theme-text py-2 pr-4 tabular-nums">
+                  {{ subTopic.estimatedDurationMinutes }} min
+                </td>
+                <td class="py-2 pr-4">
+                  @if (subTopic.hasArticle) {
+                    <span
+                      class="text-theme-text inline-flex items-center gap-1.5 text-xs"
+                    >
+                      <i
+                        class="fi fi-rr-document text-theme-primary"
+                        aria-hidden="true"
+                      ></i>
+                      Article linked
+                    </span>
+                  } @else {
+                    <span class="text-theme-text-secondary text-xs"
+                      >No article</span
+                    >
+                  }
+                </td>
+                <td class="py-2 pr-4">
+                  <org-status-pill
+                    [label]="subTopic.accessLevel"
+                    [tone]="subTopic.accessTone"
+                  />
+                </td>
+                <td class="py-2 pr-4">
+                  <org-status-pill
+                    [label]="subTopic.status"
+                    [tone]="subTopic.statusTone"
+                  />
+                </td>
+                <td class="text-theme-text py-2 pr-4">
+                  {{ subTopic.createdAt | date: 'mediumDate' }}
+                </td>
+                <td class="py-2 text-right">
+                  <div class="flex justify-end">
+                    <button
+                      type="button"
+                      class="text-theme-text-secondary hover:bg-theme-surface hover:text-theme-text rounded-md p-1.5 transition-colors"
+                      aria-label="Row actions"
+                      [attr.aria-expanded]="openMenuId() === subTopic._id"
+                      cdkOverlayOrigin
+                      #rowMenuTrigger="cdkOverlayOrigin"
+                      (click)="toggleMenu(subTopic._id)"
+                    >
+                      <i
+                        class="fi fi-rr-menu-dots-vertical text-sm"
+                        aria-hidden="true"
+                      ></i>
+                    </button>
+
+                    <ng-template
+                      cdkConnectedOverlay
+                      [cdkConnectedOverlayOrigin]="rowMenuTrigger"
+                      [cdkConnectedOverlayOpen]="openMenuId() === subTopic._id"
+                      [cdkConnectedOverlayHasBackdrop]="true"
+                      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                      [cdkConnectedOverlayPositions]="[
+                        {
+                          originX: 'end',
+                          originY: 'bottom',
+                          overlayX: 'end',
+                          overlayY: 'top',
+                          offsetY: 4,
+                        },
+                      ]"
+                      (backdropClick)="closeMenu()"
+                      (overlayOutsideClick)="closeMenu()"
+                      (detach)="closeMenu()"
+                    >
+                      <div
+                        class="bg-theme-surface border-theme-border w-40 overflow-hidden rounded-xl border p-1.5 shadow-md"
+                        role="menu"
+                        aria-label="Row actions"
+                        tabindex="-1"
+                        (keydown.escape)="closeMenu()"
+                      >
+                        <a
+                          class="text-theme-text hover:bg-theme-background flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm no-underline"
+                          role="menuitem"
+                          [routerLink]="['.', subTopic._id]"
+                          queryParamsHandling="preserve"
+                          (click)="closeMenu()"
+                        >
+                          <i
+                            class="fi fi-rr-edit text-theme-text-secondary w-4.5 text-center text-sm"
+                            aria-hidden="true"
+                          ></i>
+                          <span>Manage</span>
+                        </a>
+                      </div>
+                    </ng-template>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (filteredTotal() > 0) {
+        <div class="mt-4">
+          <org-table-pagination
+            [total]="filteredTotal()"
+            [page]="page()"
+            [pageSize]="pageSize()"
+            (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)"
+          />
+        </div>
+      }
+    }
+  </div>
+
+  @if (showDialog()) {
+    <org-create-sub-topic-dialog
+      [topicOptions]="topicOptions()"
+      [subTopics]="subTopics()"
+      [initialTopicId]="filters().topicId"
+      [creating]="saving()"
+      (create)="submitDialog($event)"
+      (closed)="cancelDialog()"
+    />
+  }
+
+  @if (selectedSubTopicId(); as subTopicId) {
+    <org-sub-topic-detail-drawer [subTopicId]="subTopicId" />
+  }
+</div>

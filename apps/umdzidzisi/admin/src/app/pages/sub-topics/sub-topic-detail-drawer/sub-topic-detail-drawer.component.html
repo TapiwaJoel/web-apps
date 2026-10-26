@@ -1,0 +1,232 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="sub-topic-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="sub-topic-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ subTopic()?.name ?? 'Sub-topic' }}
+      </h2>
+      @if (subTopic(); as st) {
+        <org-status-pill [label]="st.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (subTopicsLoading() && !subTopic()) {
+      <p class="text-theme-text-secondary text-sm">Loading sub-topic…</p>
+    } @else if (subTopic(); as st) {
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="sub-topic-detail-topic"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Topic</label
+            >
+            <select
+              id="sub-topic-detail-topic"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().topicId"
+              (ngModelChange)="updateForm('topicId', $event)"
+            >
+              <option value="" disabled>Select a topic</option>
+              @for (option of topicOptions(); track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label
+              for="sub-topic-detail-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name</label
+            >
+            <input
+              id="sub-topic-detail-name"
+              type="text"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+          </div>
+
+          <div>
+            <label
+              for="sub-topic-detail-objectives"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Learning objectives</label
+            >
+            <textarea
+              id="sub-topic-detail-objectives"
+              rows="4"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().learningObjectives"
+              (ngModelChange)="updateForm('learningObjectives', $event)"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                for="sub-topic-detail-duration"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Duration (minutes)</label
+              >
+              <input
+                id="sub-topic-detail-duration"
+                type="number"
+                min="1"
+                step="1"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm tabular-nums"
+                [ngModel]="formValue().estimatedDurationMinutes"
+                (ngModelChange)="updateForm('estimatedDurationMinutes', $event)"
+              />
+            </div>
+            <div>
+              <label
+                for="sub-topic-detail-order"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Order</label
+              >
+              <input
+                id="sub-topic-detail-order"
+                type="number"
+                min="1"
+                step="1"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm tabular-nums"
+                [ngModel]="formValue().order"
+                (ngModelChange)="updateForm('order', $event)"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                for="sub-topic-detail-access"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Access</label
+              >
+              <select
+                id="sub-topic-detail-access"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().accessLevel"
+                (ngModelChange)="updateForm('accessLevel', $event)"
+              >
+                @for (option of accessLevelOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label
+                for="sub-topic-detail-status"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Status</label
+              >
+              <select
+                id="sub-topic-detail-status"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().status"
+                (ngModelChange)="updateForm('status', $event)"
+              >
+                @for (option of statusOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Article</span
+            >
+            <org-article-picker
+              [value]="formValue().articleId || null"
+              [disabled]="saving()"
+              (valueChange)="updateForm('articleId', $event)"
+            />
+            @if (articleTaken()) {
+              <p class="text-warning mt-1.5 text-xs" role="status">
+                This article is already linked to another sub-topic in this
+                topic. An article can be linked only once per topic.
+              </p>
+            }
+            @if (hasLinkedArticle()) {
+              <p
+                class="text-theme-text-secondary mt-1.5 flex items-start gap-1.5 text-xs"
+              >
+                <i class="fi fi-rr-info mt-0.5" aria-hidden="true"></i>
+                You can swap this article for another, but you can't unlink it.
+                The server doesn't support removing a linked article yet.
+              </p>
+            }
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Created</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ st.createdAt | date: 'mediumDate' }}
+              </p>
+            </div>
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Last updated</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ st.updatedAt | date: 'mediumDate' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving() || !isDirty() || !isValid()"
+            (click)="saveSubTopic()"
+          >
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="text-error text-sm">
+        Sub-topic not found. Check the link, or close this panel to return to
+        the list.
+      </p>
+    }
+  </div>
+</div>

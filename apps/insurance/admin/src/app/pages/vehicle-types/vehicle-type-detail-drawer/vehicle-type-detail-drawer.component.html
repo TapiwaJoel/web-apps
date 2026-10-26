@@ -1,0 +1,100 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="vehicle-type-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="vehicle-type-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ vehicleType()?.name ?? 'Vehicle Type' }}
+      </h2>
+      @if (vehicleType(); as v) {
+        <org-status-pill [label]="v.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (vehicleTypesLoading() && !vehicleType()) {
+      <p class="text-theme-text-secondary text-sm">Loading vehicle type…</p>
+    } @else if (!vehicleType()) {
+      <p class="text-error text-sm">Vehicle type not found.</p>
+    } @else {
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="vehicle-type-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name</label
+            >
+            <input
+              id="vehicle-type-name"
+              type="text"
+              class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+          </div>
+          <div>
+            <label
+              for="vehicle-type-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="vehicle-type-description"
+              rows="3"
+              class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Created</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ vehicleType()?.createdAt | date: 'mediumDate' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-insurance-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving()"
+            (click)="saveVehicleType()"
+          >
+            {{ saving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

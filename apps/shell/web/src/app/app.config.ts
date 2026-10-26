@@ -12,7 +12,12 @@ import {
 } from '@angular/common/http';
 import { appRoutes } from './app.routes';
 import { API_BASE_URL } from '@mushaviri/api';
-import { apiInterceptor, ENVIRONMENT, SessionStore } from '@mushaviri/util';
+import {
+  apiInterceptor,
+  ENVIRONMENT,
+  refreshInterceptor,
+  SessionStore,
+} from '@mushaviri/util';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
@@ -20,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes),
     provideHttpClient(
-      withInterceptors([apiInterceptor]),
+      withInterceptors([apiInterceptor, refreshInterceptor]),
       // Echoes the CSRF cookie back as a header for @fastify/csrf-protection.
       // Angular only attaches this on same-origin requests, so it is inert in dev
       // (:4200 -> :3000) and takes effect once the app is served behind the gateway.

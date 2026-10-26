@@ -1,0 +1,447 @@
+<div class="p-6">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-theme-text text-xl font-semibold">Users</h1>
+  </div>
+
+  <div class="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    @for (card of userStats(); track card.label) {
+      <org-kpi-stat-card [card]="card" />
+    }
+  </div>
+
+  <div
+    class="bg-theme-background border-theme-border rounded-xl border p-6 shadow-sm"
+  >
+    @if (usersLoading()) {
+      <p class="text-theme-text-secondary text-sm">Loading users…</p>
+    } @else if (usersError()) {
+      <p class="text-error text-sm">{{ usersError() }}</p>
+    } @else if (rows().length === 0) {
+      <div class="flex flex-col items-center py-16 text-center">
+        <div
+          class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary-color)_12%,transparent)]"
+        >
+          <svg
+            class="text-theme-primary h-8 w-8"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M17 20v-1a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v1" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 20v-1a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
+        <h2 class="text-theme-text text-lg font-semibold">No users yet</h2>
+        <p class="text-theme-text-secondary mt-1 max-w-sm text-sm">
+          Add your first user to start managing access.
+        </p>
+        <button
+          type="button"
+          class="bg-theme-primary mt-5 rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+          (click)="openCreateForm()"
+        >
+          Add User
+        </button>
+      </div>
+    } @else {
+      <div class="mb-4 flex items-center justify-end gap-2">
+        <button
+          type="button"
+          class="border-theme-border text-theme-text hover:bg-theme-surface relative rounded-lg border p-2.5 transition-colors"
+          aria-label="Filters"
+          [attr.aria-expanded]="filtersOpen()"
+          cdkOverlayOrigin
+          #filtersTrigger="cdkOverlayOrigin"
+          (click)="toggleFilters()"
+        >
+          <i class="fi fi-rr-filter text-sm" aria-hidden="true"></i>
+          @if (activeFilterCount() > 0) {
+            <span
+              class="bg-theme-primary absolute -top-1.5 -right-1.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[0.65rem] font-semibold text-white"
+              >{{ activeFilterCount() }}</span
+            >
+          }
+        </button>
+
+        <ng-template
+          cdkConnectedOverlay
+          [cdkConnectedOverlayOrigin]="filtersTrigger"
+          [cdkConnectedOverlayOpen]="filtersOpen()"
+          [cdkConnectedOverlayHasBackdrop]="true"
+          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+          [cdkConnectedOverlayPositions]="[
+            {
+              originX: 'end',
+              originY: 'bottom',
+              overlayX: 'end',
+              overlayY: 'top',
+              offsetY: 8,
+            },
+          ]"
+          (backdropClick)="closeFilters()"
+          (overlayOutsideClick)="closeFilters()"
+          (detach)="closeFilters()"
+        >
+          <div
+            class="bg-theme-surface border-theme-border w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border shadow-md"
+            role="dialog"
+            aria-label="Filters"
+            tabindex="-1"
+            (keydown.escape)="closeFilters()"
+          >
+            <div
+              class="border-theme-border flex items-center justify-between border-b p-4"
+            >
+              <span class="text-theme-text text-sm font-semibold">Filters</span>
+              @if (activeFilterCount() > 0) {
+                <button
+                  type="button"
+                  class="text-theme-text-secondary hover:text-theme-text text-xs font-medium"
+                  (click)="resetFilters()"
+                >
+                  Reset
+                </button>
+              }
+            </div>
+
+            <div class="flex flex-col gap-4 p-4">
+              <div>
+                <label
+                  for="filter-name"
+                  class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                  >Name</label
+                >
+                <input
+                  id="filter-name"
+                  type="text"
+                  placeholder="Filter by name…"
+                  [ngModel]="filters().name"
+                  (ngModelChange)="onFilterChange('name', $event)"
+                  class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="filter-email"
+                  class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                  >Email</label
+                >
+                <input
+                  id="filter-email"
+                  type="text"
+                  placeholder="Filter by email…"
+                  [ngModel]="filters().emailAddress"
+                  (ngModelChange)="onFilterChange('emailAddress', $event)"
+                  class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="filter-phone"
+                  class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                  >Phone</label
+                >
+                <input
+                  id="filter-phone"
+                  type="text"
+                  placeholder="Filter by phone…"
+                  [ngModel]="filters().phoneNumber"
+                  (ngModelChange)="onFilterChange('phoneNumber', $event)"
+                  class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="filter-role"
+                  class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                  >Role</label
+                >
+                <select
+                  id="filter-role"
+                  [ngModel]="filters().roleName"
+                  (ngModelChange)="onFilterChange('roleName', $event)"
+                  class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                >
+                  <option value="">All</option>
+                  @for (role of roleOptions(); track role) {
+                    <option [value]="role">{{ role }}</option>
+                  }
+                </select>
+              </div>
+
+              <div>
+                <label
+                  for="filter-status"
+                  class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                  >Status</label
+                >
+                <select
+                  id="filter-status"
+                  [ngModel]="filters().status"
+                  (ngModelChange)="onFilterChange('status', $event)"
+                  class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                >
+                  <option value="">All</option>
+                  @for (status of statusOptions(); track status) {
+                    <option [value]="status">{{ status }}</option>
+                  }
+                </select>
+              </div>
+
+              <div>
+                <span
+                  class="text-theme-text-secondary mb-1 block text-xs font-medium"
+                  >Created</span
+                >
+                <div class="flex items-center gap-2">
+                  <input
+                    type="date"
+                    aria-label="Created from"
+                    [ngModel]="filters().createdFrom"
+                    (ngModelChange)="onFilterChange('createdFrom', $event)"
+                    class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                  />
+                  <span class="text-theme-text-secondary text-xs">to</span>
+                  <input
+                    type="date"
+                    aria-label="Created to"
+                    [ngModel]="filters().createdTo"
+                    (ngModelChange)="onFilterChange('createdTo', $event)"
+                    class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="border-theme-border flex items-center justify-end border-t p-4"
+            >
+              <button
+                type="button"
+                class="bg-theme-primary rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                (click)="closeFilters()"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </ng-template>
+
+        <button
+          type="button"
+          class="bg-theme-primary rounded-lg p-2.5 text-white transition-colors hover:opacity-90"
+          aria-label="New User"
+          (click)="openCreateForm()"
+        >
+          <i class="fi fi-rr-plus text-sm" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr
+              class="text-theme-text-secondary border-theme-border border-b text-xs"
+            >
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="sortKey() === 'name' ? sortDirection() : null"
+                  (sortChange)="onSortChange('name', $event)"
+                >
+                  Name
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="
+                    sortKey() === 'emailAddress' ? sortDirection() : null
+                  "
+                  (sortChange)="onSortChange('emailAddress', $event)"
+                >
+                  Email
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="
+                    sortKey() === 'phoneNumber' ? sortDirection() : null
+                  "
+                  (sortChange)="onSortChange('phoneNumber', $event)"
+                >
+                  Phone
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="
+                    sortKey() === 'roleName' ? sortDirection() : null
+                  "
+                  (sortChange)="onSortChange('roleName', $event)"
+                >
+                  Role
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="sortKey() === 'status' ? sortDirection() : null"
+                  (sortChange)="onSortChange('status', $event)"
+                >
+                  Status
+                </org-sortable-column-header>
+              </th>
+              <th class="pr-4 pb-1.5">
+                <org-sortable-column-header
+                  [direction]="
+                    sortKey() === 'createdAt' ? sortDirection() : null
+                  "
+                  (sortChange)="onSortChange('createdAt', $event)"
+                >
+                  Created
+                </org-sortable-column-header>
+              </th>
+              <th class="pb-1.5 text-right font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredTotal() === 0) {
+              <tr>
+                <td
+                  colspan="7"
+                  class="text-theme-text-secondary py-8 text-center"
+                >
+                  No users match your search or filters.
+                </td>
+              </tr>
+            }
+            @for (user of pagedRows(); track user._id) {
+              <tr
+                class="border-theme-border hover:bg-theme-surface border-t transition-colors"
+              >
+                <td class="text-theme-text py-2 pr-4">{{ user.name }}</td>
+                <td class="text-theme-text py-2 pr-4">
+                  {{ user.emailAddress || '—' }}
+                </td>
+                <td class="text-theme-text py-2 pr-4">
+                  {{ user.phoneNumber }}
+                </td>
+                <td class="text-theme-text py-2 pr-4">
+                  {{ user.roleName }}
+                </td>
+                <td class="py-2 pr-4">
+                  <span
+                    class="inline-flex w-fit items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                    [class.bg-success-light]="user.statusTone === 'success'"
+                    [class.text-success]="user.statusTone === 'success'"
+                    [class.bg-info-light]="user.statusTone === 'info'"
+                    [class.text-info]="user.statusTone === 'info'"
+                    [class.bg-warning-light]="user.statusTone === 'warning'"
+                    [class.text-warning]="user.statusTone === 'warning'"
+                    [class.bg-error-light]="user.statusTone === 'error'"
+                    [class.text-error]="user.statusTone === 'error'"
+                  >
+                    {{ user.status }}
+                  </span>
+                </td>
+                <td class="text-theme-text py-2 pr-4">
+                  {{ user.createdAt | date: 'mediumDate' }}
+                </td>
+                <td class="py-2 text-right">
+                  <div class="flex justify-end">
+                    <button
+                      type="button"
+                      class="text-theme-text-secondary hover:bg-theme-surface hover:text-theme-text rounded-md p-1.5 transition-colors"
+                      aria-label="Row actions"
+                      [attr.aria-expanded]="openMenuId() === user._id"
+                      cdkOverlayOrigin
+                      #rowMenuTrigger="cdkOverlayOrigin"
+                      (click)="toggleMenu(user._id)"
+                    >
+                      <i
+                        class="fi fi-rr-menu-dots-vertical text-sm"
+                        aria-hidden="true"
+                      ></i>
+                    </button>
+
+                    <ng-template
+                      cdkConnectedOverlay
+                      [cdkConnectedOverlayOrigin]="rowMenuTrigger"
+                      [cdkConnectedOverlayOpen]="openMenuId() === user._id"
+                      [cdkConnectedOverlayHasBackdrop]="true"
+                      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                      [cdkConnectedOverlayPositions]="[
+                        {
+                          originX: 'end',
+                          originY: 'bottom',
+                          overlayX: 'end',
+                          overlayY: 'top',
+                          offsetY: 4,
+                        },
+                      ]"
+                      (backdropClick)="closeMenu()"
+                      (overlayOutsideClick)="closeMenu()"
+                      (detach)="closeMenu()"
+                    >
+                      <div
+                        class="bg-theme-surface border-theme-border w-40 overflow-hidden rounded-xl border p-1.5 shadow-md"
+                        role="menu"
+                        aria-label="Row actions"
+                        tabindex="-1"
+                        (keydown.escape)="closeMenu()"
+                      >
+                        <a
+                          class="text-theme-text hover:bg-theme-surface flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm no-underline"
+                          role="menuitem"
+                          [routerLink]="['.', user._id]"
+                          (click)="closeMenu()"
+                        >
+                          <i
+                            class="fi fi-rr-clock text-theme-text-secondary w-4.5 text-center text-sm"
+                            aria-hidden="true"
+                          ></i>
+                          <span>View Activity</span>
+                        </a>
+                      </div>
+                    </ng-template>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (filteredTotal() > 0) {
+        <div class="mt-4">
+          <org-table-pagination
+            [total]="filteredTotal()"
+            [page]="page()"
+            [pageSize]="pageSize()"
+            (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)"
+          />
+        </div>
+      }
+    }
+  </div>
+
+  @if (showDialog()) {
+    <org-create-user-dialog
+      [roles]="roles()"
+      [creating]="saving()"
+      (submitted)="submitDialog($event)"
+      (closed)="cancelDialog()"
+    />
+  }
+
+  @if (selectedUserId(); as userId) {
+    <org-user-detail-drawer [userId]="userId" />
+  }
+</div>

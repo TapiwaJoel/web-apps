@@ -82,6 +82,7 @@ export class LoginComponent {
     password: ['', [Validators.required]],
   });
   public readonly loading: WritableSignal<boolean> = signal(false);
+  public readonly showPassword: WritableSignal<boolean> = signal(false);
 
   // Device verification dialog state
   /** Non-null while the "unrecognised device" dialog is open. */
@@ -171,6 +172,10 @@ export class LoginComponent {
   public hasError(control: string, error: string): boolean {
     const field: ReturnType<FormGroup['get']> = this.form.get(control);
     return !!field && field.touched && field.hasError(error);
+  }
+
+  public togglePasswordVisibility(): void {
+    this.showPassword.update((value: boolean): boolean => !value);
   }
 
   /** User picked a different channel in the dialog: resend the code on it. */

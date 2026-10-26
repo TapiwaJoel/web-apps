@@ -1,0 +1,296 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="subscription-plan-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="subscription-plan-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ plan()?.name ?? 'Subscription plan' }}
+      </h2>
+      @if (plan(); as current) {
+        <org-status-pill [label]="current.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (subscriptionPlansLoading() && !plan()) {
+      <p class="text-theme-text-secondary text-sm">Loading plan…</p>
+    } @else if (!plan()) {
+      <div class="py-10 text-center">
+        <p class="text-error text-sm">This plan doesn't exist.</p>
+        <p class="text-theme-text-secondary mt-1 text-xs">
+          It may have been removed, or the link is wrong.
+        </p>
+      </div>
+    } @else {
+      <div
+        class="border-theme-border mb-5 flex items-end justify-between gap-4 rounded-lg border p-5"
+      >
+        <div>
+          <span class="text-theme-text-secondary text-xs font-medium"
+            >Current price</span
+          >
+          <p class="text-theme-text mt-0.5 text-2xl font-semibold tabular-nums">
+            {{ priceLabel() }}
+            <span class="text-theme-text-secondary text-sm font-normal"
+              >/ {{ plan()?.billingCycle }}</span
+            >
+          </p>
+          @if (examinationBoardName()) {
+            <p class="text-theme-text-secondary mt-1 text-xs">
+              {{ examinationBoardName() }}
+            </p>
+          }
+        </div>
+        <a
+          class="text-theme-primary shrink-0 text-sm font-medium hover:underline"
+          [routerLink]="['../../all']"
+          [queryParams]="{ subscriptionPlanId: subscriptionPlanId() }"
+        >
+          View subscriptions →
+        </a>
+      </div>
+
+      <div class="bg-theme-surface rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="plan-edit-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Plan name <span class="text-error">*</span></label
+            >
+            <input
+              id="plan-edit-name"
+              type="text"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [class.border-error]="conflicts().nameTaken"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+            @if (conflicts().nameTaken) {
+              <p class="text-error mt-1.5 text-xs">
+                Another plan already uses this name. Plan names must be unique.
+              </p>
+            }
+          </div>
+
+          <div>
+            <label
+              for="plan-edit-level"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Educational level <span class="text-error">*</span></label
+            >
+            <select
+              id="plan-edit-level"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().educationalLevelId"
+              (ngModelChange)="updateForm('educationalLevelId', $event)"
+            >
+              <option value="" disabled>Select a level</option>
+              @for (option of levelOptions(); track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label
+              for="plan-edit-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="plan-edit-description"
+              rows="3"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <label
+                for="plan-edit-price"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Price <span class="text-error">*</span></label
+              >
+              <input
+                id="plan-edit-price"
+                type="number"
+                min="0.01"
+                step="0.01"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().price"
+                (ngModelChange)="updateForm('price', $event)"
+              />
+            </div>
+            <div>
+              <label
+                for="plan-edit-currency"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Currency <span class="text-error">*</span></label
+              >
+              <select
+                id="plan-edit-currency"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().currency"
+                (ngModelChange)="updateForm('currency', $event)"
+              >
+                @for (option of currencyOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label
+                for="plan-edit-cycle"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Billing cycle <span class="text-error">*</span></label
+              >
+              <select
+                id="plan-edit-cycle"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().billingCycle"
+                (ngModelChange)="updateForm('billingCycle', $event)"
+              >
+                @for (option of billingCycleOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          @if (conflicts().duplicateCombination; as duplicate) {
+            <div
+              class="border-warning/50 bg-warning/10 text-theme-text flex gap-2.5 rounded-lg border px-3.5 py-2.5 text-xs"
+              role="status"
+            >
+              <i
+                class="fi fi-rr-triangle-warning text-warning mt-0.5"
+                aria-hidden="true"
+              ></i>
+              <span>
+                "{{ duplicate.name }}" already covers this level, currency and
+                billing cycle. Each combination can only have one plan, so the
+                server will likely reject this change.
+              </span>
+            </div>
+          }
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                for="plan-edit-subjects"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Number of subjects <span class="text-error">*</span></label
+              >
+              <input
+                id="plan-edit-subjects"
+                type="number"
+                min="1"
+                step="1"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().numberOfSubjects"
+                (ngModelChange)="updateForm('numberOfSubjects', $event)"
+              />
+            </div>
+            <div>
+              <label
+                for="plan-edit-grace"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Grace period (days) <span class="text-error">*</span></label
+              >
+              <input
+                id="plan-edit-grace"
+                type="number"
+                min="0"
+                step="1"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().gracePeriodDays"
+                (ngModelChange)="updateForm('gracePeriodDays', $event)"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="plan-edit-status"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Status</label
+            >
+            <select
+              id="plan-edit-status"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().status"
+              (ngModelChange)="updateForm('status', $event)"
+            >
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <p class="text-theme-text-secondary mt-1.5 text-xs">
+              Set to Inactive to stop new subscriptions to this plan.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Created</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ plan()?.createdAt | date: 'medium' }}
+              </p>
+            </div>
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Last updated</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ plan()?.updatedAt | date: 'medium' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="!isDirty() || !isValid() || saving()"
+            (click)="savePlan()"
+          >
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

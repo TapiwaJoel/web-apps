@@ -1,0 +1,253 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 flex max-h-[90vh] w-full max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl border shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-subscription-plan-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="flex items-center justify-between px-8 pt-8 pb-6">
+    <h2
+      id="create-subscription-plan-title"
+      class="text-theme-text text-xl font-semibold"
+    >
+      New subscription plan
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid flex-1 grid-cols-1 gap-y-5 overflow-y-auto px-8">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label
+          for="plan-create-board"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Examination board</label
+        >
+        <select
+          id="plan-create-board"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="examinationBoardId()"
+          (ngModelChange)="onBoardChange($event)"
+        >
+          <option value="">All boards</option>
+          @for (board of examinationBoards(); track board._id) {
+            <option [value]="board._id">{{ board.name }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label
+          for="plan-create-level"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Educational level <span class="text-error">*</span></label
+        >
+        <select
+          id="plan-create-level"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().educationalLevelId"
+          (ngModelChange)="updateForm('educationalLevelId', $event)"
+        >
+          <option value="" disabled>Select a level</option>
+          @for (level of availableLevels(); track level._id) {
+            <option [value]="level._id">{{ level.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label
+        for="plan-create-name"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Plan name <span class="text-error">*</span></label
+      >
+      <input
+        id="plan-create-name"
+        type="text"
+        placeholder="e.g. O Level Monthly"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [class.border-error]="conflicts().nameTaken"
+        [ngModel]="form().name"
+        (ngModelChange)="updateForm('name', $event)"
+      />
+      @if (conflicts().nameTaken) {
+        <p class="text-error mt-1.5 text-xs">
+          Another plan already uses this name. Plan names must be unique.
+        </p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="plan-create-description"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Description</label
+      >
+      <textarea
+        id="plan-create-description"
+        rows="2"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().description"
+        (ngModelChange)="updateForm('description', $event)"
+      ></textarea>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div>
+        <label
+          for="plan-create-price"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Price <span class="text-error">*</span></label
+        >
+        <input
+          id="plan-create-price"
+          type="number"
+          min="0.01"
+          step="0.01"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().price"
+          (ngModelChange)="updateForm('price', $event)"
+        />
+      </div>
+      <div>
+        <label
+          for="plan-create-currency"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Currency <span class="text-error">*</span></label
+        >
+        <select
+          id="plan-create-currency"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().currency"
+          (ngModelChange)="updateForm('currency', $event)"
+        >
+          <option value="" disabled>Select</option>
+          @for (option of currencyOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label
+          for="plan-create-cycle"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Billing cycle <span class="text-error">*</span></label
+        >
+        <select
+          id="plan-create-cycle"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().billingCycle"
+          (ngModelChange)="updateForm('billingCycle', $event)"
+        >
+          <option value="" disabled>Select</option>
+          @for (option of billingCycleOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    @if (pricePreview()) {
+      <p class="text-theme-text-secondary -mt-3 text-xs">
+        Learners pay
+        <span class="text-theme-text font-semibold">{{ pricePreview() }}</span>
+        @if (form().billingCycle) {
+          per {{ form().billingCycle.toLowerCase() }} cycle
+        }
+      </p>
+    }
+
+    @if (conflicts().duplicateCombination; as duplicate) {
+      <div
+        class="border-warning/50 bg-warning/10 text-theme-text flex gap-2.5 rounded-lg border px-3.5 py-2.5 text-xs"
+        role="status"
+      >
+        <i
+          class="fi fi-rr-triangle-warning text-warning mt-0.5"
+          aria-hidden="true"
+        ></i>
+        <span>
+          "{{ duplicate.name }}" already covers this level, currency and billing
+          cycle. Each combination can only have one plan, so the server will
+          likely reject this one.
+        </span>
+      </div>
+    }
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label
+          for="plan-create-subjects"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Number of subjects <span class="text-error">*</span></label
+        >
+        <input
+          id="plan-create-subjects"
+          type="number"
+          min="1"
+          step="1"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().numberOfSubjects"
+          (ngModelChange)="updateForm('numberOfSubjects', $event)"
+        />
+        <p class="text-theme-text-secondary mt-1.5 text-xs">
+          How many subjects a learner can pick.
+        </p>
+      </div>
+      <div>
+        <label
+          for="plan-create-grace"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Grace period (days) <span class="text-error">*</span></label
+        >
+        <input
+          id="plan-create-grace"
+          type="number"
+          min="0"
+          step="1"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().gracePeriodDays"
+          (ngModelChange)="updateForm('gracePeriodDays', $event)"
+        />
+        <p class="text-theme-text-secondary mt-1.5 text-xs">
+          Days of access kept after a missed renewal.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-end gap-3 px-8 pt-6 pb-8">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create plan' }}
+    </button>
+  </div>
+</div>

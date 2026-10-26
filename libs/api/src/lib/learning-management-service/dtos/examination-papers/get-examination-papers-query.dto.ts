@@ -1,6 +1,6 @@
-import { EntityStatus, PaginationParams } from '../../../common';
+import { EntityStatus } from '../../../common';
 
-export interface GetExaminationPapersQueryDto extends PaginationParams {
+export interface GetExaminationPapersQueryDto {
   _id?: string;
   subjectId?: string;
   name?: string;

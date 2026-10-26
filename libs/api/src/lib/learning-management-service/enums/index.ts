@@ -6,3 +6,5 @@ export * from './examination-paper-type.enum';
 export * from './profile-type.enum';
 export * from './billing-cycle.enum';
 export * from './subscription-status.enum';
+export * from './subscription-reminder-event.enum';
+export * from './communication-channel.enum';

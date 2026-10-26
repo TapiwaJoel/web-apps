@@ -1,14 +1,4 @@
-import { CommentStatus } from '../../enums';
-
-/**
- * CommentSortOrder
- *
- * Enum defining the possible sort order values for comments.
- */
-export enum CommentSortOrder {
-  NEWEST = 'newest',
-  OLDEST = 'oldest',
-}
+import { CommentSortOrder, CommentStatus } from '../../enums';
 
 export interface GetCommentsQueryDto {
   commentable: string;

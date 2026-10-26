@@ -1,0 +1,178 @@
+<div
+  class="bg-umdzidzisi-900/50 fixed inset-0 z-40"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border p-8 shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-grading-scale-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="mb-6 flex items-center justify-between">
+    <h2
+      id="create-grading-scale-title"
+      class="text-theme-text text-xl font-semibold"
+    >
+      Create Grading Scale
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-2 gap-x-4 gap-y-5">
+    <div class="col-span-2">
+      <label
+        for="grading-scale-system"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Grading System <span class="text-error">*</span></label
+      >
+      <select
+        id="grading-scale-system"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().gradingSystemId"
+        (ngModelChange)="updateForm('gradingSystemId', $event)"
+      >
+        <option value="" disabled>Select a grading system</option>
+        @for (system of gradingSystems(); track system._id) {
+          <option [value]="system._id">{{ system.name }}</option>
+        }
+      </select>
+    </div>
+
+    @if (form().gradingSystemId) {
+      <div class="col-span-2">
+        <span class="text-theme-text-secondary mb-1.5 block text-xs font-medium"
+          >Preview</span
+        >
+        <org-grading-scale-range-bar
+          [scales]="previewScales()"
+          [compact]="true"
+        />
+      </div>
+    }
+
+    <div>
+      <label
+        for="grading-scale-symbol"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Symbol <span class="text-error">*</span></label
+      >
+      <input
+        id="grading-scale-symbol"
+        type="text"
+        placeholder="e.g. A*"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().symbol"
+        (ngModelChange)="updateForm('symbol', $event)"
+      />
+    </div>
+    <div>
+      <label
+        for="grading-scale-order"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Order <span class="text-error">*</span></label
+      >
+      <input
+        id="grading-scale-order"
+        type="number"
+        min="1"
+        step="1"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().order"
+        (ngModelChange)="updateForm('order', $event)"
+      />
+    </div>
+    <div>
+      <label
+        for="grading-scale-min"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Minimum score <span class="text-error">*</span></label
+      >
+      <input
+        id="grading-scale-min"
+        type="number"
+        min="0"
+        max="100"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().minimumScore"
+        (ngModelChange)="updateForm('minimumScore', $event)"
+      />
+    </div>
+    <div>
+      <label
+        for="grading-scale-max"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Maximum score <span class="text-error">*</span></label
+      >
+      <input
+        id="grading-scale-max"
+        type="number"
+        min="0"
+        max="100"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().maximumScore"
+        (ngModelChange)="updateForm('maximumScore', $event)"
+      />
+    </div>
+    <p class="text-theme-text-secondary col-span-2 -mt-3 text-xs">
+      Inclusive range from 0 to 100. Order 1 is the highest grade.
+    </p>
+    <div class="col-span-2">
+      <label
+        for="grading-scale-description"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Description</label
+      >
+      <textarea
+        id="grading-scale-description"
+        rows="2"
+        placeholder="e.g. Excellent performance"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().description"
+        (ngModelChange)="updateForm('description', $event)"
+      ></textarea>
+    </div>
+  </div>
+
+  @if (showError() && formError(); as error) {
+    <p
+      class="border-error/40 bg-error/10 text-error mt-5 flex items-start gap-2 rounded-lg border px-3 py-2 text-sm"
+      role="alert"
+    >
+      <i class="fi fi-rr-exclamation mt-0.5 text-xs" aria-hidden="true"></i>
+      <span>{{ error }}</span>
+    </p>
+  }
+
+  <div class="mt-8 flex items-center justify-end gap-3">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!!formError() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create Scale' }}
+    </button>
+  </div>
+</div>

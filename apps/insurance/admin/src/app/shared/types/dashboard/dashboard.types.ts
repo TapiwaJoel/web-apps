@@ -1,3 +1,5 @@
+import { KpiCard } from '@mushaviri/ui';
+
 /** Status tone driving a Recent Activity row's status pill. */
 export type ActivityStatus = 'expiring' | 'approved' | 'pending';
 
@@ -7,13 +9,7 @@ export type ApplicationStatus = 'active' | 'pending' | 'expiring';
 /** Semantic tone accepted by `StatusPillComponent`. */
 export type PillTone = 'success' | 'warning' | 'info' | 'error';
 
-/** One KPI summary card at the top of the dashboard. */
-export interface KpiCard {
-  label: string;
-  value: string;
-  icon: string;
-  badge?: { text: string; tone: 'success' | 'info' };
-}
+export type { KpiCard };
 
 /** One month's premium figure in the Premium Growth chart. */
 export interface PremiumMonth {

@@ -13,22 +13,39 @@ export const UMDZIDZISI_RAIL_CONFIG: TreeNavNode[] = [
     active: true,
   },
   {
+    id: 'rail-curriculum',
+    label: 'Curriculum',
+    icon: 'fi fi-rr-book-open-reader',
+    // Section root so the rail icon stays active for every curriculum/* child.
+    route: 'curriculum',
+    children: [
+      {
+        id: 'examination-boards',
+        label: 'Examination Boards',
+        route: 'curriculum/boards',
+      },
+      {
+        id: 'educational-levels',
+        label: 'Educational Levels',
+        route: 'curriculum/levels',
+      },
+      { id: 'grades', label: 'Grades', route: 'curriculum/grades' },
+      { id: 'subjects', label: 'Subjects', route: 'curriculum/subjects' },
+      { id: 'topics', label: 'Topics', route: 'curriculum/topics' },
+      { id: 'sub-topics', label: 'Sub-topics', route: 'curriculum/sub-topics' },
+    ],
+  },
+  {
     id: 'rail-examinations',
     label: 'Examinations',
     icon: 'fi fi-rr-graduation-cap',
     // Section root so the rail icon stays active for every examinations/* child.
     route: 'examinations',
-    badge: '38',
     children: [
       {
         id: 'all-examinations',
-        label: 'All Examinations',
+        label: 'Examinations',
         route: 'examinations/all',
-      },
-      {
-        id: 'examination-boards',
-        label: 'Examination Boards',
-        route: 'examinations/boards',
       },
       {
         id: 'examination-papers',
@@ -36,28 +53,19 @@ export const UMDZIDZISI_RAIL_CONFIG: TreeNavNode[] = [
         route: 'examinations/papers',
       },
       {
-        id: 'educational-levels',
-        label: 'Educational Levels',
-        route: 'examinations/levels',
-      },
-    ],
-  },
-  {
-    id: 'rail-subjects',
-    label: 'Subjects',
-    icon: 'fi fi-rr-book-open-reader',
-    // Section root so the rail icon stays active for every subjects/* child.
-    route: 'subjects',
-    children: [
-      {
-        id: 'all-subjects',
-        label: 'All Subjects',
-        route: 'subjects/all',
+        id: 'assessments',
+        label: 'Assessments',
+        route: 'examinations/assessments',
       },
       {
-        id: 'topics',
-        label: 'Topics',
-        route: 'subjects/topics',
+        id: 'grading-systems',
+        label: 'Grading Systems',
+        route: 'examinations/grading-systems',
+      },
+      {
+        id: 'grading-scales',
+        label: 'Grading Scales',
+        route: 'examinations/grading-scales',
       },
     ],
   },
@@ -67,37 +75,47 @@ export const UMDZIDZISI_RAIL_CONFIG: TreeNavNode[] = [
     icon: 'fi fi-rr-credit-card',
     // Section root so the rail icon stays active for every subscriptions/* child.
     route: 'subscriptions',
-    badge: '5',
     children: [
-      {
-        id: 'active-subscriptions',
-        label: 'Active Subscriptions',
-        route: 'subscriptions/active',
-      },
       {
         id: 'subscription-plans',
         label: 'Subscription Plans',
         route: 'subscriptions/plans',
       },
+      {
+        id: 'all-subscriptions',
+        label: 'Subscriptions',
+        route: 'subscriptions/all',
+      },
     ],
   },
   {
-    id: 'rail-profiles',
-    label: 'Profiles',
+    id: 'rail-learners',
+    label: 'Learners',
+    icon: 'fi fi-rr-users',
+    // Section root so the rail icon stays active for every learners/* child.
+    route: 'learners',
+    children: [
+      {
+        id: 'learner-profiles',
+        label: 'Learner Profiles',
+        route: 'learners/profiles',
+      },
+    ],
+  },
+  {
+    id: 'rail-admin',
+    label: 'Admin',
+    icon: 'fi fi-rr-user-gear',
+    children: [
+      { id: 'users', label: 'Users', route: 'users' },
+      { id: 'roles', label: 'Roles', route: 'roles' },
+    ],
+  },
+  {
+    id: 'rail-profile',
+    label: 'Profile',
     icon: 'fi fi-rr-user',
-    route: 'profiles',
-  },
-  {
-    id: 'rail-settings',
-    label: 'Settings',
-    icon: 'fi fi-rr-settings',
-    route: 'settings',
-  },
-  {
-    id: 'rail-preferences',
-    label: 'Preferences',
-    icon: 'fi fi-rr-settings-sliders',
-    route: 'preferences',
+    route: 'profile',
   },
 ];
 
@@ -124,22 +142,38 @@ export const UMDZIDZISI_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     route: 'dashboard',
   },
   {
+    id: 'curriculum',
+    label: 'Curriculum',
+    icon: 'fi fi-rr-book-open-reader',
+    variant: 'section',
+    expanded: true,
+    children: [
+      {
+        id: 'examination-boards',
+        label: 'Examination Boards',
+        route: 'curriculum/boards',
+      },
+      {
+        id: 'educational-levels',
+        label: 'Educational Levels',
+        route: 'curriculum/levels',
+      },
+      { id: 'grades', label: 'Grades', route: 'curriculum/grades' },
+      { id: 'subjects', label: 'Subjects', route: 'curriculum/subjects' },
+      { id: 'topics', label: 'Topics', route: 'curriculum/topics' },
+      { id: 'sub-topics', label: 'Sub-topics', route: 'curriculum/sub-topics' },
+    ],
+  },
+  {
     id: 'examinations',
     label: 'Examinations',
     icon: 'fi fi-rr-graduation-cap',
     variant: 'section',
-    expanded: true,
-    badge: '38',
     children: [
       {
         id: 'all-examinations',
-        label: 'All Examinations',
+        label: 'Examinations',
         route: 'examinations/all',
-      },
-      {
-        id: 'examination-boards',
-        label: 'Examination Boards',
-        route: 'examinations/boards',
       },
       {
         id: 'examination-papers',
@@ -147,27 +181,19 @@ export const UMDZIDZISI_ADMIN_NAV_CONFIG: TreeNavNode[] = [
         route: 'examinations/papers',
       },
       {
-        id: 'educational-levels',
-        label: 'Educational Levels',
-        route: 'examinations/levels',
-      },
-    ],
-  },
-  {
-    id: 'subjects',
-    label: 'Subjects',
-    icon: 'fi fi-rr-book-open-reader',
-    variant: 'section',
-    children: [
-      {
-        id: 'all-subjects',
-        label: 'All Subjects',
-        route: 'subjects/all',
+        id: 'assessments',
+        label: 'Assessments',
+        route: 'examinations/assessments',
       },
       {
-        id: 'topics',
-        label: 'Topics',
-        route: 'subjects/topics',
+        id: 'grading-systems',
+        label: 'Grading Systems',
+        route: 'examinations/grading-systems',
+      },
+      {
+        id: 'grading-scales',
+        label: 'Grading Scales',
+        route: 'examinations/grading-scales',
       },
     ],
   },
@@ -176,50 +202,51 @@ export const UMDZIDZISI_ADMIN_NAV_CONFIG: TreeNavNode[] = [
     label: 'Subscriptions',
     icon: 'fi fi-rr-credit-card',
     variant: 'section',
-    badge: '5',
     children: [
-      {
-        id: 'active-subscriptions',
-        label: 'Active Subscriptions',
-        route: 'subscriptions/active',
-      },
       {
         id: 'subscription-plans',
         label: 'Subscription Plans',
         route: 'subscriptions/plans',
       },
+      {
+        id: 'all-subscriptions',
+        label: 'Subscriptions',
+        route: 'subscriptions/all',
+      },
     ],
   },
   {
-    id: 'profiles',
-    label: 'Profiles',
+    id: 'learners',
+    label: 'Learners',
+    icon: 'fi fi-rr-users',
+    variant: 'section',
+    children: [
+      {
+        id: 'learner-profiles',
+        label: 'Learner Profiles',
+        route: 'learners/profiles',
+      },
+    ],
+  },
+  {
+    id: 'admin',
+    label: 'Admin',
+    icon: 'fi fi-rr-user-gear',
+    variant: 'section',
+    children: [
+      {
+        id: 'users',
+        label: 'Users',
+        icon: 'fi fi-rr-user-gear',
+        route: 'users',
+      },
+      { id: 'roles', label: 'Roles', icon: 'fi fi-rr-lock', route: 'roles' },
+    ],
+  },
+  {
+    id: 'profile',
+    label: 'Profile',
     icon: 'fi fi-rr-user',
-    route: 'profiles',
-  },
-  {
-    id: 'settings',
-    label: 'Settings',
-    icon: 'fi fi-rr-settings',
-    route: 'settings',
-  },
-];
-
-/**
- * User menu configuration (shown at bottom of sidebar)
- */
-export const USER_MENU_CONFIG: TreeNavNode[] = [
-  {
-    id: 'preferences',
-    label: 'Preferences',
-    icon: '🎨',
-    route: 'preferences',
-  },
-  {
-    id: 'logout',
-    label: 'Logout',
-    icon: '🚪',
-    action: (): void => {
-      // Logout handled by the layout component wiring.
-    },
+    route: 'profile',
   },
 ];

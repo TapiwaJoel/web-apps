@@ -2,7 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { CreateRoleDto, RoleResponseDto, UpdateRoleDto } from '../dtos';
+import {
+  CreateRoleDto,
+  GetRolesQueryDto,
+  RoleResponseDto,
+  UpdateRoleDto,
+} from '../dtos';
 import {
   API_BASE_URL,
   PaginateResult,
@@ -36,7 +41,7 @@ export class RolesService {
   }
 
   public list(
-    query: { serviceName?: string } = {},
+    query: GetRolesQueryDto = {},
   ): Observable<PaginateResult<RoleResponseDto>> {
     let params: HttpParams = new HttpParams();
     (Object.entries(query) as [string, unknown][]).forEach(

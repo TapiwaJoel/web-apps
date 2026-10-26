@@ -1,0 +1,129 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="examination-paper-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <div class="min-w-0">
+        <h2
+          id="examination-paper-detail-title"
+          class="text-theme-text truncate text-lg font-semibold"
+        >
+          {{ paper()?.name ?? 'Examination Paper' }}
+        </h2>
+        @if (paper()) {
+          <p class="text-theme-text-secondary truncate text-xs">
+            {{ subjectLabel() }}
+          </p>
+        }
+      </div>
+      @if (paper(); as current) {
+        <org-status-pill [label]="current.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (papersLoading() && !paper()) {
+      <p class="text-theme-text-secondary text-sm">
+        Loading examination paper…
+      </p>
+    } @else if (!paper()) {
+      <div class="flex flex-col items-start gap-3">
+        <p class="text-error text-sm">
+          This examination paper doesn't exist or is no longer available.
+        </p>
+        <button
+          type="button"
+          class="text-theme-primary text-sm font-medium hover:underline"
+          (click)="close()"
+        >
+          Back to papers
+        </button>
+      </div>
+    } @else {
+      <a
+        class="border-theme-border bg-theme-surface hover:border-theme-primary text-theme-text mb-5 flex items-center justify-between rounded-lg border px-4 py-3 text-sm no-underline transition-colors"
+        [routerLink]="['../../assessments']"
+        [queryParams]="{ examinationPaperId: paperId() }"
+      >
+        <span class="flex items-center gap-2.5">
+          <i
+            class="fi fi-rr-test text-theme-text-secondary"
+            aria-hidden="true"
+          ></i>
+          Assessments built on this paper
+        </span>
+        <span class="text-theme-primary font-medium">View assessments →</span>
+      </a>
+
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <org-examination-paper-fields
+          idPrefix="edit-paper"
+          [form]="formValue()"
+          [subjectOptions]="subjectOptions()"
+          (fieldChange)="updateForm($event)"
+        />
+
+        <dl
+          class="border-theme-border mt-5 grid grid-cols-2 gap-4 border-t pt-4"
+        >
+          <div>
+            <dt class="text-theme-text-secondary text-xs font-medium">
+              Created
+            </dt>
+            <dd class="text-theme-text mt-0.5 text-sm">
+              {{ paper()?.createdAt | date: 'mediumDate' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-theme-text-secondary text-xs font-medium">
+              Last updated
+            </dt>
+            <dd class="text-theme-text mt-0.5 text-sm">
+              {{ paper()?.updatedAt | date: 'medium' }}
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-6 flex items-center justify-end gap-3">
+          @if (!isValid()) {
+            <span class="text-error text-xs"
+              >Fill in every required field.</span
+            >
+          }
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving() || !isValid() || !isDirty()"
+            (click)="savePaper()"
+          >
+            {{ saving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

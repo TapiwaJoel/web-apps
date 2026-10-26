@@ -1,0 +1,116 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border p-8 shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-educational-level-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="mb-6 flex items-center justify-between">
+    <h2
+      id="create-educational-level-title"
+      class="text-theme-text text-xl font-semibold"
+    >
+      Create Educational Level
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-y-5">
+    <div>
+      <label
+        for="educational-level-board"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Examination board <span class="text-error">*</span></label
+      >
+      <select
+        id="educational-level-board"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().examinationBoardId"
+        (ngModelChange)="updateForm('examinationBoardId', $event)"
+      >
+        <option value="" disabled>Select an examination board</option>
+        @for (board of examinationBoards(); track board._id) {
+          <option [value]="board._id">
+            {{ board.name }} ({{ board.country }})
+          </option>
+        }
+      </select>
+      @if (examinationBoards().length === 0) {
+        <p class="text-theme-text-secondary mt-1.5 text-xs">
+          Create an examination board first.
+        </p>
+      }
+    </div>
+    <div>
+      <label
+        for="educational-level-name"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Name <span class="text-error">*</span></label
+      >
+      <input
+        id="educational-level-name"
+        type="text"
+        placeholder="e.g. O Level"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().name"
+        (ngModelChange)="updateForm('name', $event)"
+      />
+      @if (isDuplicate()) {
+        <p class="text-warning mt-1.5 flex items-center gap-1.5 text-xs">
+          <i class="fi fi-rr-triangle-warning" aria-hidden="true"></i>
+          This board already has a level with this name.
+        </p>
+      }
+    </div>
+    <div>
+      <label
+        for="educational-level-description"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Description</label
+      >
+      <textarea
+        id="educational-level-description"
+        rows="3"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().description"
+        (ngModelChange)="updateForm('description', $event)"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="mt-8 flex items-center justify-end gap-3">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create Level' }}
+    </button>
+  </div>
+</div>

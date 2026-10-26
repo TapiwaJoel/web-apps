@@ -1,0 +1,199 @@
+<div
+  class="bg-umdzidzisi-900/50 fixed inset-0 z-40"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="grading-scale-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="grading-scale-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{
+          gradingScale() ? 'Grade ' + gradingScale()?.symbol : 'Grading Scale'
+        }}
+      </h2>
+      @if (gradingScale(); as scale) {
+        <org-status-pill [label]="scale.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (gradingScalesLoading() && !gradingScale()) {
+      <p class="text-theme-text-secondary text-sm">Loading grading scale…</p>
+    } @else if (!gradingScale()) {
+      <p class="text-error text-sm">Grading scale not found.</p>
+    } @else {
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="mb-5">
+          <span
+            class="text-theme-text-secondary mb-1.5 block text-xs font-medium"
+            >Position in its grading system</span
+          >
+          <org-grading-scale-range-bar [scales]="previewScales()" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-x-4 gap-y-5">
+          <div class="col-span-2">
+            <label
+              for="grading-scale-system"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Grading System</label
+            >
+            <select
+              id="grading-scale-system"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().gradingSystemId"
+              (ngModelChange)="updateForm('gradingSystemId', $event)"
+            >
+              @for (system of gradingSystems(); track system._id) {
+                <option [value]="system._id">{{ system.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label
+              for="grading-scale-symbol"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Symbol</label
+            >
+            <input
+              id="grading-scale-symbol"
+              type="text"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().symbol"
+              (ngModelChange)="updateForm('symbol', $event)"
+            />
+          </div>
+          <div>
+            <label
+              for="grading-scale-order"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Order</label
+            >
+            <input
+              id="grading-scale-order"
+              type="number"
+              min="1"
+              step="1"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().order"
+              (ngModelChange)="updateForm('order', $event)"
+            />
+          </div>
+          <div>
+            <label
+              for="grading-scale-min"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Minimum score</label
+            >
+            <input
+              id="grading-scale-min"
+              type="number"
+              min="0"
+              max="100"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().minimumScore"
+              (ngModelChange)="updateForm('minimumScore', $event)"
+            />
+          </div>
+          <div>
+            <label
+              for="grading-scale-max"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Maximum score</label
+            >
+            <input
+              id="grading-scale-max"
+              type="number"
+              min="0"
+              max="100"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().maximumScore"
+              (ngModelChange)="updateForm('maximumScore', $event)"
+            />
+          </div>
+          <div class="col-span-2">
+            <label
+              for="grading-scale-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="grading-scale-description"
+              rows="2"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Status</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ gradingScale()?.status }}
+            </p>
+            <p class="text-theme-text-secondary mt-0.5 text-xs">
+              The API doesn’t accept status changes for grading scales.
+            </p>
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Created</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ gradingScale()?.createdAt | date: 'mediumDate' }}
+            </p>
+          </div>
+        </div>
+
+        @if (formError(); as error) {
+          <p
+            class="border-error/40 bg-error/10 text-error mt-5 flex items-start gap-2 rounded-lg border px-3 py-2 text-sm"
+            role="alert"
+          >
+            <i
+              class="fi fi-rr-exclamation mt-0.5 text-xs"
+              aria-hidden="true"
+            ></i>
+            <span>{{ error }}</span>
+          </p>
+        }
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving() || !!formError()"
+            (click)="saveGradingScale()"
+          >
+            {{ saving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

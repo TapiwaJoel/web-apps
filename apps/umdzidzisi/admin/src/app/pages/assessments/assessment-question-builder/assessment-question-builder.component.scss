@@ -1,0 +1,9 @@
+@use 'sass:math';
+
+// Width classes for the marks-allocated meter (`marksPercent` is a whole
+// number 0–100), so the template binds a class instead of an inline style.
+@for $percent from 0 through 100 {
+  .marks-fill-#{$percent} {
+    width: math.percentage(math.div($percent, 100));
+  }
+}

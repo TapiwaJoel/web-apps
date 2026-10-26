@@ -1,0 +1,154 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 max-h-[90vh] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border p-8 shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-topic-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="mb-6 flex items-center justify-between">
+    <h2 id="create-topic-title" class="text-theme-text text-xl font-semibold">
+      New topic
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-y-5">
+    <div>
+      <label
+        for="topic-subject"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Subject</label
+      >
+      <select
+        id="topic-subject"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().subjectId"
+        (ngModelChange)="updateForm('subjectId', $event)"
+      >
+        <option value="" disabled>Select a subject</option>
+        @for (subject of subjects(); track subject._id) {
+          <option [value]="subject._id">
+            {{ subject.name }} ({{ subject.code }})
+          </option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label
+        for="topic-grade"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Grade</label
+      >
+      <select
+        id="topic-grade"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm disabled:opacity-50"
+        [disabled]="!form().subjectId"
+        [ngModel]="form().gradeId"
+        (ngModelChange)="updateForm('gradeId', $event)"
+      >
+        <option value="" disabled>
+          {{ form().subjectId ? 'Select a grade' : 'Choose a subject first' }}
+        </option>
+        @for (grade of availableGrades(); track grade._id) {
+          <option [value]="grade._id">{{ grade.name }}</option>
+        }
+      </select>
+      @if (form().subjectId && availableGrades().length === 0) {
+        <p class="text-theme-text-secondary mt-1.5 text-xs">
+          This subject's level has no grades yet. Add grades to the level first.
+        </p>
+      } @else {
+        <p class="text-theme-text-secondary mt-1.5 text-xs">
+          Only grades at the subject's educational level are listed.
+        </p>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_7rem]">
+      <div>
+        <label
+          for="topic-name"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Name</label
+        >
+        <input
+          id="topic-name"
+          type="text"
+          placeholder="e.g. Quadratic equations"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().name"
+          (ngModelChange)="updateForm('name', $event)"
+        />
+      </div>
+      <div>
+        <label
+          for="topic-order"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Order</label
+        >
+        <input
+          id="topic-order"
+          type="number"
+          min="1"
+          step="1"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm tabular-nums"
+          [ngModel]="form().order"
+          (ngModelChange)="updateForm('order', $event)"
+        />
+      </div>
+    </div>
+
+    @if (orderTaken()) {
+      <p
+        class="bg-warning-light text-warning -mt-2 flex items-start gap-2 rounded-lg px-3 py-2 text-xs"
+        role="status"
+      >
+        <i class="fi fi-rr-triangle-warning mt-0.5" aria-hidden="true"></i>
+        Another topic in this subject and grade already uses order
+        {{ form().order }}. Orders must be unique, so the server will reject
+        this.
+      </p>
+    }
+
+    <p class="text-theme-text-secondary text-xs">
+      New topics start as a draft. Publish them from the topic's details.
+    </p>
+  </div>
+
+  <div class="mt-8 flex items-center justify-end gap-3">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create topic' }}
+    </button>
+  </div>
+</div>

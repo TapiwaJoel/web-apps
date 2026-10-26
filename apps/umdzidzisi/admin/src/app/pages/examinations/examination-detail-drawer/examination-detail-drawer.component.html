@@ -1,0 +1,181 @@
+<div
+  class="bg-umdzidzisi-900/50 fixed inset-0 z-40"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="examination-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="examination-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ examination()?.name ?? 'Examination' }}
+      </h2>
+      @if (examination(); as exam) {
+        <org-status-pill [label]="exam.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (examinationsLoading() && !examination()) {
+      <p class="text-theme-text-secondary text-sm">Loading examination…</p>
+    } @else if (!examination()) {
+      <p class="text-error text-sm">Examination not found.</p>
+    } @else {
+      <a
+        class="border-theme-border bg-theme-surface text-theme-text hover:border-theme-primary mb-6 flex items-center justify-between rounded-lg border px-4 py-3 text-sm font-medium no-underline transition-colors"
+        [routerLink]="['../../grading-systems']"
+        [queryParams]="{ examinationId: examinationId() }"
+      >
+        <span class="flex items-center gap-2.5">
+          <i
+            class="fi fi-rr-diploma text-theme-text-secondary"
+            aria-hidden="true"
+          ></i>
+          Grading systems for this examination
+        </span>
+        <span class="text-theme-primary">View grading systems →</span>
+      </a>
+
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="examination-board"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Examination Board</label
+            >
+            <select
+              id="examination-board"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().examinationBoardId"
+              (ngModelChange)="updateForm('examinationBoardId', $event)"
+            >
+              @for (board of examinationBoards(); track board._id) {
+                <option [value]="board._id">{{ board.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label
+              for="examination-level"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Educational Level</label
+            >
+            <select
+              id="examination-level"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().educationalLevelId"
+              (ngModelChange)="updateForm('educationalLevelId', $event)"
+            >
+              <option value="" disabled>Select an educational level</option>
+              @for (level of availableEducationalLevels(); track level._id) {
+                <option [value]="level._id">{{ level.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label
+              for="examination-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name</label
+            >
+            <input
+              id="examination-name"
+              type="text"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+          </div>
+          <div>
+            <label
+              for="examination-qualification"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Qualification</label
+            >
+            <input
+              id="examination-qualification"
+              type="text"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().qualification"
+              (ngModelChange)="updateForm('qualification', $event)"
+            />
+          </div>
+          <div>
+            <label
+              for="examination-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="examination-description"
+              rows="3"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+          <div>
+            <label
+              for="examination-status"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Status</label
+            >
+            <select
+              id="examination-status"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().status"
+              (ngModelChange)="updateForm('status', $event)"
+            >
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Created</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ examination()?.createdAt | date: 'mediumDate' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving() || !isValid()"
+            (click)="saveExamination()"
+          >
+            {{ saving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

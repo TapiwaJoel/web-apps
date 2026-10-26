@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -6,12 +6,14 @@ import {
   CreateSubscriptionDto,
   GetSubscriptionsQueryDto,
   SubscriptionResponseDto,
+  SubscriptionsListResponseDto,
 } from '../dtos';
 import {
   API_BASE_URL,
+  HeaderPaginationParams,
   LEARNING_MANAGEMENT_PATH,
-  PaginateResult,
   ServiceResponse,
+  buildPaginationHeaders,
   buildUrl,
   mapHttpError,
 } from '../../common';
@@ -36,9 +38,14 @@ export class SubscriptionsService {
       );
   }
 
+  /**
+   * `GET /subscriptions`. Filters go in the query string; pagination and
+   * sorting go in X-Page / X-Limit / X-Sort-By / X-Sort-Order headers.
+   */
   public list(
     query: GetSubscriptionsQueryDto = {},
-  ): Observable<PaginateResult<SubscriptionResponseDto>> {
+    page: HeaderPaginationParams = {},
+  ): Observable<SubscriptionsListResponseDto> {
     let params: HttpParams = new HttpParams();
     (Object.entries(query) as [string, unknown][]).forEach(
       ([key, value]: [string, unknown]): void => {
@@ -47,18 +54,17 @@ export class SubscriptionsService {
         }
       },
     );
+    const headers: HttpHeaders = buildPaginationHeaders(page);
     return this.http
-      .get<ServiceResponse<PaginateResult<SubscriptionResponseDto>>>(
-        this.url(),
-        {
-          params,
-        },
-      )
+      .get<ServiceResponse<SubscriptionsListResponseDto>>(this.url(), {
+        headers,
+        params,
+      })
       .pipe(
         map(
           (
-            r: ServiceResponse<PaginateResult<SubscriptionResponseDto>>,
-          ): PaginateResult<SubscriptionResponseDto> => r.data,
+            r: ServiceResponse<SubscriptionsListResponseDto>,
+          ): SubscriptionsListResponseDto => r.data,
         ),
         catchError(mapHttpError),
       );

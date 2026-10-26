@@ -1,0 +1,220 @@
+<div
+  class="flex items-start gap-4"
+  role="group"
+  [attr.aria-labelledby]="pickerId + '-label'"
+  [attr.aria-busy]="uploading()"
+>
+  <span [id]="pickerId + '-label'" class="sr-only">Image</span>
+
+  <div
+    class="bg-theme-surface border-theme-border relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border"
+  >
+    @if (uploading()) {
+      <div
+        class="flex flex-col items-center gap-1"
+        role="status"
+        aria-live="polite"
+      >
+        <i
+          class="fi fi-rr-spinner text-umdzidzisi-500 animate-spin text-xl"
+          aria-hidden="true"
+        ></i>
+        <span class="text-theme-text-secondary text-xs">Uploading…</span>
+      </div>
+    } @else if (previewUrl() && !previewFailed()) {
+      <img
+        [src]="previewUrl()"
+        [alt]="selectedName() ?? 'Selected image'"
+        class="h-full w-full object-cover"
+        (error)="onPreviewError()"
+      />
+    } @else if (previewUrl()) {
+      <div class="flex flex-col items-center gap-1 px-2 text-center">
+        <i class="fi fi-rr-picture text-error text-xl" aria-hidden="true"></i>
+        <span class="text-theme-text-secondary text-xs"
+          >Preview unavailable</span
+        >
+      </div>
+    } @else {
+      <div class="flex flex-col items-center gap-1">
+        <i
+          class="fi fi-rr-picture text-theme-text-secondary text-2xl"
+          aria-hidden="true"
+        ></i>
+        <span class="text-theme-text-secondary text-xs">No image</span>
+      </div>
+    }
+  </div>
+
+  <div class="flex min-w-0 flex-col gap-2">
+    @if (value()) {
+      <p
+        class="text-theme-text truncate text-sm font-medium"
+        [title]="selectedName() ?? value()"
+      >
+        {{ selectedName() ?? value() }}
+      </p>
+    } @else {
+      <p class="text-theme-text-secondary text-sm">No image selected</p>
+    }
+
+    <div class="flex flex-wrap gap-2">
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        class="hidden"
+        tabindex="-1"
+        aria-hidden="true"
+        (change)="onFileSelected($event)"
+      />
+      <button
+        type="button"
+        class="bg-umdzidzisi-600 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        [disabled]="disabled() || uploading()"
+        (click)="openFileDialog()"
+      >
+        <i class="fi fi-rr-upload text-xs" aria-hidden="true"></i>
+        {{ uploading() ? 'Uploading…' : 'Upload image' }}
+      </button>
+      <button
+        type="button"
+        class="border-theme-border text-theme-text hover:bg-theme-surface inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium disabled:cursor-not-allowed disabled:opacity-50"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="panelOpen()"
+        [attr.aria-controls]="panelOpen() ? pickerId + '-panel' : null"
+        [disabled]="disabled() || uploading()"
+        cdkOverlayOrigin
+        #panelTrigger="cdkOverlayOrigin"
+        (click)="togglePanel()"
+      >
+        <i class="fi fi-rr-apps text-xs" aria-hidden="true"></i>
+        Choose existing
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="panelTrigger"
+  [cdkConnectedOverlayOpen]="panelOpen()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPositions]="[
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetY: -8,
+    },
+  ]"
+  (backdropClick)="closePanel()"
+  (detach)="closePanel()"
+>
+  <div
+    [id]="pickerId + '-panel'"
+    class="bg-theme-surface border-theme-border w-96 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border shadow-md"
+    role="dialog"
+    aria-label="Choose an existing image"
+  >
+    <div class="border-theme-border border-b p-3">
+      <label
+        [for]="pickerId + '-search'"
+        class="text-theme-text-secondary mb-1 block text-xs font-medium"
+        >Search images</label
+      >
+      <input
+        #searchInput
+        [id]="pickerId + '-search'"
+        type="search"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="true"
+        [attr.aria-controls]="pickerId + '-grid'"
+        [attr.aria-activedescendant]="
+          activeIndex() >= 0 ? optionId(activeIndex()) : null
+        "
+        placeholder="Search by name…"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchChange($event)"
+        (keydown)="onSearchKeydown($event)"
+      />
+    </div>
+
+    <div class="max-h-80 overflow-y-auto p-3">
+      @if (resourcesLoading() && images().length === 0) {
+        <p
+          class="text-theme-text-secondary py-6 text-center text-sm"
+          role="status"
+        >
+          Loading images…
+        </p>
+      } @else if (resourcesError() && images().length === 0) {
+        <p class="text-error py-6 text-center text-sm" role="alert">
+          {{ resourcesError() }}
+        </p>
+      } @else if (images().length === 0) {
+        <p
+          class="text-theme-text-secondary py-6 text-center text-sm"
+          role="status"
+        >
+          {{ searchTerm() ? 'No images match your search.' : 'No images yet.' }}
+        </p>
+      } @else {
+        <ul
+          [id]="pickerId + '-grid'"
+          role="listbox"
+          aria-label="Images"
+          class="grid grid-cols-3 gap-2"
+        >
+          @for (image of images(); track image._id; let i = $index) {
+            <li
+              [id]="optionId(i)"
+              role="option"
+              tabindex="-1"
+              [attr.aria-selected]="image._id === value()"
+              class="group cursor-pointer overflow-hidden rounded-lg border-2 transition-colors"
+              [class.border-umdzidzisi-500]="
+                i === activeIndex() || image._id === value()
+              "
+              [class.border-transparent]="
+                i !== activeIndex() && image._id !== value()
+              "
+              (mousedown)="$event.preventDefault()"
+              (click)="choose(image)"
+              (keydown.enter)="$event.preventDefault(); choose(image)"
+              (keydown.space)="$event.preventDefault(); choose(image)"
+              (mouseenter)="activeIndex.set(i)"
+            >
+              <div class="bg-theme-background aspect-square w-full">
+                <img
+                  [src]="thumbnailUrl(image._id)"
+                  [alt]="image.name"
+                  loading="lazy"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+              <p
+                class="text-theme-text truncate px-1.5 py-1 text-xs"
+                [title]="image.name"
+              >
+                {{ image.name }}
+              </p>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+</ng-template>

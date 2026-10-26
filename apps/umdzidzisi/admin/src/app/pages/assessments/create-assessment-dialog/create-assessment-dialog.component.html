@@ -1,0 +1,68 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl border shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-assessment-dialog-heading"
+  (keydown.escape)="onCancel()"
+>
+  <div class="flex items-start justify-between px-8 pt-8 pb-6">
+    <div>
+      <h2
+        id="create-assessment-dialog-heading"
+        class="text-theme-text text-xl font-semibold"
+      >
+        New Assessment
+      </h2>
+      <p class="text-theme-text-secondary mt-1 text-sm">
+        You'll add questions from the assessment's detail panel once it's
+        created.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="overflow-y-auto px-8">
+    <org-assessment-fields
+      idPrefix="create-assessment"
+      [form]="form()"
+      [options]="options()"
+      (fieldChange)="updateForm($event)"
+    />
+  </div>
+
+  <div class="flex items-center justify-end gap-3 px-8 pt-6 pb-8">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create Assessment' }}
+    </button>
+  </div>
+</div>

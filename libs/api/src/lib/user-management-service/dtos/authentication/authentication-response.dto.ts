@@ -1,8 +1,8 @@
 import { AuthenticationSettingsResponseDto } from './authentication-settings-response.dto';
 import { TokenInfoDto } from './token-info.dto';
-import { UserResponseDto } from '../users/user-response.dto';
-import { SystemUserResponseDto } from '../system-users/system-user-response.dto';
-import { DeviceResponseDto } from '../devices/device-response.dto';
+import { UserResponseDto } from '../users';
+import { SystemUserResponseDto } from '../system-users';
+import { DeviceResponseDto } from '../devices';
 
 export interface AuthenticationResponseDto {
   _id: string;

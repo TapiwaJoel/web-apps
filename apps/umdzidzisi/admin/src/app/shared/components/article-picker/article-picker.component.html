@@ -1,0 +1,141 @@
+<label [for]="pickerId + '-input'" class="sr-only">{{ label() }}</label>
+<div
+  data-combobox-field
+  class="border-theme-border bg-theme-background focus-within:border-umdzidzisi-500 relative flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5"
+  [class.opacity-50]="disabled()"
+  cdkOverlayOrigin
+  #fieldOrigin="cdkOverlayOrigin"
+>
+  <i
+    class="fi fi-rr-search text-theme-text-secondary text-xs"
+    aria-hidden="true"
+  ></i>
+  <input
+    [id]="pickerId + '-input'"
+    type="text"
+    role="combobox"
+    autocomplete="off"
+    aria-autocomplete="list"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="open()"
+    [attr.aria-controls]="open() ? pickerId + '-listbox' : null"
+    [attr.aria-activedescendant]="
+      open() && activeIndex() >= 0 ? optionId(activeIndex()) : null
+    "
+    [attr.aria-describedby]="selected() ? pickerId + '-status' : null"
+    placeholder="Search articles by title…"
+    class="text-theme-text min-w-0 flex-1 bg-transparent text-sm outline-none disabled:cursor-not-allowed"
+    [disabled]="disabled()"
+    [ngModel]="displayText()"
+    (ngModelChange)="onQueryChange($event)"
+    (click)="openPanel()"
+    (keydown)="onKeydown($event)"
+  />
+  @if (!open() && selected(); as article) {
+    <span [id]="pickerId + '-status'" class="shrink-0">
+      <org-status-pill
+        [label]="article.status"
+        [tone]="ARTICLE_STATUS_TONES[article.status]"
+      />
+    </span>
+  }
+  <button
+    type="button"
+    tabindex="-1"
+    class="text-theme-text-secondary hover:text-theme-text shrink-0 disabled:cursor-not-allowed"
+    aria-hidden="true"
+    [disabled]="disabled()"
+    (click)="open() ? closePanel() : openPanel()"
+  >
+    <i
+      class="fi text-xs"
+      [class.fi-rr-angle-small-down]="!open()"
+      [class.fi-rr-angle-small-up]="open()"
+    ></i>
+  </button>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="fieldOrigin"
+  [cdkConnectedOverlayOpen]="open()"
+  [cdkConnectedOverlayWidth]="panelWidth() || 320"
+  [cdkConnectedOverlayPositions]="[
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 4,
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetY: -4,
+    },
+  ]"
+  (overlayOutsideClick)="onOutsideClick($event)"
+  (detach)="closePanel()"
+>
+  <div
+    class="bg-theme-surface border-theme-border max-h-72 min-w-64 overflow-y-auto rounded-lg border py-1 shadow-md"
+  >
+    @if (articlesLoading() && results().length === 0) {
+      <p class="text-theme-text-secondary px-3 py-4 text-sm" role="status">
+        Loading articles…
+      </p>
+    } @else if (articlesError() && results().length === 0) {
+      <p class="text-error px-3 py-4 text-sm" role="alert">
+        {{ articlesError() }}
+      </p>
+    } @else if (results().length === 0) {
+      <p class="text-theme-text-secondary px-3 py-4 text-sm" role="status">
+        {{ query() ? 'No articles match your search.' : 'No articles yet.' }}
+      </p>
+    }
+    <ul [id]="pickerId + '-listbox'" role="listbox" [attr.aria-label]="label()">
+      @for (article of results(); track article.id; let i = $index) {
+        <li
+          [id]="optionId(i)"
+          role="option"
+          tabindex="-1"
+          [attr.aria-selected]="article.id === value()"
+          class="flex cursor-pointer items-center justify-between gap-3 px-3 py-2 text-sm"
+          [class.bg-umdzidzisi-500/15]="i === activeIndex()"
+          (mousedown)="$event.preventDefault()"
+          (click)="choose(article)"
+          (keydown.enter)="$event.preventDefault(); choose(article)"
+          (keydown.space)="$event.preventDefault(); choose(article)"
+          (mouseenter)="activeIndex.set(i)"
+        >
+          <span class="min-w-0">
+            <span
+              class="text-theme-text block truncate"
+              [class.font-semibold]="article.id === value()"
+              >{{ article.title }}</span
+            >
+            @if (article.subtitle) {
+              <span class="text-theme-text-secondary block truncate text-xs">{{
+                article.subtitle
+              }}</span>
+            }
+          </span>
+          <span class="flex shrink-0 items-center gap-2">
+            <org-status-pill
+              [label]="article.status"
+              [tone]="ARTICLE_STATUS_TONES[article.status]"
+            />
+            @if (article.id === value()) {
+              <i
+                class="fi fi-rr-check text-umdzidzisi-500 text-xs"
+                aria-hidden="true"
+              ></i>
+            }
+          </span>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>

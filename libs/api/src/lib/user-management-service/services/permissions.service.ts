@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import {
 } from '../dtos';
 import {
   API_BASE_URL,
+  buildPaginationHeaders,
   PaginateResult,
   ServiceResponse,
   USER_MANAGEMENT_PATH,
@@ -48,9 +49,23 @@ export class PermissionsService {
       );
   }
 
-  public list(): Observable<PaginateResult<PermissionResponseDto>> {
+  public list(
+    query: { serviceName?: string; page?: number } = {},
+  ): Observable<PaginateResult<PermissionResponseDto>> {
+    const { page, ...rest }: { serviceName?: string; page?: number } = query;
+    let params: HttpParams = new HttpParams();
+    (Object.entries(rest) as [string, unknown][]).forEach(
+      ([key, value]: [string, unknown]): void => {
+        if (value !== undefined && value !== null && value !== '') {
+          params = params.set(key, String(value));
+        }
+      },
+    );
     return this.http
-      .get<ServiceResponse<PaginateResult<PermissionResponseDto>>>(this.url())
+      .get<ServiceResponse<PaginateResult<PermissionResponseDto>>>(this.url(), {
+        params,
+        headers: buildPaginationHeaders({ limit: 100, page }),
+      })
       .pipe(
         map(
           (

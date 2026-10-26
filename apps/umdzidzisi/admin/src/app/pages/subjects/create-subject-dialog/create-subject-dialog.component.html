@@ -1,0 +1,186 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 max-h-[90vh] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border p-8 shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-subject-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="mb-6 flex items-center justify-between">
+    <h2 id="create-subject-title" class="text-theme-text text-xl font-semibold">
+      New subject
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-y-5">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label
+          for="subject-board"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Examination board</label
+        >
+        <select
+          id="subject-board"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().examinationBoardId"
+          (ngModelChange)="updateForm('examinationBoardId', $event)"
+        >
+          <option value="" disabled>Select a board</option>
+          @for (board of examinationBoards(); track board._id) {
+            <option [value]="board._id">{{ board.name }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label
+          for="subject-level"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Educational level</label
+        >
+        <select
+          id="subject-level"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm disabled:opacity-50"
+          [disabled]="!form().examinationBoardId"
+          [ngModel]="form().educationalLevelId"
+          (ngModelChange)="updateForm('educationalLevelId', $event)"
+        >
+          <option value="" disabled>
+            {{
+              form().examinationBoardId
+                ? 'Select a level'
+                : 'Choose a board first'
+            }}
+          </option>
+          @for (level of availableLevels(); track level._id) {
+            <option [value]="level._id">{{ level.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem]">
+      <div>
+        <label
+          for="subject-name"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Name</label
+        >
+        <input
+          id="subject-name"
+          type="text"
+          placeholder="e.g. Mathematics"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+          [ngModel]="form().name"
+          (ngModelChange)="updateForm('name', $event)"
+        />
+      </div>
+      <div>
+        <label
+          for="subject-code"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Code</label
+        >
+        <input
+          id="subject-code"
+          type="text"
+          placeholder="e.g. 4004"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 font-mono text-sm"
+          [ngModel]="form().code"
+          (ngModelChange)="updateForm('code', $event)"
+        />
+      </div>
+    </div>
+    <p class="text-theme-text-secondary -mt-3 text-xs">
+      Name and code must be unique within the chosen board and level.
+    </p>
+
+    <div>
+      <label
+        for="subject-type"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Subject type</label
+      >
+      <select
+        id="subject-type"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().subjectType"
+        (ngModelChange)="updateForm('subjectType', $event)"
+      >
+        <option value="" disabled>Select a type</option>
+        @for (option of subjectTypeOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label
+        for="subject-description"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Description
+        <span class="text-theme-text-secondary font-normal"
+          >(optional)</span
+        ></label
+      >
+      <textarea
+        id="subject-description"
+        rows="3"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().description"
+        (ngModelChange)="updateForm('description', $event)"
+      ></textarea>
+    </div>
+
+    <div>
+      <span class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Cover image</span
+      >
+      <org-cms-image-picker
+        [value]="form().image || null"
+        [disabled]="creating()"
+        (valueChange)="updateForm('image', $event)"
+      />
+    </div>
+
+    <p class="text-theme-text-secondary text-xs">
+      New subjects start as a draft. Publish them from the subject's details.
+    </p>
+  </div>
+
+  <div class="mt-8 flex items-center justify-end gap-3">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create subject' }}
+    </button>
+  </div>
+</div>

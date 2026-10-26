@@ -1,0 +1,157 @@
+<div
+  class="bg-umdzidzisi-900/50 fixed inset-0 z-40"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="grading-system-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="grading-system-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ gradingSystem()?.name ?? 'Grading System' }}
+      </h2>
+      @if (gradingSystem(); as system) {
+        <org-status-pill [label]="system.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (gradingSystemsLoading() && !gradingSystem()) {
+      <p class="text-theme-text-secondary text-sm">Loading grading system…</p>
+    } @else if (!gradingSystem()) {
+      <p class="text-error text-sm">Grading system not found.</p>
+    } @else {
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="mb-3 flex items-center justify-between">
+          <span class="text-theme-text text-sm font-semibold">Score bands</span>
+          <a
+            class="text-theme-primary hover:text-theme-text text-xs font-medium no-underline"
+            [routerLink]="['../../grading-scales']"
+            [queryParams]="{ gradingSystemId: gradingSystemId() }"
+            >Manage scales →</a
+          >
+        </div>
+        @if (gradingScalesLoading() && scales().length === 0) {
+          <p class="text-theme-text-secondary text-sm">Loading scales…</p>
+        } @else if (scales().length === 0) {
+          <p class="text-theme-text-secondary text-sm">
+            No scales yet. Use Manage scales to add bands such as A* for 90–100.
+          </p>
+        } @else {
+          <org-grading-scale-range-bar [scales]="scales()" />
+        }
+      </div>
+
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="grading-system-examination"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Examination</label
+            >
+            <select
+              id="grading-system-examination"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().examinationId"
+              (ngModelChange)="updateForm('examinationId', $event)"
+            >
+              @for (examination of examinations(); track examination._id) {
+                <option [value]="examination._id">
+                  {{ examination.name }}
+                </option>
+              }
+            </select>
+          </div>
+          <div>
+            <label
+              for="grading-system-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name</label
+            >
+            <input
+              id="grading-system-name"
+              type="text"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+          </div>
+          <div>
+            <label
+              for="grading-system-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="grading-system-description"
+              rows="3"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+          <div>
+            <label
+              for="grading-system-status"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Status</label
+            >
+            <select
+              id="grading-system-status"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().status"
+              (ngModelChange)="updateForm('status', $event)"
+            >
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Created</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ gradingSystem()?.createdAt | date: 'mediumDate' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving() || !isValid()"
+            (click)="saveGradingSystem()"
+          >
+            {{ saving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,173 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="user-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="user-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ user()?.name ?? 'User' }}
+      </h2>
+      @if (user(); as u) {
+        <org-status-pill [label]="u.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (usersLoading() && !user()) {
+      <p class="text-theme-text-secondary text-sm">Loading user…</p>
+    } @else if (!user()) {
+      <p class="text-error text-sm">User not found.</p>
+    } @else {
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="user-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name</label
+            >
+            <input
+              id="user-name"
+              type="text"
+              class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Email Address</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ formValue().emailAddress }}
+            </p>
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Phone Number</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ formValue().phoneNumber }}
+            </p>
+          </div>
+          <div>
+            <label
+              for="user-role"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Role</label
+            >
+            <select
+              id="user-role"
+              class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().role"
+              (ngModelChange)="updateForm('role', $event)"
+            >
+              <option value="" disabled>Select a role</option>
+              @for (role of roles(); track role._id) {
+                <option [value]="role._id">{{ role.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Created</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ user()?.createdAt | date: 'mediumDate' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between">
+          @if (user()?.status === UserStatus.DELETED) {
+            <button
+              type="button"
+              class="border-theme-border text-theme-text hover:bg-theme-background cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+              [disabled]="deleting()"
+              (click)="restore()"
+            >
+              {{ deleting() ? 'Restoring…' : 'Restore User' }}
+            </button>
+          } @else if (confirmingDrawerDelete()) {
+            <div class="flex items-center gap-2">
+              <span class="text-theme-text-secondary text-xs"
+                >Delete this user?</span
+              >
+              <button
+                type="button"
+                class="bg-error cursor-pointer rounded-md px-2.5 py-1.5 text-xs font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                [disabled]="deleting()"
+                (click)="deleteFromDrawer()"
+              >
+                {{ deleting() ? 'Deleting…' : 'Confirm' }}
+              </button>
+              <button
+                type="button"
+                class="border-theme-border text-theme-text hover:bg-theme-surface cursor-pointer rounded-md border px-2.5 py-1.5 text-xs font-medium"
+                [disabled]="deleting()"
+                (click)="cancelDrawerDelete()"
+              >
+                Cancel
+              </button>
+            </div>
+          } @else {
+            <button
+              type="button"
+              class="text-error hover:bg-error-light cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium"
+              (click)="confirmDrawerDelete()"
+            >
+              Delete User
+            </button>
+          }
+
+          <button
+            type="button"
+            class="bg-theme-primary cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving()"
+            (click)="saveUser()"
+          >
+            {{ saving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-theme-surface rounded-lg p-5">
+        <h3 class="text-theme-text mb-4 text-base font-semibold">Activity</h3>
+
+        @if (auditTrailStore.auditTrailLoading()) {
+          <p class="text-theme-text-secondary text-sm">Loading activity…</p>
+        } @else if (auditTrailStore.auditTrailError(); as error) {
+          <p class="text-error text-sm">{{ error }}</p>
+        } @else {
+          <org-user-audit-trail-list [entries]="userAuditTrail()" />
+        }
+      </div>
+    }
+  </div>
+</div>

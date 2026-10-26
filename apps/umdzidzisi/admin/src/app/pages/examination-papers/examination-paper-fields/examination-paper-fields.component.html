@@ -1,0 +1,146 @@
+<div class="grid grid-cols-1 gap-y-5">
+  <div>
+    <label
+      [for]="idPrefix() + '-subject'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Subject <span class="text-error">*</span></label
+    >
+    <select
+      [id]="idPrefix() + '-subject'"
+      class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+      [ngModel]="form().subjectId"
+      (ngModelChange)="update('subjectId', $event)"
+    >
+      <option value="" disabled>Select a subject</option>
+      @for (option of subjectOptions(); track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+
+  <div>
+    <label
+      [for]="idPrefix() + '-name'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Name <span class="text-error">*</span></label
+    >
+    <input
+      [id]="idPrefix() + '-name'"
+      type="text"
+      placeholder="e.g. Paper 1"
+      class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+      [attr.maxlength]="limits.name"
+      [ngModel]="form().name"
+      (ngModelChange)="update('name', $event)"
+    />
+  </div>
+
+  <div>
+    <label
+      [for]="idPrefix() + '-description'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Description <span class="text-error">*</span></label
+    >
+    <textarea
+      [id]="idPrefix() + '-description'"
+      rows="3"
+      placeholder="What this paper covers and how it is sat"
+      class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+      [attr.maxlength]="limits.description"
+      [ngModel]="form().description"
+      (ngModelChange)="update('description', $event)"
+    ></textarea>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+      <label
+        [for]="idPrefix() + '-type'"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Type <span class="text-error">*</span></label
+      >
+      <select
+        [id]="idPrefix() + '-type'"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().type"
+        (ngModelChange)="update('type', $event)"
+      >
+        <option value="" disabled>Select a type</option>
+        @for (option of typeOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label
+        [for]="idPrefix() + '-status'"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Status</label
+      >
+      <select
+        [id]="idPrefix() + '-status'"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().status"
+        (ngModelChange)="update('status', $event)"
+      >
+        @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div>
+      <label
+        [for]="idPrefix() + '-questions'"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Questions <span class="text-error">*</span></label
+      >
+      <input
+        [id]="idPrefix() + '-questions'"
+        type="number"
+        min="1"
+        step="1"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().numberOfQuestions"
+        (ngModelChange)="update('numberOfQuestions', $event)"
+      />
+    </div>
+    <div>
+      <label
+        [for]="idPrefix() + '-duration'"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Duration (min) <span class="text-error">*</span></label
+      >
+      <input
+        [id]="idPrefix() + '-duration'"
+        type="number"
+        min="1"
+        step="1"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().duration"
+        (ngModelChange)="update('duration', $event)"
+      />
+    </div>
+    <div>
+      <label
+        [for]="idPrefix() + '-marks'"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Marks <span class="text-error">*</span></label
+      >
+      <input
+        [id]="idPrefix() + '-marks'"
+        type="number"
+        min="1"
+        step="1"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().marks"
+        (ngModelChange)="update('marks', $event)"
+      />
+    </div>
+  </div>
+  <p class="text-theme-text-secondary -mt-3 text-xs">
+    Question count, duration and marks must each be greater than 0.
+  </p>
+</div>

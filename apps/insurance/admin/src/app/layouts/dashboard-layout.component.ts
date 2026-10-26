@@ -18,6 +18,7 @@ import { DashboardTopbarComponent } from './topbar/dashboard-topbar.component';
   imports: [SidebarLayoutComponent, RouterOutlet, DashboardTopbarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard-layout.component.html',
+  styleUrl: './dashboard-layout.component.scss',
 })
 export class DashboardLayoutComponent {
   private readonly router: Router = inject(Router);
@@ -29,19 +30,19 @@ export class DashboardLayoutComponent {
   public navConfig: TreeNavNode[] = INSURANCE_ADMIN_NAV_CONFIG;
 
   protected readonly currentUserName: Signal<string> = computed(
-    () => this.session.user()?.name ?? 'Admin',
+    () => this.session.systemUser()?.name ?? 'Admin',
   );
   protected readonly currentUserFirstName: Signal<string> = computed(
-    () => this.session.user()?.name?.split(' ')[0] ?? 'there',
+    () => this.session.systemUser()?.name?.split(' ')[0] ?? 'there',
   );
   protected readonly currentUserEmail: Signal<string> = computed(
-    () => this.session.user()?.emailAddress ?? '',
+    () => this.session.systemUser()?.emailAddress ?? '',
   );
   protected readonly currentUserRole: Signal<string> = computed(
-    () => this.session.user()?.role ?? '',
+    () => this.session.systemUser()?.role ?? '',
   );
   protected readonly currentUserPhone: Signal<string> = computed(
-    () => this.session.user()?.phoneNumber ?? '',
+    () => this.session.systemUser()?.phoneNumber ?? '',
   );
 
   public logout(): void {

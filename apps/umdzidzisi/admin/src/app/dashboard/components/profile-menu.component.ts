@@ -28,8 +28,8 @@ import { RouterModule } from '@angular/router';
 })
 export class ProfileMenuComponent {
   public readonly userName: InputSignal<string> = input('Admin');
-  public readonly email: InputSignal<string> = input('admin@umdzidzisi.co.zw');
-  public readonly role: InputSignal<string> = input('Administrator');
+  public readonly email: InputSignal<string> = input('');
+  public readonly role: InputSignal<string> = input('');
 
   /** Emitted when the user chooses Logout. */
   public readonly logout: OutputEmitterRef<void> = output<void>();
@@ -42,6 +42,7 @@ export class ProfileMenuComponent {
   protected readonly initials: Signal<string> = computed<string>(() =>
     this.userName()
       .split(' ')
+      .filter(Boolean)
       .map((word: string) => word[0])
       .join('')
       .slice(0, 2)

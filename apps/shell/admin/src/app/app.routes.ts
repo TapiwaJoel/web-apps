@@ -80,6 +80,13 @@ export const appRoutes: Routes = [
       ),
   },
   {
+    path: 'activate-account',
+    loadComponent: () =>
+      import('./activate-account/activate-account.component').then(
+        (m) => m.ActivateAccountComponent,
+      ),
+  },
+  {
     path: 'app-selector',
     canActivate: [requiredAuthGuard],
     loadComponent: () =>

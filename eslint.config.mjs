@@ -64,7 +64,9 @@ export default [
             },
             {
               sourceTag: 'type:ui',
-              onlyDependOnLibsWithTags: ['type:util'],
+              // `type:feature` = @mushaviri/api: shared admin pages (users,
+              // roles, profile) inject its signal stores directly.
+              onlyDependOnLibsWithTags: ['type:util', 'type:feature'],
             },
             {
               sourceTag: 'type:data-access',

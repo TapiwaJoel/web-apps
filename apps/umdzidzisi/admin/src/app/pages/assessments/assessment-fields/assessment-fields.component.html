@@ -1,0 +1,155 @@
+<div class="grid grid-cols-1 gap-y-5">
+  <div>
+    <label
+      [for]="idPrefix() + '-paper'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Examination paper <span class="text-error">*</span></label
+    >
+    <select
+      [id]="idPrefix() + '-paper'"
+      class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+      [ngModel]="form().examinationPaperId"
+      (ngModelChange)="update('examinationPaperId', $event)"
+    >
+      <option value="" disabled>Select a paper</option>
+      @for (option of options().papers; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+    <p class="text-theme-text-secondary mt-1.5 text-xs">
+      The subject comes from the paper.
+    </p>
+  </div>
+
+  <div>
+    <label
+      [for]="idPrefix() + '-level'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Educational level <span class="text-error">*</span></label
+    >
+    <input
+      [id]="idPrefix() + '-level'"
+      type="text"
+      placeholder="e.g. O-Level"
+      class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+      [ngModel]="form().educationalLevel"
+      (ngModelChange)="update('educationalLevel', $event)"
+    />
+    <p class="text-theme-text-secondary mt-1.5 text-xs">
+      Filled in from the paper's subject. You can change it.
+    </p>
+  </div>
+
+  <div>
+    <label
+      [for]="idPrefix() + '-title'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Title <span class="text-error">*</span></label
+    >
+    <input
+      [id]="idPrefix() + '-title'"
+      type="text"
+      placeholder="e.g. Algebra revision test"
+      class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+      [attr.maxlength]="limits.title"
+      [ngModel]="form().title"
+      (ngModelChange)="update('title', $event)"
+    />
+  </div>
+
+  <div>
+    <label
+      [for]="idPrefix() + '-description'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Description</label
+    >
+    <textarea
+      [id]="idPrefix() + '-description'"
+      rows="3"
+      class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+      [attr.maxlength]="limits.description"
+      [ngModel]="form().description"
+      (ngModelChange)="update('description', $event)"
+    ></textarea>
+    <p class="text-theme-text-secondary mt-1 text-right text-xs tabular-nums">
+      {{ form().description.length }} / {{ limits.description }}
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+      <label
+        [for]="idPrefix() + '-topic'"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Topic</label
+      >
+      <select
+        [id]="idPrefix() + '-topic'"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm disabled:opacity-50"
+        [disabled]="!form().examinationPaperId"
+        [ngModel]="form().topicId"
+        (ngModelChange)="update('topicId', $event)"
+      >
+        <option value="">
+          {{ form().examinationPaperId ? 'Any topic' : 'Select a paper first' }}
+        </option>
+        @for (option of options().topics; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label
+        [for]="idPrefix() + '-sub-topic'"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Sub-topic</label
+      >
+      <select
+        [id]="idPrefix() + '-sub-topic'"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm disabled:opacity-50"
+        [disabled]="!form().topicId"
+        [ngModel]="form().subTopicId"
+        (ngModelChange)="update('subTopicId', $event)"
+      >
+        <option value="">
+          {{ form().topicId ? 'Any sub-topic' : 'Select a topic first' }}
+        </option>
+        @for (option of options().subTopics; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label
+      [for]="idPrefix() + '-tags'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Topic tags</label
+    >
+    <org-topic-tags-input
+      [inputId]="idPrefix() + '-tags'"
+      [value]="form().topicTags"
+      [max]="limits.topicTags"
+      (valueChange)="update('topicTags', $event)"
+    />
+  </div>
+
+  <div>
+    <label
+      [for]="idPrefix() + '-status'"
+      class="text-theme-text mb-1.5 block text-sm font-medium"
+      >Status</label
+    >
+    <select
+      [id]="idPrefix() + '-status'"
+      class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+      [ngModel]="form().status"
+      (ngModelChange)="update('status', $event)"
+    >
+      @for (option of statusOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+</div>

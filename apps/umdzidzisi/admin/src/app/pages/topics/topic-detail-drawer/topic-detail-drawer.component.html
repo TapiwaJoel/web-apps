@@ -1,0 +1,209 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="topic-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="topic-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ topic()?.name ?? 'Topic' }}
+      </h2>
+      @if (topic(); as t) {
+        <org-status-pill [label]="t.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (topicsLoading() && !topic()) {
+      <p class="text-theme-text-secondary text-sm">Loading topic…</p>
+    } @else if (topic(); as t) {
+      <a
+        class="border-theme-border hover:bg-theme-surface text-theme-text mb-4 flex items-center justify-between rounded-lg border px-4 py-3 text-sm font-medium no-underline transition-colors"
+        [routerLink]="['sub-topics']"
+        [relativeTo]="curriculumRoute"
+        [queryParams]="{ topicId: t._id }"
+      >
+        <span class="flex items-center gap-2.5">
+          <i
+            class="fi fi-rr-list-check text-theme-primary text-sm"
+            aria-hidden="true"
+          ></i>
+          View sub-topics
+        </span>
+        <span class="text-theme-primary" aria-hidden="true">&rarr;</span>
+      </a>
+
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="topic-detail-subject"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Subject</label
+            >
+            <select
+              id="topic-detail-subject"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().subjectId"
+              (ngModelChange)="updateForm('subjectId', $event)"
+            >
+              <option value="" disabled>Select a subject</option>
+              @for (subject of subjects(); track subject._id) {
+                <option [value]="subject._id">
+                  {{ subject.name }} ({{ subject.code }})
+                </option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label
+              for="topic-detail-grade"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Grade</label
+            >
+            <select
+              id="topic-detail-grade"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().gradeId"
+              (ngModelChange)="updateForm('gradeId', $event)"
+            >
+              <option value="" disabled>Select a grade</option>
+              @for (grade of availableGrades(); track grade._id) {
+                <option [value]="grade._id">{{ grade.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_7rem]">
+            <div>
+              <label
+                for="topic-detail-name"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Name</label
+              >
+              <input
+                id="topic-detail-name"
+                type="text"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+                [ngModel]="formValue().name"
+                (ngModelChange)="updateForm('name', $event)"
+              />
+            </div>
+            <div>
+              <label
+                for="topic-detail-order"
+                class="text-theme-text mb-1.5 block text-sm font-medium"
+                >Order</label
+              >
+              <input
+                id="topic-detail-order"
+                type="number"
+                min="1"
+                step="1"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm tabular-nums"
+                [ngModel]="formValue().order"
+                (ngModelChange)="updateForm('order', $event)"
+              />
+            </div>
+          </div>
+
+          @if (orderTaken()) {
+            <p
+              class="bg-warning-light text-warning -mt-2 flex items-start gap-2 rounded-lg px-3 py-2 text-xs"
+              role="status"
+            >
+              <i
+                class="fi fi-rr-triangle-warning mt-0.5"
+                aria-hidden="true"
+              ></i>
+              Another topic in this subject and grade already uses order
+              {{ formValue().order }}.
+            </p>
+          }
+
+          <div>
+            <label
+              for="topic-detail-status"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Status</label
+            >
+            <select
+              id="topic-detail-status"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().status"
+              (ngModelChange)="updateForm('status', $event)"
+            >
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <p class="text-theme-text-secondary mt-1.5 text-xs">
+              Archive a topic to retire it. Topics can't be deleted.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Created</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ t.createdAt | date: 'mediumDate' }}
+              </p>
+            </div>
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Last updated</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ t.updatedAt | date: 'mediumDate' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving() || !isDirty() || !isValid()"
+            (click)="saveTopic()"
+          >
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="text-error text-sm">
+        Topic not found. Check the link, or close this panel to return to the
+        list.
+      </p>
+    }
+  </div>
+</div>

@@ -1,0 +1,112 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border p-8 shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-comprehensive-rate-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="mb-6 flex items-center justify-between">
+    <h2
+      id="create-comprehensive-rate-title"
+      class="text-theme-text text-xl font-semibold"
+    >
+      Create Comprehensive Rate
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-y-5">
+    <div>
+      <label
+        for="comprehensive-rate-vehicle-type"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Vehicle Type</label
+      >
+      <select
+        id="comprehensive-rate-vehicle-type"
+        class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().vehicleType"
+        (ngModelChange)="updateForm('vehicleType', $event)"
+      >
+        <option value="" disabled>Select a vehicle type</option>
+        @for (vehicleType of vehicleTypes(); track vehicleType._id) {
+          <option [value]="vehicleType._id">{{ vehicleType.name }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label
+        for="comprehensive-rate-vehicle-usage"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Vehicle Usage</label
+      >
+      <select
+        id="comprehensive-rate-vehicle-usage"
+        class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().vehicleUsage"
+        (ngModelChange)="updateForm('vehicleUsage', $event)"
+      >
+        <option value="" disabled>Select a vehicle usage</option>
+        @for (usage of availableVehicleUsages(); track usage._id) {
+          <option [value]="usage._id">{{ usage.usages.join(', ') }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label
+        for="comprehensive-rate-rate"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Rate (%)</label
+      >
+      <input
+        id="comprehensive-rate-rate"
+        type="number"
+        min="0"
+        max="100"
+        step="0.0001"
+        class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().rate"
+        (ngModelChange)="updateForm('rate', $event)"
+      />
+      <p class="text-theme-text-secondary mt-1.5 text-xs">
+        Percentage between 0 and 100, up to 4 decimal places.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-8 flex items-center justify-end gap-3">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-insurance-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create Rate' }}
+    </button>
+  </div>
+</div>

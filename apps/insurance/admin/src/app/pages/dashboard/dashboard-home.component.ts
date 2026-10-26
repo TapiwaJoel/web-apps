@@ -3,7 +3,7 @@ import {
   DashboardPageData,
   MOCK_DASHBOARD_DATA,
 } from '../../shared/types/dashboard/dashboard.types';
-import { KpiStatCardComponent } from './components/kpi-stat-card.component';
+import { KpiStatCardComponent } from '@mushaviri/ui';
 import { PremiumGrowthChartComponent } from './components/premium-growth-chart.component';
 import { RecentActivityListComponent } from './components/recent-activity-list.component';
 import { QuickActionsComponent } from './components/quick-actions.component';

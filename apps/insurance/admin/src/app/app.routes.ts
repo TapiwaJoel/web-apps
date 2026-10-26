@@ -1,4 +1,6 @@
 import { Route } from '@angular/router';
+import { INSURANCE_PATH } from '@mushaviri/api';
+import { ADMIN_SERVICE_NAME } from '@mushaviri/util';
 import { DashboardLayoutComponent } from './layouts/dashboard-layout.component';
 import { DashboardHomeComponent } from './pages/dashboard/dashboard-home.component';
 import { DocumentsComponent } from './pages/documents/documents.component';
@@ -15,16 +17,25 @@ import { OpenClaimsComponent } from './pages/claims/open-claims/open-claims.comp
 import { UnderReviewClaimsComponent } from './pages/claims/under-review-claims/under-review-claims.component';
 import { SettledClaimsComponent } from './pages/claims/settled-claims/settled-claims.component';
 import { ReportsComponent } from './pages/reports/reports.component';
-import { SettingsComponent } from './pages/settings/settings.component';
 import { QuotesComponent } from './pages/quotes/quotes.component';
-import { ProfileComponent } from './pages/profile/profile.component';
-import { PreferencesComponent } from './pages/preferences/preferences.component';
-import { UsersComponent } from './pages/users/users.component';
+import {
+  ProfileComponent,
+  PreferencesComponent,
+  UsersComponent,
+  RolesComponent,
+} from '@mushaviri/ui';
+import { VehicleUsagesComponent } from './pages/vehicle-usages/vehicle-usages.component';
+import { VehicleTypesComponent } from './pages/vehicle-types/vehicle-types.component';
+import { PolicyPeriodsComponent } from './pages/policy-periods/policy-periods.component';
+import { InsuranceCompaniesComponent } from './pages/insurance-companies/insurance-companies.component';
+import { InsuranceCoverageTypesComponent } from './pages/insurance-coverage-types/insurance-coverage-types.component';
+import { ComprehensiveRatesComponent } from './pages/comprehensive-rates/comprehensive-rates.component';
 
 export const appRoutes: Route[] = [
   {
     path: '',
     component: DashboardLayoutComponent,
+    providers: [{ provide: ADMIN_SERVICE_NAME, useValue: INSURANCE_PATH }],
     children: [
       {
         path: 'dashboard',
@@ -97,16 +108,112 @@ export const appRoutes: Route[] = [
         component: AgentsComponent,
       },
       {
-        path: 'settings',
-        component: SettingsComponent,
-      },
-      {
         path: 'quotes',
         component: QuotesComponent,
       },
       {
+        path: 'vehicle-usages',
+        children: [
+          {
+            path: '',
+            component: VehicleUsagesComponent,
+          },
+          {
+            path: ':id',
+            component: VehicleUsagesComponent,
+          },
+        ],
+      },
+      {
+        path: 'vehicle-types',
+        children: [
+          {
+            path: '',
+            component: VehicleTypesComponent,
+          },
+          {
+            path: ':id',
+            component: VehicleTypesComponent,
+          },
+        ],
+      },
+      {
+        path: 'policy-periods',
+        children: [
+          {
+            path: '',
+            component: PolicyPeriodsComponent,
+          },
+          {
+            path: ':id',
+            component: PolicyPeriodsComponent,
+          },
+        ],
+      },
+      {
+        path: 'insurance-companies',
+        children: [
+          {
+            path: '',
+            component: InsuranceCompaniesComponent,
+          },
+          {
+            path: ':id',
+            component: InsuranceCompaniesComponent,
+          },
+        ],
+      },
+      {
+        path: 'insurance-coverage-types',
+        children: [
+          {
+            path: '',
+            component: InsuranceCoverageTypesComponent,
+          },
+          {
+            path: ':id',
+            component: InsuranceCoverageTypesComponent,
+          },
+        ],
+      },
+      {
+        path: 'comprehensive-rates',
+        children: [
+          {
+            path: '',
+            component: ComprehensiveRatesComponent,
+          },
+          {
+            path: ':id',
+            component: ComprehensiveRatesComponent,
+          },
+        ],
+      },
+      {
         path: 'users',
-        component: UsersComponent,
+        children: [
+          {
+            path: '',
+            component: UsersComponent,
+          },
+          {
+            path: ':id',
+            component: UsersComponent,
+          },
+        ],
+      },
+      {
+        path: 'roles',
+        children: [
+          {
+            path: '',
+            component: RolesComponent,
+          },
+          {
+            path: ':id',
+            component: RolesComponent,
+          },
+        ],
       },
       {
         path: 'profile',

@@ -1,0 +1,260 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="subscription-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="subscription-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ subscriber()?.name ?? 'Subscription' }}
+      </h2>
+      @if (subscription()) {
+        <org-status-pill [label]="statusLabel()" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (subscriptionsLoading() && !subscription()) {
+      <p class="text-theme-text-secondary text-sm">Loading subscription…</p>
+    } @else if (subscription(); as current) {
+      <p
+        class="text-theme-text-secondary bg-theme-surface mb-5 flex items-center gap-2 rounded-lg px-3.5 py-2.5 text-xs"
+      >
+        <i class="fi fi-rr-lock" aria-hidden="true"></i>
+        Subscriptions are managed by learners in the app. You can view them
+        here, but not change them.
+      </p>
+
+      <div class="border-theme-border mb-5 rounded-lg border p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Plan</span
+            >
+            <p class="text-theme-text mt-0.5 truncate text-sm font-medium">
+              {{ plan()?.name ?? current.subscriptionPlanId }}
+            </p>
+          </div>
+          <div class="shrink-0 text-right">
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Paid</span
+            >
+            <p
+              class="text-theme-text mt-0.5 text-xl font-semibold tabular-nums"
+            >
+              {{ amountLabel() }}
+            </p>
+            <p class="text-theme-text-secondary text-xs">
+              {{ billingCycleLabel() }}
+            </p>
+          </div>
+        </div>
+        @if (plan()) {
+          <a
+            class="text-theme-primary mt-3 inline-block text-sm font-medium hover:underline"
+            [routerLink]="['../../plans', current.subscriptionPlanId]"
+          >
+            View plan →
+          </a>
+        }
+      </div>
+
+      <section class="mb-6" aria-labelledby="subscription-period-heading">
+        <h3
+          id="subscription-period-heading"
+          class="text-theme-text mb-3 text-sm font-semibold"
+        >
+          Period
+        </h3>
+        <ol class="border-theme-border relative ml-1.5 border-l">
+          <li class="mb-4 ml-4">
+            <span
+              class="bg-theme-primary absolute -left-1.5 mt-1 h-3 w-3 rounded-full"
+              aria-hidden="true"
+            ></span>
+            <p class="text-theme-text-secondary text-xs">Starts</p>
+            <p class="text-theme-text text-sm">
+              {{ current.startDate | date: 'mediumDate' }}
+            </p>
+          </li>
+          <li class="ml-4" [class.mb-4]="current.gracePeriodEndDate">
+            <span
+              class="border-theme-primary bg-theme-background absolute -left-1.5 mt-1 h-3 w-3 rounded-full border-2"
+              aria-hidden="true"
+            ></span>
+            <p class="text-theme-text-secondary text-xs">Ends</p>
+            <p class="text-theme-text text-sm">
+              {{ current.endDate | date: 'mediumDate' }}
+            </p>
+          </li>
+          @if (current.gracePeriodEndDate) {
+            <li class="ml-4">
+              <span
+                class="border-warning bg-theme-background absolute -left-1.5 mt-1 h-3 w-3 rounded-full border-2"
+                aria-hidden="true"
+              ></span>
+              <p class="text-theme-text-secondary text-xs">Grace period ends</p>
+              <p class="text-theme-text text-sm">
+                {{ current.gracePeriodEndDate | date: 'mediumDate' }}
+              </p>
+            </li>
+          }
+        </ol>
+      </section>
+
+      <section class="mb-6" aria-labelledby="subscription-subscriber-heading">
+        <h3
+          id="subscription-subscriber-heading"
+          class="text-theme-text mb-3 text-sm font-semibold"
+        >
+          Subscriber
+        </h3>
+        <dl class="bg-theme-surface grid grid-cols-2 gap-4 rounded-lg p-4">
+          <div>
+            <dt class="text-theme-text-secondary text-xs">Name</dt>
+            <dd class="text-theme-text mt-0.5 text-sm">
+              {{ subscriber()?.name ?? 'Not found' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-theme-text-secondary text-xs">Phone</dt>
+            <dd class="text-theme-text mt-0.5 text-sm">
+              {{ subscriber()?.phoneNumber ?? '—' }}
+            </dd>
+          </div>
+          <div class="col-span-2">
+            <dt class="text-theme-text-secondary text-xs">System user ID</dt>
+            <dd class="text-theme-text mt-0.5 font-mono text-xs break-all">
+              {{ current.systemUserId }}
+            </dd>
+          </div>
+          @if (current.paymentId) {
+            <div class="col-span-2">
+              <dt class="text-theme-text-secondary text-xs">Payment ID</dt>
+              <dd class="text-theme-text mt-0.5 font-mono text-xs break-all">
+                {{ current.paymentId }}
+              </dd>
+            </div>
+          }
+          <div class="col-span-2">
+            <dt class="text-theme-text-secondary text-xs">Subscribed on</dt>
+            <dd class="text-theme-text mt-0.5 text-sm">
+              {{ current.createdAt | date: 'medium' }}
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      @if (subjects().length > 0) {
+        <section class="mb-6" aria-labelledby="subscription-subjects-heading">
+          <h3
+            id="subscription-subjects-heading"
+            class="text-theme-text mb-3 text-sm font-semibold"
+          >
+            Subjects ({{ subjects().length }})
+          </h3>
+          <ul class="flex flex-wrap gap-2">
+            @for (subject of subjects(); track subject._id) {
+              <li
+                class="border-theme-border text-theme-text rounded-full border px-3 py-1 text-xs"
+              >
+                {{ subject.name }}
+                <span class="text-theme-text-secondary">{{
+                  subject.code
+                }}</span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <section aria-labelledby="subscription-schedule-heading">
+        <h3
+          id="subscription-schedule-heading"
+          class="text-theme-text mb-3 text-sm font-semibold"
+        >
+          Notification schedule
+        </h3>
+        @if (scheduleResource.isLoading() && schedule().length === 0) {
+          <p class="text-theme-text-secondary text-sm">Loading schedule…</p>
+        } @else if (schedule().length === 0) {
+          <p class="text-theme-text-secondary text-sm">
+            @if (scheduleResource.error()) {
+              The schedule couldn't be loaded. Close and reopen this
+              subscription to try again.
+            } @else {
+              No reminders are scheduled for this subscription.
+            }
+          </p>
+        } @else {
+          <ul
+            class="border-theme-border divide-theme-border divide-y rounded-lg border"
+          >
+            @for (item of schedule(); track item.event + item.scheduledDate) {
+              <li
+                class="flex items-start justify-between gap-3 px-4 py-3"
+                [class.opacity-60]="item.isPastDue"
+              >
+                <div class="min-w-0">
+                  <p class="text-theme-text text-sm">
+                    {{ reminderEventLabels[item.event] ?? item.event }}
+                  </p>
+                  <p class="text-theme-text-secondary mt-0.5 text-xs">
+                    @for (
+                      channel of item.channels;
+                      track channel;
+                      let last = $last
+                    ) {
+                      {{ channelLabels[channel] ?? channel
+                      }}{{ last ? '' : ' · ' }}
+                    }
+                  </p>
+                </div>
+                <div class="shrink-0 text-right">
+                  <p class="text-theme-text text-sm whitespace-nowrap">
+                    {{ item.scheduledDate | date: 'mediumDate' }}
+                  </p>
+                  @if (item.isPastDue) {
+                    <p class="text-theme-text-secondary text-xs">Past due</p>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    } @else {
+      <div class="py-10 text-center">
+        <p class="text-error text-sm">This subscription doesn't exist.</p>
+        <p class="text-theme-text-secondary mt-1 text-xs">
+          It may not be in the loaded list, or the link is wrong.
+        </p>
+      </div>
+    }
+  </div>
+</div>

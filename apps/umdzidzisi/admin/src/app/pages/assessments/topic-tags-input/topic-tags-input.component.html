@@ -1,0 +1,33 @@
+<div
+  class="border-theme-border bg-theme-background focus-within:border-theme-primary flex min-h-11 flex-wrap items-center gap-1.5 rounded-lg border px-2 py-1.5"
+>
+  @for (tag of value(); track tag) {
+    <span
+      class="bg-theme-surface border-theme-border text-theme-text inline-flex items-center gap-1 rounded-full border py-0.5 pr-0.5 pl-2.5 text-xs font-medium"
+    >
+      {{ tag }}
+      <button
+        type="button"
+        class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-4.5 w-4.5 place-items-center rounded-full"
+        [attr.aria-label]="'Remove tag ' + tag"
+        (click)="removeTag(tag)"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </span>
+  }
+  <input
+    type="text"
+    class="text-theme-text min-w-28 flex-1 bg-transparent px-1.5 py-1 text-sm outline-none"
+    [id]="inputId()"
+    [placeholder]="isFull() ? 'Tag limit reached' : 'Add a tag and press Enter'"
+    [disabled]="isFull()"
+    [ngModel]="draft()"
+    (ngModelChange)="draft.set($event)"
+    (keydown)="onKeydown($event)"
+    (blur)="commitDraft()"
+  />
+</div>
+<p class="text-theme-text-secondary mt-1.5 text-xs">
+  {{ value().length }} / {{ max() }} tags
+</p>

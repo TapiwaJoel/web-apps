@@ -1,0 +1,176 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="onCancel()"
+  (keydown.enter)="onCancel()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border fixed top-1/2 left-1/2 z-50 max-h-[90vh] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border p-8 shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="create-sub-topic-title"
+  (keydown.escape)="onCancel()"
+>
+  <div class="mb-6 flex items-center justify-between">
+    <h2
+      id="create-sub-topic-title"
+      class="text-theme-text text-xl font-semibold"
+    >
+      New sub-topic
+    </h2>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 cursor-pointer place-items-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Close"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-y-5">
+    <div>
+      <label
+        for="sub-topic-topic"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Topic</label
+      >
+      <select
+        id="sub-topic-topic"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().topicId"
+        (ngModelChange)="updateForm('topicId', $event)"
+      >
+        <option value="" disabled>Select a topic</option>
+        @for (option of topicOptions(); track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label
+        for="sub-topic-name"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Name</label
+      >
+      <input
+        id="sub-topic-name"
+        type="text"
+        placeholder="e.g. Solving by factorisation"
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().name"
+        (ngModelChange)="updateForm('name', $event)"
+      />
+      @if (nameTaken()) {
+        <p class="text-warning mt-1.5 text-xs" role="status">
+          This topic already has a sub-topic with this name. Names must be
+          unique within a topic.
+        </p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="sub-topic-objectives"
+        class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Learning objectives</label
+      >
+      <textarea
+        id="sub-topic-objectives"
+        rows="4"
+        placeholder="What a learner should be able to do after this lesson."
+        class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+        [ngModel]="form().learningObjectives"
+        (ngModelChange)="updateForm('learningObjectives', $event)"
+      ></textarea>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label
+          for="sub-topic-duration"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Duration (minutes)</label
+        >
+        <input
+          id="sub-topic-duration"
+          type="number"
+          min="1"
+          step="1"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm tabular-nums"
+          [ngModel]="form().estimatedDurationMinutes"
+          (ngModelChange)="updateForm('estimatedDurationMinutes', $event)"
+        />
+      </div>
+      <div>
+        <label
+          for="sub-topic-order"
+          class="text-theme-text mb-1.5 block text-sm font-medium"
+          >Order</label
+        >
+        <input
+          id="sub-topic-order"
+          type="number"
+          min="1"
+          step="1"
+          class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm tabular-nums"
+          [ngModel]="form().order"
+          (ngModelChange)="updateForm('order', $event)"
+        />
+      </div>
+    </div>
+
+    <div>
+      <span class="text-theme-text mb-1.5 block text-sm font-medium"
+        >Article
+        <span class="text-theme-text-secondary font-normal"
+          >(optional)</span
+        ></span
+      >
+      <org-article-picker
+        [value]="form().articleId || null"
+        [disabled]="creating()"
+        (valueChange)="updateForm('articleId', $event)"
+      />
+      @if (articleTaken()) {
+        <p class="text-warning mt-1.5 text-xs" role="status">
+          This article is already linked to another sub-topic in this topic. An
+          article can be linked only once per topic.
+        </p>
+      } @else {
+        <p class="text-theme-text-secondary mt-1.5 text-xs">
+          Once linked, an article can be swapped for another but not removed.
+        </p>
+      }
+    </div>
+
+    <p class="text-theme-text-secondary text-xs">
+      New sub-topics start as drafts with paid access. Change access or publish
+      them from the sub-topic's details.
+    </p>
+  </div>
+
+  <div class="mt-8 flex items-center justify-end gap-3">
+    <button
+      type="button"
+      class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="creating()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-umdzidzisi-600 text-umdzidzisi-50 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!isValid() || creating()"
+      (click)="onSubmit()"
+    >
+      {{ creating() ? 'Creating…' : 'Create sub-topic' }}
+    </button>
+  </div>
+</div>

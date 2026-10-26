@@ -1,0 +1,9 @@
+// Highlights the device row for the current session with a faint tint of the
+// active product theme's primary colour.
+.current-device {
+  background-color: color-mix(
+    in srgb,
+    var(--theme-primary-color) 6%,
+    transparent
+  );
+}

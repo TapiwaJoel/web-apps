@@ -1,0 +1,232 @@
+<section aria-labelledby="question-builder-title">
+  <div class="mb-3 flex items-baseline justify-between gap-3">
+    <h3
+      id="question-builder-title"
+      class="text-theme-text text-sm font-semibold"
+    >
+      Questions
+    </h3>
+    <span class="text-theme-text-secondary text-xs tabular-nums">
+      {{ summary().totalMinutes }} min allowed in total
+    </span>
+  </div>
+
+  <!-- Allocation against the paper: marks meter + count, soft warnings only. -->
+  <div
+    class="border-theme-border bg-theme-background mb-4 rounded-lg border p-4"
+  >
+    <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+      <div>
+        <span class="text-theme-text-secondary block text-xs font-medium"
+          >Marks allocated</span
+        >
+        <span class="text-theme-text text-2xl font-semibold tabular-nums">
+          {{ summary().totalMarks }}
+        </span>
+        @if (summary().targetMarks !== null) {
+          <span class="text-theme-text-secondary text-sm tabular-nums">
+            / {{ summary().targetMarks }}
+          </span>
+        }
+      </div>
+      <div class="text-right">
+        <span class="text-theme-text-secondary block text-xs font-medium"
+          >Questions</span
+        >
+        <span class="text-theme-text text-2xl font-semibold tabular-nums">
+          {{ summary().count }}
+        </span>
+        @if (summary().targetCount !== null) {
+          <span class="text-theme-text-secondary text-sm tabular-nums">
+            / {{ summary().targetCount }}
+          </span>
+        }
+      </div>
+    </div>
+
+    @if (summary().targetMarks !== null) {
+      <div
+        class="bg-theme-border/60 mt-3 h-1.5 overflow-hidden rounded-full"
+        role="meter"
+        aria-label="Marks allocated against the paper's marks"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-valuenow]="summary().marksPercent"
+      >
+        <div
+          class="h-full rounded-full transition-[width] duration-300"
+          [class.bg-success]="!summary().marksMismatch"
+          [class.bg-warning]="summary().marksMismatch"
+          [class]="'marks-fill-' + summary().marksPercent"
+        ></div>
+      </div>
+    }
+
+    @if (summary().marksMismatch || summary().countMismatch) {
+      <p
+        class="border-warning/40 bg-warning/10 text-theme-text mt-3 flex items-start gap-2 rounded-md border px-3 py-2 text-xs"
+        role="status"
+      >
+        <i
+          class="fi fi-rr-triangle-warning text-warning mt-0.5 shrink-0"
+          aria-hidden="true"
+        ></i>
+        <span>
+          @if (summary().marksMismatch) {
+            Marks add up to {{ summary().totalMarks }}, but the paper is out of
+            {{ summary().targetMarks }}.
+          }
+          @if (summary().countMismatch) {
+            This assessment has {{ summary().count }}
+            {{ summary().count === 1 ? 'question' : 'questions' }}; the paper
+            expects {{ summary().targetCount }}.
+          }
+          You can still save.
+        </span>
+      </p>
+    }
+  </div>
+
+  @if (questions().length === 0) {
+    <div
+      class="border-theme-border text-theme-text-secondary mb-4 rounded-lg border border-dashed px-4 py-6 text-center text-sm"
+    >
+      No questions yet. Find one below and add it.
+    </div>
+  } @else {
+    <ol class="mb-4 flex flex-col gap-2">
+      @for (
+        question of questions();
+        track question.questionId;
+        let i = $index, first = $first, last = $last
+      ) {
+        @let label = labelFor(question.questionId);
+        <li
+          class="border-theme-border bg-theme-background rounded-lg border p-3"
+          [class.border-error]="!isRowValid(question)"
+        >
+          <div class="flex items-start gap-3">
+            <span
+              class="bg-theme-surface border-theme-border text-theme-text grid h-7 min-w-7 shrink-0 place-items-center rounded-md border px-1 text-xs font-semibold tabular-nums"
+              [attr.aria-label]="'Position ' + question.order"
+              >{{ question.order }}</span
+            >
+            <div class="min-w-0 flex-1">
+              <p
+                class="text-theme-text truncate text-sm font-medium"
+                [class.font-mono]="!label.resolved"
+                [class.text-xs]="!label.resolved"
+                [title]="label.title"
+              >
+                {{ label.title }}
+              </p>
+              @if (label.type) {
+                <p class="text-theme-text-secondary text-xs">
+                  {{ label.type }}
+                </p>
+              }
+            </div>
+            <div class="flex shrink-0 items-center gap-0.5">
+              <button
+                type="button"
+                class="text-theme-text-secondary hover:bg-theme-surface hover:text-theme-text grid h-7 w-7 place-items-center rounded-md disabled:cursor-not-allowed disabled:opacity-30"
+                aria-label="Move up"
+                [disabled]="first"
+                (click)="move(i, -1)"
+              >
+                <i class="fi fi-rr-angle-small-up" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="text-theme-text-secondary hover:bg-theme-surface hover:text-theme-text grid h-7 w-7 place-items-center rounded-md disabled:cursor-not-allowed disabled:opacity-30"
+                aria-label="Move down"
+                [disabled]="last"
+                (click)="move(i, 1)"
+              >
+                <i class="fi fi-rr-angle-small-down" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="text-theme-text-secondary hover:bg-error/10 hover:text-error grid h-7 w-7 place-items-center rounded-md"
+                aria-label="Remove question"
+                (click)="remove(i)"
+              >
+                <i class="fi fi-rr-cross-small" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <label class="block">
+              <span class="text-theme-text-secondary mb-1 block text-xs"
+                >Marks</span
+              >
+              <input
+                type="number"
+                min="0"
+                step="1"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm tabular-nums"
+                [ngModel]="question.marks"
+                (ngModelChange)="updateRow(i, 'marks', $event)"
+              />
+            </label>
+            <label class="block">
+              <span class="text-theme-text-secondary mb-1 block text-xs"
+                >Time (min)</span
+              >
+              <input
+                type="number"
+                min="0"
+                step="1"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm tabular-nums"
+                [ngModel]="question.timeAllowed"
+                (ngModelChange)="updateRow(i, 'timeAllowed', $event)"
+              />
+            </label>
+            <label class="block">
+              <span class="text-theme-text-secondary mb-1 block text-xs"
+                >Section</span
+              >
+              <input
+                type="text"
+                placeholder="Section A"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                [attr.maxlength]="limits.sectionLabel"
+                [ngModel]="question.sectionLabel ?? ''"
+                (ngModelChange)="updateRow(i, 'sectionLabel', $event)"
+              />
+            </label>
+            <label class="block">
+              <span class="text-theme-text-secondary mb-1 block text-xs"
+                >Number</span
+              >
+              <input
+                type="text"
+                placeholder="1a"
+                class="border-theme-border bg-theme-background text-theme-text w-full rounded-md border px-2.5 py-1.5 text-sm"
+                [attr.maxlength]="limits.questionNumber"
+                [ngModel]="question.questionNumber ?? ''"
+                (ngModelChange)="updateRow(i, 'questionNumber', $event)"
+              />
+            </label>
+          </div>
+          @if (!isRowValid(question)) {
+            <p class="text-error mt-2 text-xs">
+              Marks and time must be 0 or more.
+            </p>
+          }
+        </li>
+      }
+    </ol>
+  }
+
+  <div class="border-theme-border rounded-lg border p-3">
+    <span class="text-theme-text mb-2 block text-xs font-semibold"
+      >Add a question</span
+    >
+    <org-question-picker
+      [excludeIds]="excludeIds()"
+      (questionPicked)="onQuestionPicked($event)"
+    />
+  </div>
+</section>

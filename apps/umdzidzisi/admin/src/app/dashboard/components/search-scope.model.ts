@@ -1,15 +1,11 @@
 /**
  * Search scopes for the header's global search. The `id` is the machine value a
  * future data layer reads to route a query to the right API/endpoint; `route` is
- * where pressing Enter navigates today (with the query as `?q=`), while the app
- * has no backend yet.
+ * where pressing Enter navigates (with the query as `?q=`); the target list page
+ * reads the query from `GlobalSearchService`.
  */
 export type SearchScopeId =
-  | 'all'
-  | 'examinations'
-  | 'subjects'
-  | 'learners'
-  | 'subscriptions';
+  'all' | 'curriculum' | 'examinations' | 'learners' | 'subscriptions';
 
 export interface SearchScope {
   /** Stable identity used to pick the API/endpoint for this scope. */
@@ -34,31 +30,31 @@ export const SEARCH_SCOPES: SearchScope[] = [
     placeholder: 'Search everything…',
   },
   {
+    id: 'curriculum',
+    label: 'Subjects',
+    icon: 'fi fi-rr-book-open-reader',
+    route: 'curriculum/subjects',
+    placeholder: 'Search subjects…',
+  },
+  {
     id: 'examinations',
     label: 'Examinations',
     icon: 'fi fi-rr-graduation-cap',
-    route: 'examinations',
+    route: 'examinations/all',
     placeholder: 'Search examinations…',
-  },
-  {
-    id: 'subjects',
-    label: 'Subjects',
-    icon: 'fi fi-rr-book-open-reader',
-    route: 'subjects',
-    placeholder: 'Search subjects…',
   },
   {
     id: 'learners',
     label: 'Learners',
-    icon: 'fi fi-rr-user',
-    route: 'profiles',
+    icon: 'fi fi-rr-users',
+    route: 'learners/profiles',
     placeholder: 'Search learners…',
   },
   {
     id: 'subscriptions',
     label: 'Subscriptions',
     icon: 'fi fi-rr-credit-card',
-    route: 'subscriptions',
+    route: 'subscriptions/all',
     placeholder: 'Search subscriptions…',
   },
 ];

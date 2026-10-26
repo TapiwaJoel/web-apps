@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { CreateRolePermissionDto, RolePermissionResponseDto } from '../dtos';
 import {
   API_BASE_URL,
+  buildPaginationHeaders,
   PaginateResult,
   ServiceResponse,
   USER_MANAGEMENT_PATH,
@@ -48,10 +49,15 @@ export class RolePermissionsService {
       );
   }
 
-  public list(): Observable<PaginateResult<RolePermissionResponseDto>> {
+  public list(
+    query: { page?: number } = {},
+  ): Observable<PaginateResult<RolePermissionResponseDto>> {
     return this.http
       .get<ServiceResponse<PaginateResult<RolePermissionResponseDto>>>(
         this.url(),
+        {
+          headers: buildPaginationHeaders({ limit: 100, page: query.page }),
+        },
       )
       .pipe(
         map(

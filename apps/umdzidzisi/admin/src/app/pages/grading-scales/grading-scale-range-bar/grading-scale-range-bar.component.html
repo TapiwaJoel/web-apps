@@ -1,0 +1,56 @@
+<div>
+  <div
+    class="border-theme-border bg-theme-surface relative h-8 overflow-hidden rounded-md border"
+    role="img"
+    [attr.aria-label]="ariaLabel()"
+  >
+    @for (segment of segments(); track segment.id) {
+      <div
+        class="border-theme-background absolute inset-y-0 flex items-center justify-center overflow-hidden border-r text-xs font-semibold"
+        [class]="segment.shadeClass + ' ' + segment.positionClass"
+        [attr.title]="
+          segment.symbol +
+          ': ' +
+          segment.minimumScore +
+          '–' +
+          segment.maximumScore
+        "
+      >
+        @if (segment.width >= minLabelWidth) {
+          <span class="truncate px-1">{{ segment.symbol }}</span>
+        }
+      </div>
+    }
+  </div>
+  <div
+    class="text-theme-text-secondary mt-1 flex justify-between text-[0.65rem] tabular-nums"
+    aria-hidden="true"
+  >
+    <span>0</span>
+    <span>25</span>
+    <span>50</span>
+    <span>75</span>
+    <span>100</span>
+  </div>
+
+  @if (!compact()) {
+    <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+      @for (segment of segments(); track segment.id) {
+        <span class="text-theme-text inline-flex items-center gap-1.5 text-xs">
+          <span
+            class="inline-block h-2.5 w-2.5 rounded-sm"
+            [class]="segment.shadeClass"
+            aria-hidden="true"
+          ></span>
+          <span class="font-semibold">{{ segment.symbol }}</span>
+          <span class="text-theme-text-secondary tabular-nums"
+            >{{ segment.minimumScore }}–{{ segment.maximumScore }}</span
+          >
+        </span>
+      }
+      <span class="text-theme-text-secondary ml-auto text-xs tabular-nums">
+        {{ coveredScores() }} of 101 scores covered
+      </span>
+    </div>
+  }
+</div>

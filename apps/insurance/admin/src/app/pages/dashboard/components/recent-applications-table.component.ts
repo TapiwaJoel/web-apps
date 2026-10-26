@@ -7,7 +7,7 @@ import {
   type Signal,
 } from '@angular/core';
 import { ApplicationRow } from '../../../shared/types/dashboard/dashboard.types';
-import { StatusPillComponent } from './status-pill.component';
+import { StatusPillComponent } from '@mushaviri/ui';
 import {
   APPLICATION_STATUS_STYLES,
   ApplicationDisplayRow,

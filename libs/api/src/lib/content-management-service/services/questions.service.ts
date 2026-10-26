@@ -49,13 +49,22 @@ export class QuestionsService {
       );
   }
 
+  /**
+   * GET /questions — paginated via `limit`/`offset` query params (this
+   * endpoint does not read the X-Page/X-Limit headers). Array filters
+   * (`ids`, `tags`) are sent as repeated params.
+   */
   public list(
     query: ListQuestionsQueryDto = {},
   ): Observable<PaginateResult<QuestionResponseDto>> {
     let params: HttpParams = new HttpParams();
     (Object.entries(query) as [string, unknown][]).forEach(
       ([key, value]: [string, unknown]): void => {
-        if (value !== undefined && value !== null && value !== '') {
+        if (Array.isArray(value)) {
+          value.forEach((v: unknown): void => {
+            params = params.append(key, String(v));
+          });
+        } else if (value !== undefined && value !== null && value !== '') {
           params = params.set(key, String(value));
         }
       },

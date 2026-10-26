@@ -1,0 +1,22 @@
+<div class="relative w-full max-w-xs">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="text-theme-text-secondary pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
+  >
+    <circle cx="11" cy="11" r="7" />
+    <path d="m21 21-4.35-4.35" />
+  </svg>
+  <input
+    type="text"
+    [placeholder]="placeholder"
+    [ngModel]="term()"
+    (ngModelChange)="onInput($event)"
+    class="border-theme-border text-theme-text w-full rounded-lg border py-2 pr-3 pl-9 text-sm transition-all focus:ring-2 focus:outline-none"
+  />
+</div>

@@ -75,6 +75,8 @@ export class ForgotPasswordComponent {
   });
   public readonly requestLoading: WritableSignal<boolean> = signal(false);
   public readonly resetLoading: WritableSignal<boolean> = signal(false);
+  public readonly showNewPassword: WritableSignal<boolean> = signal(false);
+  public readonly showConfirmPassword: WritableSignal<boolean> = signal(false);
 
   /** Non-null once a recovery code has been requested; drives step-2 display. */
   public readonly challenge: WritableSignal<RecoveryChallenge | null> =
@@ -189,6 +191,7 @@ export class ForgotPasswordComponent {
         },
       });
   }
+
   public onBackToRequest(): void {
     this.challenge.set(null);
     this.resetForm.reset();
@@ -221,6 +224,14 @@ export class ForgotPasswordComponent {
   public hasError(form: FormGroup, control: string, error: string): boolean {
     const field: ReturnType<FormGroup['get']> = form.get(control);
     return !!field && field.touched && field.hasError(error);
+  }
+
+  public toggleNewPasswordVisibility(): void {
+    this.showNewPassword.update((value: boolean): boolean => !value);
+  }
+
+  public toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword.update((value: boolean): boolean => !value);
   }
 
   public channelLabel(): string {

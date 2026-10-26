@@ -3,11 +3,11 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import {
-  DocumentResourceResponseDto,
+  AnyResourceResponseDto,
+  GetResourceContentQueryDto,
   GetResourcesQueryDto,
-  MediaResourceResponseDto,
-  ResourceResponseDto,
 } from '../dtos';
+import { FileType } from '../enums';
 import {
   API_BASE_URL,
   CONTENT_MANAGEMENT_PATH,
@@ -18,10 +18,6 @@ import {
   buildUrl,
   mapHttpError,
 } from '../../common';
-
-type AnyResourceResponseDto = ResourceResponseDto<
-  MediaResourceResponseDto | DocumentResourceResponseDto
->;
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesService {
@@ -56,9 +52,11 @@ export class ResourcesService {
       );
   }
 
-  public remove(type: string, filename: string): Observable<void> {
+  public remove(type: FileType, filename: string): Observable<void> {
     return this.http
-      .delete<ServiceResponse<void>>(this.url(type, filename))
+      .delete<ServiceResponse<void>>(
+        this.url(type, encodeURIComponent(filename)),
+      )
       .pipe(
         map((): void => undefined),
         catchError(mapHttpError),
@@ -82,20 +80,44 @@ export class ResourcesService {
       );
   }
 
+  /**
+   * GET /resources/:_id/content — raw file bytes (the endpoint streams the
+   * file, it is not wrapped in ServiceResponse).
+   */
   public getContent(
     id: string,
-    opts: { thumbnail?: boolean; download?: boolean } = {},
+    query: GetResourceContentQueryDto = {},
   ): Observable<Blob> {
-    let params: HttpParams = new HttpParams();
-    if (opts.thumbnail !== undefined) {
-      params = params.set('thumbnail', String(opts.thumbnail));
-    }
-    if (opts.download !== undefined) {
-      params = params.set('download', String(opts.download));
-    }
     return this.http
-      .get(this.url(id, 'content'), { responseType: 'blob', params })
+      .get(this.url(id, 'content'), {
+        responseType: 'blob',
+        params: this.contentParams(query),
+      })
       .pipe(catchError(mapHttpError));
+  }
+
+  /**
+   * Absolute URL of GET /resources/:_id/content, for use directly as an
+   * `<img src>` / `<video src>` / download link (auth travels via cookie).
+   */
+  public contentUrl(
+    id: string,
+    query: GetResourceContentQueryDto = {},
+  ): string {
+    const qs: string = this.contentParams(query).toString();
+    const base: string = this.url(id, 'content');
+    return qs ? `${base}?${qs}` : base;
+  }
+
+  private contentParams(query: GetResourceContentQueryDto): HttpParams {
+    let params: HttpParams = new HttpParams();
+    if (query.thumbnail !== undefined) {
+      params = params.set('thumbnail', String(query.thumbnail));
+    }
+    if (query.download !== undefined) {
+      params = params.set('download', String(query.download));
+    }
+    return params;
   }
 
   private url(...segments: string[]): string {

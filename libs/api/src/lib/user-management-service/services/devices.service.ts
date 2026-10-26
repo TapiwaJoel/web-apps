@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { DeviceResponseDto } from '../dtos';
+import { DeviceResponseDto, GetDevicesQueryDto } from '../dtos';
 import {
   API_BASE_URL,
   PaginateResult,
@@ -12,23 +12,13 @@ import {
   mapHttpError,
 } from '../../common';
 
-export interface DevicesQuery {
-  _id?: string;
-  systemUser?: string;
-  deviceType?: string;
-  deviceId?: string;
-  name?: string;
-  platform?: string;
-  isActive?: boolean;
-}
-
 @Injectable({ providedIn: 'root' })
 export class DevicesService {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly baseUrl: string = inject(API_BASE_URL);
 
   public list(
-    query: DevicesQuery = {},
+    query: GetDevicesQueryDto = {},
   ): Observable<PaginateResult<DeviceResponseDto>> {
     let params: HttpParams = new HttpParams();
     (Object.entries(query) as [string, unknown][]).forEach(

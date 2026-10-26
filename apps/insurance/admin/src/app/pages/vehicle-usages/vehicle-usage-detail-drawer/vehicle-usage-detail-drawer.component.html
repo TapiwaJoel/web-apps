@@ -1,0 +1,97 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="vehicle-usage-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="vehicle-usage-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ vehicleTypeName() || 'Vehicle Usage' }}
+      </h2>
+      @if (vehicleUsage(); as vu) {
+        <org-status-pill [label]="vu.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (vehicleUsagesLoading() && !vehicleUsage()) {
+      <p class="text-theme-text-secondary text-sm">Loading vehicle usage…</p>
+    } @else if (!vehicleUsage()) {
+      <p class="text-error text-sm">Vehicle usage not found.</p>
+    } @else {
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Vehicle Type</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ vehicleTypeName() }}
+            </p>
+          </div>
+          <div>
+            <label
+              for="vehicle-usage-usages"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Usages</label
+            >
+            <textarea
+              id="vehicle-usage-usages"
+              rows="5"
+              class="border-theme-border text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().usagesText"
+              (ngModelChange)="updateForm('usagesText', $event)"
+            ></textarea>
+            <p class="text-theme-text-secondary mt-1.5 text-xs">
+              One usage per line.
+            </p>
+          </div>
+          <div>
+            <span class="text-theme-text-secondary text-xs font-medium"
+              >Created</span
+            >
+            <p class="text-theme-text mt-0.5 text-sm">
+              {{ vehicleUsage()?.createdAt | date: 'mediumDate' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-insurance-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="saving()"
+            (click)="saveVehicleUsage()"
+          >
+            {{ saving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

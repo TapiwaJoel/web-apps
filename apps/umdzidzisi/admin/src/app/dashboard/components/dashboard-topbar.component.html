@@ -8,6 +8,8 @@
 
     <org-profile-menu
       [userName]="userName()"
+      [email]="userEmail()"
+      [role]="userRole()"
       (logout)="logout.emit()"
       (changePassword)="changePassword.emit()"
     />

@@ -1,0 +1,53 @@
+@if (rows().length === 0) {
+  <div class="flex flex-col items-center py-16 text-center">
+    <div
+      class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary-color)_12%,transparent)]"
+    >
+      <svg
+        class="text-theme-primary h-8 w-8"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+    </div>
+    <h2 class="text-theme-text text-lg font-semibold">No activity yet</h2>
+    <p class="text-theme-text-secondary mt-1 max-w-sm text-sm">
+      This user has no recorded activity.
+    </p>
+  </div>
+} @else {
+  <ul class="flex flex-col gap-4">
+    @for (row of rows(); track row._id) {
+      <li class="flex items-start gap-3">
+        <span
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+          [class.bg-success-light]="row.style.tone === 'success'"
+          [class.text-success]="row.style.tone === 'success'"
+          [class.bg-info-light]="row.style.tone === 'info'"
+          [class.text-info]="row.style.tone === 'info'"
+          [class.bg-warning-light]="row.style.tone === 'warning'"
+          [class.text-warning]="row.style.tone === 'warning'"
+          [class.bg-error-light]="row.style.tone === 'error'"
+          [class.text-error]="row.style.tone === 'error'"
+        >
+          <i class="{{ row.style.icon }} text-sm" aria-hidden="true"></i>
+        </span>
+        <div class="flex flex-col">
+          <span class="text-theme-text text-sm font-semibold">{{
+            row.style.label
+          }}</span>
+          <span class="text-theme-text-secondary text-xs">
+            {{ row.resource
+            }}{{ row.resourceId ? ' · ' + row.resourceId : '' }} &middot;
+            {{ row.accessedAt | date: 'medium' }}
+          </span>
+        </div>
+      </li>
+    }
+  </ul>
+}

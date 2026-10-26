@@ -1,0 +1,202 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="examination-board-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="flex min-w-0 items-center gap-2.5">
+      <h2
+        id="examination-board-detail-title"
+        class="text-theme-text truncate text-lg font-semibold"
+      >
+        {{ examinationBoard()?.name ?? 'Examination Board' }}
+      </h2>
+      @if (examinationBoard(); as board) {
+        <org-status-pill [label]="board.status" [tone]="statusTone()" />
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (examinationBoardsLoading() && !examinationBoard()) {
+      <p class="text-theme-text-secondary text-sm">
+        Loading examination board…
+      </p>
+    } @else if (!examinationBoard()) {
+      <div class="flex flex-col items-start gap-3">
+        <p class="text-error text-sm">
+          This examination board doesn't exist or was removed.
+        </p>
+        <button
+          type="button"
+          class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium"
+          (click)="close()"
+        >
+          Back to boards
+        </button>
+      </div>
+    } @else {
+      <a
+        class="bg-umdzidzisi-100 text-umdzidzisi-600 mb-5 flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium no-underline hover:opacity-90"
+        [routerLink]="['../../levels']"
+        [queryParams]="{ examinationBoardId: examinationBoardId() }"
+      >
+        <span class="flex items-center gap-2">
+          <i class="fi fi-rr-layers" aria-hidden="true"></i>
+          View educational levels
+        </span>
+        <span aria-hidden="true">→</span>
+      </a>
+
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="examination-board-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name <span class="text-error">*</span></label
+            >
+            <input
+              id="examination-board-name"
+              type="text"
+              maxlength="255"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+          </div>
+          <div>
+            <label
+              for="examination-board-country"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Country <span class="text-error">*</span></label
+            >
+            <select
+              id="examination-board-country"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().country"
+              (ngModelChange)="updateForm('country', $event)"
+            >
+              <option value="" disabled>Select a country</option>
+              @for (option of countryOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            @if (isDuplicate()) {
+              <p class="text-warning mt-1.5 flex items-center gap-1.5 text-xs">
+                <i class="fi fi-rr-triangle-warning" aria-hidden="true"></i>
+                Another board with this name already exists in this country.
+              </p>
+            }
+          </div>
+          <div>
+            <label
+              for="examination-board-website"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Website</label
+            >
+            <input
+              id="examination-board-website"
+              type="url"
+              maxlength="2083"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [class.border-error]="!websiteValid()"
+              [ngModel]="formValue().website"
+              (ngModelChange)="updateForm('website', $event)"
+            />
+            @if (!websiteValid()) {
+              <p class="text-error mt-1.5 text-xs">
+                Enter a valid web address.
+              </p>
+            }
+          </div>
+          <div>
+            <label
+              for="examination-board-description"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Description</label
+            >
+            <textarea
+              id="examination-board-description"
+              rows="3"
+              maxlength="10000"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().description"
+              (ngModelChange)="updateForm('description', $event)"
+            ></textarea>
+          </div>
+          <div>
+            <label
+              for="examination-board-status"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Status</label
+            >
+            <select
+              id="examination-board-status"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().status"
+              (ngModelChange)="updateForm('status', $event)"
+            >
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <p class="text-theme-text-secondary mt-1.5 text-xs">
+              Set to Inactive to retire this board. Boards can't be deleted.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Created</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ examinationBoard()?.createdAt | date: 'mediumDate' }}
+              </p>
+            </div>
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Last updated</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ examinationBoard()?.updatedAt | date: 'mediumDate' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="!isDirty() || !isValid() || saving()"
+            (click)="saveExaminationBoard()"
+          >
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

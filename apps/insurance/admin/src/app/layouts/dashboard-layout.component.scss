@@ -1,0 +1,15 @@
+// Off-white surround fills the whole content column (covers the shared white
+// .main-content) so the white panel below can curve against it, matching the
+// sidebar's own background rather than sitting on an unrelated white tone.
+.dashboard-surround {
+  background-color: var(--theme-sidebar-bg, #f2f6f9);
+}
+
+// The raised content panel gets a soft shadow along its top/left edge so the
+// surround-vs-panel relationship reads as depth, not just a flat color seam.
+.dashboard-panel {
+  box-shadow:
+    -1px 0 0 0 var(--theme-shadow, rgba(30, 58, 95, 0.08)),
+    0 -1px 0 0 var(--theme-shadow, rgba(30, 58, 95, 0.08)),
+    0 1px 3px 0 var(--theme-shadow, rgba(30, 58, 95, 0.08));
+}

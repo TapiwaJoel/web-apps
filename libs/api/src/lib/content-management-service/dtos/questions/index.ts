@@ -7,6 +7,7 @@ export * from './pairing.dto';
 export * from './matching-pairs.dto';
 export * from './standard-answers.dto';
 export * from './matching-answers.dto';
+export * from './free-text-config.dto';
 export * from './free-text-answers.dto';
 export * from './question-answers.dto';
 export * from './question-response.dto';

@@ -7,7 +7,7 @@ import {
   type Signal,
 } from '@angular/core';
 import { ActivityItem } from '../../../shared/types/dashboard/dashboard.types';
-import { StatusPillComponent } from './status-pill.component';
+import { StatusPillComponent } from '@mushaviri/ui';
 import {
   ACTIVITY_STATUS_STYLES,
   type ActivityRow,

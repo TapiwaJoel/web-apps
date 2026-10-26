@@ -1,7 +1,6 @@
 import { ContentStatus, SubjectType } from '../../enums';
-import { PaginationParams } from '../../../common';
 
-export interface GetSubjectsQueryDto extends PaginationParams {
+export interface GetSubjectsQueryDto {
   _id?: string;
   name?: string;
   code?: string;

@@ -1,7 +1,6 @@
 import { AccessLevel, ContentStatus } from '../../enums';
-import { PaginationParams } from '../../../common';
 
-export interface GetSubTopicsQueryDto extends PaginationParams {
+export interface GetSubTopicsQueryDto {
   _id?: string;
   topicId?: string;
   name?: string;

@@ -23,6 +23,15 @@ body {
   box-sizing: border-box;
 }
 
+// A remote's own global stylesheet is never loaded when the shell renders
+// it (see the native-federation note further down), so button affordances
+// like a pointer cursor must live here to apply across all tenants' pages.
+button:not(:disabled),
+[type='button']:not(:disabled),
+[type='submit']:not(:disabled) {
+  cursor: pointer;
+}
+
 // Insurance-admin sidebar nav overrides — matches designs/img_4.png's compact
 // row height, inset list padding, and muted section-label treatment. Gated by
 // data-theme='insurance' (set at runtime by ThemeService on <html>) so this

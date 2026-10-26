@@ -1,0 +1,186 @@
+<div
+  class="fixed inset-0 z-40 bg-black/45"
+  role="button"
+  tabindex="0"
+  aria-label="Close drawer"
+  (click)="close()"
+  (keydown.enter)="close()"
+></div>
+
+<div
+  class="bg-theme-background border-theme-border animate-slide-in fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l shadow-xl"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="grade-detail-title"
+  (keydown.escape)="close()"
+>
+  <div
+    class="border-theme-border flex items-center justify-between border-b p-5"
+  >
+    <div class="min-w-0">
+      <div class="flex min-w-0 items-center gap-2.5">
+        <h2
+          id="grade-detail-title"
+          class="text-theme-text truncate text-lg font-semibold"
+        >
+          {{ grade()?.name ?? 'Grade' }}
+        </h2>
+        @if (grade(); as g) {
+          <org-status-pill [label]="g.status" [tone]="statusTone()" />
+        }
+      </div>
+      @if (grade()) {
+        <p class="text-theme-text-secondary truncate text-xs">
+          {{ levelLabel() }}
+        </p>
+      }
+    </div>
+    <button
+      type="button"
+      class="text-theme-text-secondary hover:bg-theme-border/40 hover:text-theme-text grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-full"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    @if (gradesLoading() && !grade()) {
+      <p class="text-theme-text-secondary text-sm">Loading grade…</p>
+    } @else if (!grade()) {
+      <div class="flex flex-col items-start gap-3">
+        <p class="text-error text-sm">
+          This grade doesn't exist or was removed.
+        </p>
+        <button
+          type="button"
+          class="border-theme-border text-theme-text hover:bg-theme-border/20 cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium"
+          (click)="close()"
+        >
+          Back to grades
+        </button>
+      </div>
+    } @else {
+      <div class="bg-theme-surface mb-6 rounded-lg p-5">
+        <div class="grid grid-cols-1 gap-y-5">
+          <div>
+            <label
+              for="grade-level"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Educational level <span class="text-error">*</span></label
+            >
+            <select
+              id="grade-level"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().educationalLevelId"
+              (ngModelChange)="updateForm('educationalLevelId', $event)"
+            >
+              <option value="" disabled>Select an educational level</option>
+              @for (level of levelOptions(); track level.id) {
+                <option [value]="level.id">{{ level.label }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label
+              for="grade-name"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Name <span class="text-error">*</span></label
+            >
+            <input
+              id="grade-name"
+              type="text"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().name"
+              (ngModelChange)="updateForm('name', $event)"
+            />
+            @if (isDuplicateName()) {
+              <p class="text-warning mt-1.5 flex items-center gap-1.5 text-xs">
+                <i class="fi fi-rr-triangle-warning" aria-hidden="true"></i>
+                This level already has another grade with this name.
+              </p>
+            }
+          </div>
+          <div>
+            <label
+              for="grade-display-order"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Display order <span class="text-error">*</span></label
+            >
+            <input
+              id="grade-display-order"
+              type="number"
+              min="1"
+              step="1"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [class.border-error]="!displayOrderValid()"
+              [ngModel]="formValue().displayOrder"
+              (ngModelChange)="updateForm('displayOrder', $event)"
+            />
+            @if (!displayOrderValid()) {
+              <p class="text-error mt-1.5 text-xs">
+                Display order must be 1 or more.
+              </p>
+            } @else if (displayOrderTakenBy(); as takenBy) {
+              <p class="text-warning mt-1.5 flex items-center gap-1.5 text-xs">
+                <i class="fi fi-rr-triangle-warning" aria-hidden="true"></i>
+                {{ takenBy }} already uses this position in the level. Pick
+                another number.
+              </p>
+            }
+          </div>
+          <div>
+            <label
+              for="grade-status"
+              class="text-theme-text mb-1.5 block text-sm font-medium"
+              >Status</label
+            >
+            <select
+              id="grade-status"
+              class="border-theme-border bg-theme-background text-theme-text w-full rounded-lg border px-3.5 py-2.5 text-sm"
+              [ngModel]="formValue().status"
+              (ngModelChange)="updateForm('status', $event)"
+            >
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <p class="text-theme-text-secondary mt-1.5 text-xs">
+              Set to Inactive or Deleted to retire this grade.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Created</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ grade()?.createdAt | date: 'mediumDate' }}
+              </p>
+            </div>
+            <div>
+              <span class="text-theme-text-secondary text-xs font-medium"
+                >Last updated</span
+              >
+              <p class="text-theme-text mt-0.5 text-sm">
+                {{ grade()?.updatedAt | date: 'mediumDate' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end">
+          <button
+            type="button"
+            class="bg-umdzidzisi-600 cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="!isDirty() || !isValid() || saving()"
+            (click)="saveGrade()"
+          >
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

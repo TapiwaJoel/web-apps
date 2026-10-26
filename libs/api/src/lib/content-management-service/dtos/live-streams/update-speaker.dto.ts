@@ -1,4 +1,4 @@
-import { SpeakerRoleDto } from './add-speaker.dto';
+import { SpeakerRoleDto } from '../../enums';
 
 export interface UpdateSpeakerDto {
   role?: SpeakerRoleDto;
